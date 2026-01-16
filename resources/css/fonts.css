@@ -1,0 +1,16 @@
+    @font-face {
+      font-family: 'Robot';
+      src: url('/fonts/fear-robot-19.italic.ttf');
+      font-weight: bold;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('/fonts/Poppins-Regular.ttf');
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Fredoka';
+      src: url('/fonts/Fredoka-VariableFont_wdth\,wght.ttf');
+      font-style: normal;
+    }
