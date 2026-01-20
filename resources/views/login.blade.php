@@ -61,6 +61,13 @@
         color: var(--muted);
         text-align: center;
     }
+
+    a{
+        color: var(--magenta);
+    }
+    a:hover{
+        text-decoration:underline;
+    }
     </style>
 </head>
 
