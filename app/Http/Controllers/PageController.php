@@ -26,7 +26,8 @@ class PageController extends Controller
 
     public function proyectos()
     {
-        return view('proyectos'); // muestra proyectos.blade.php
+        $usuario = auth()->user();
+        return view('proyectos',['usuario'=>$usuario]); // muestra proyectos.blade.php
     }
 
     public function proyecto()

@@ -89,11 +89,16 @@
             </header>
 
             <!-- FORM -->
-            <form class="auth-form" method="post" action="#">
+            <form class="auth-form" method="post" action="{{ route('registro.post') }}">
                 @csrf
                 <div class="form-group">
-                    <label for="name">Nombre de usuario</label>
-                    <input type="text" id="name" name="name" required>
+                    <label for="username">Nombre de usuario</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Nombre Completo</label>
+                    <input type="description" id="description" name="description" required>
                 </div>
 
                 <div class="form-group">

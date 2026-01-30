@@ -122,6 +122,10 @@
         gap: 10px;
       }
     }
+
+    h1{
+      font-size:3rem;
+    }
   </style>
 </head>
 
@@ -129,13 +133,21 @@
   <!-- HEADER -->
   <header>
     <div class="title-gradient logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
-    <div class="user-avatar">CM</div>
+    <div>
+      <div class="user-avatar">CM</div>
+      <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+        @csrf
+        <button type="submit" style="background:none; border:none; cursor:pointer;">
+            <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
+        </button>
+    </form>
+    </div>
   </header>
 
   <!-- MAIN -->
   <main>
     <div class="projects-container">
-
+      <h1 class="title-gradient">Bienvenido, {{ $usuario->description }}</h1>
       <!-- PRODUCTOR -->
       <section class="projects-section">
         <div class="projects-section-header">

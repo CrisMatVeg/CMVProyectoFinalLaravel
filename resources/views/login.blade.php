@@ -85,11 +85,11 @@
             </header>
 
             <!-- FORM -->
-            <form class="auth-form" method="post" action="#">
+            <form method="POST" action="{{ route('login.post') }}">
                 @csrf
                 <div class="form-group">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="username">Nombre de Usuario</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
 
                 <div class="form-group">
