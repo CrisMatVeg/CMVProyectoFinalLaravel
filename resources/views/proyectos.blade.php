@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   @vite('resources/css/app.css')
+  @vite('resources/js/app.js')
 
   <style>
     /* ======================================================
@@ -123,8 +124,8 @@
       }
     }
 
-    h1{
-      font-size:3rem;
+    h1 {
+      font-size: 3rem;
     }
   </style>
 </head>
@@ -138,9 +139,9 @@
       <form action="{{ route('logout') }}" method="POST" style="display:inline;">
         @csrf
         <button type="submit" style="background:none; border:none; cursor:pointer;">
-            <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
+          <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
         </button>
-    </form>
+      </form>
     </div>
   </header>
 
@@ -159,17 +160,14 @@
         </div>
 
         <div class="projects-grid">
-
-        <a href="{{ route('proyecto') }}" class="main-card hover-lift">
-            <h3>Proyecto Aurora</h3>
-            <span>Juego de exploración narrativa</span>
-        </a>
-
-        <a href="{{ route('proyecto') }}" class="main-card hover-lift">
-            <h3>Neon Depths</h3>
-            <span>Roguelike cyberpunk</span>
-            <a href="{{ route('proyecto') }}"></a>
-        </a>
+          @forelse ($proyectos as $proyecto)
+            <a href="{{ route('proyecto') }}" class="main-card hover-lift">
+              <h3>{{ $proyecto->name }}</h3>
+              <span>{{ $proyecto->description }}</span>
+            </a>
+          @empty
+            <p>No tienes proyectos todavía.</p>
+          @endforelse
         </div>
       </section>
 
@@ -220,15 +218,16 @@
         <h2 class="title-gradient">Crear nuevo proyecto</h2>
       </header>
 
-      <form class="modal-form">
+      <form class="modal-form" method="POST" action="{{ route('proyectos.store') }}">
+        @csrf
         <div class="form-group">
           <label for="project-name">Nombre del proyecto</label>
-          <input type="text" id="project-name" name="project-name" placeholder="Ej: Aurora" required>
+          <input type="text" id="name" name="name" required>
         </div>
 
         <div class="form-group">
           <label for="project-desc">Descripción corta</label>
-          <textarea id="project-desc" name="project-desc" placeholder="Breve descripción" rows="3"></textarea>
+          <textarea id="project-desc" name="description" placeholder="description" rows="3"></textarea>
         </div>
 
         <div class="modal-actions">

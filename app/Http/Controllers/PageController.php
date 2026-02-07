@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
@@ -26,8 +27,11 @@ class PageController extends Controller
 
     public function proyectos()
     {
-        $usuario = auth()->user();
-        return view('proyectos',['usuario'=>$usuario]); // muestra proyectos.blade.php
+        $usuario = Auth::user();
+        return view('proyectos', [
+            'usuario' => $usuario,
+            'proyectos' => $usuario->proyectos()->latest()->get(),
+        ]);
     }
 
     public function proyecto()

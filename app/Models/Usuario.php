@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /* use Illuminate\Database\Eloquent\Model; */
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Proyecto;
 
 class Usuario extends Authenticatable
 {
@@ -30,5 +31,10 @@ class Usuario extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function proyectos()
+    {
+        return $this->hasMany(Proyecto::class, 'created_by');
     }
 }
