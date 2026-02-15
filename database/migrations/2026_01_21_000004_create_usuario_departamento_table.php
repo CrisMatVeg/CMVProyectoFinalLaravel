@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->timestamp('created_at')->useCurrent();
 
             // Un usuario solo puede pertenecer una vez a un departamento
-            $table->unique(['usuario_id', 'departamento_id']);
+            $table->unique(['user_id', 'department_id']);
         });
     }
 

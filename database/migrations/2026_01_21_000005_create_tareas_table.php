@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->enum('estado', ['pendiente', 'wip', 'finalizado'])
                   ->default('pendiente');
-            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained('departamentos')->onDelete('cascade');
             $table->timestamps();
         });
         
