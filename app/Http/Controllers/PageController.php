@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use App\Models\Proyecto;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -36,17 +37,19 @@ class PageController extends Controller
 
     public function proyecto($id)
     {
-        $proyecto = Proyecto::with(['departamentos.tareas', 'miembros'])->findOrFail($id);
+        // Cargar proyecto con departamentos, tareas y usuarios de cada departamento
+        $proyecto = Proyecto::with(['departamentos.usuarios', 'departamentos.tareas'])->findOrFail($id);
 
-        // Estadísticas generales
+        // Estadísticas generales del proyecto
         $numMiembros = $proyecto->departamentos
             ->flatMap(fn($dep) => $dep->usuarios) // todos los usuarios de todos los departamentos
             ->unique('id')                        // no contar repetidos
             ->count();
-        $numTareas = $proyecto->departamentos
+
+        $totalTareas = $proyecto->departamentos
             ->flatMap(fn($dep) => $dep->tareas)
             ->count();
-        $totalTareas = $numTareas;
+
         $tareasFinalizadas = $proyecto->departamentos
             ->flatMap(fn($dep) => $dep->tareas)
             ->where('estado', 'finalizado')
@@ -54,7 +57,7 @@ class PageController extends Controller
 
         $progreso = $totalTareas ? round(($tareasFinalizadas / $totalTareas) * 100) : 0;
 
-        return view('proyecto', compact('proyecto', 'numMiembros', 'numProyectos', 'progreso'));
+        return view('proyecto', compact('proyecto', 'numMiembros', 'progreso'));
     }
 
     public function procesarLogin(Request $request)

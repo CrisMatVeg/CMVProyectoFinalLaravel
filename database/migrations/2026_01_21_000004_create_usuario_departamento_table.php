@@ -21,7 +21,7 @@ return new class extends Migration {
                   ->constrained('proyectos')
                   ->cascadeOnDelete();
 
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             // Un usuario solo puede pertenecer una vez a un departamento
             $table->unique(['user_id', 'department_id']);
