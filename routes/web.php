@@ -14,6 +14,8 @@ Route::post('/registro', [cUsuario::class, 'registro'])->name('registro.post');
 Route::middleware('auth')->group(function () {
     Route::get('/proyectos', [PageController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos', [cProyecto::class, 'store'])->name('proyectos.store');
-    Route::get('/proyecto', [PageController::class, 'proyecto'])->name('proyecto');
+    Route::get('/proyecto/{proyecto}', [PageController::class, 'proyecto'])->name('proyecto');
+    Route::put('/proyectos/{proyecto}', [cProyecto::class, 'update'])->name('proyectos.update');
+    Route::delete('/proyectos/{proyecto}', [cProyecto::class, 'destroy'])->name('proyectos.destroy');
 });
 

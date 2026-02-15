@@ -10,6 +10,8 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->enum('estado', ['pendiente', 'wip', 'finalizado'])
+                  ->default('pendiente');
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->timestamps();
         });

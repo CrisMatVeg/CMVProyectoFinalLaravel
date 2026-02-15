@@ -26,6 +26,13 @@
       margin: 0;
     }
 
+    header>div:last-child {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      /* separación entre avatar y logout */
+    }
+
     /* ======================================================
        CONTENT
     ====================================================== */
@@ -56,7 +63,8 @@
       margin-bottom: 32px;
     }
 
-    .create-project-btn {
+    .create-project-btn,
+    .join-project-btn {
       font-size: 14px;
       padding: 10px 18px;
       white-space: nowrap;
@@ -96,11 +104,6 @@
       max-width: 480px;
     }
 
-    .main-card {
-      width: 100%;
-      max-width: 480px;
-    }
-
     .modal-header {
       margin-bottom: 15px;
     }
@@ -126,6 +129,40 @@
 
     h1 {
       font-size: 3rem;
+    }
+
+    .project-options {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+    }
+
+    .project-options i {
+      font-size: 1.2rem;
+    }
+
+    .options-menu {
+      padding: 10px;
+      overflow: visible;
+      position: absolute;
+      top: 130%;
+      right: 0;
+      border: 2px solid var(--magenta);
+      border-radius: 6px;
+      min-width: 140px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .options-menu ul {
+      list-style: none;
+      padding: 3px 0;
+      margin: 0;
+    }
+
+    .options-menu li {
+      padding: 8px 12px;
     }
   </style>
 </head>
@@ -161,10 +198,32 @@
 
         <div class="projects-grid">
           @forelse ($proyectos as $proyecto)
-            <a href="{{ route('proyecto') }}" class="main-card hover-lift">
-              <h3>{{ $proyecto->name }}</h3>
-              <span>{{ $proyecto->description }}</span>
-            </a>
+            <div class="main-card hover-lift relative" data-project-id="{{ $proyecto->id }}">
+              <!-- Tres puntitos -->
+              <div class="project-options" data-project-id="{{ $proyecto->id }}">
+                <i class="fa-solid fa-ellipsis"></i>
+                <div class="options-menu hidden">
+                  <ul>
+                    <li>
+                      <button type="button" class="open-edit-modal" data-project-id="{{ $proyecto->id }}">
+                        Modificar
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" class="open-delete-modal" data-project-id="{{ $proyecto->id }}">
+                        Eliminar
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Contenido principal -->
+              <a href="{{ route('proyecto', $proyecto->id) }}">
+                <h3>{{ $proyecto->name }}</h3>
+                <span>{{ $proyecto->description }}</span>
+              </a>
+            </div>
           @empty
             <p>No tienes proyectos todavía.</p>
           @endforelse
@@ -175,6 +234,10 @@
       <section class="projects-section">
         <div class="projects-section-header">
           <h2 class="title-gradient">Otros proyectos</h2>
+
+          <button class="btn-primary hover-lift join-project-btn">
+            + Unirse a un proyecto
+          </button>
         </div>
 
         <div class="projects-grid">
@@ -238,6 +301,54 @@
 
     </div>
   </div>
+
+  <!-- Modal Editar -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Modificar proyecto</h2>
+    </header>
+
+    <form id="edit-form" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="form-group">
+        <label for="edit-name">Nombre del proyecto</label>
+        <input type="text" id="edit-name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-desc">Descripción</label>
+        <textarea id="edit-desc" name="description" rows="3"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Guardar cambios</button>
+        <button type="button" class="btn-secondary cancel-btn hover-lift" data-modal="edit-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal-overlay hidden" id="delete-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Eliminar proyecto</h2>
+    </header>
+
+    <p>¿Estás seguro de que quieres eliminar este proyecto?</p>
+
+    <form id="delete-form" method="POST">
+      @csrf
+      @method('DELETE')
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Sí, eliminar</button>
+        <button type="button" class="btn-secondary cancel-btn hover-lift" data-modal="delete-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 
 </html>
