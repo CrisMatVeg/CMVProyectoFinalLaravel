@@ -1,0 +1,61 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php *)",
+      "Bash(composer *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git stash*)",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(git tag*)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)"
+    ],
+    "deny": [
+      "Bash(start http*)",
+      "Bash(start https*)",
+      "Bash(start chrome*)",
+      "Bash(start firefox*)",
+      "Bash(start msedge*)",
+      "Bash(xdg-open *)",
+      "Bash(open http*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"$(pwd)\" status --porcelain 2>/dev/null | grep -q . && printf '{\"systemMessage\": \"Hay cambios sin commitear. Quieres hacer commit? Dime y genero el mensaje en español.\"}' || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -qiE '\"command\":\\s*\"[^\"]*\\b(start (https?|chrome|firefox|msedge|iexplore)|xdg-open|open https?)' && printf '{\"continue\": false, \"stopReason\": \"Bloqueado: apertura de navegador no permitida por configuracion del proyecto.\"}' || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
