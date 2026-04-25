@@ -113,3 +113,10 @@ document.querySelectorAll(".modal-overlay").forEach((modal) => {
         }
     });
 });
+
+// Modal Unirse a proyecto
+const joinModal = document.getElementById("join-modal");
+document.querySelector(".join-project-btn")?.addEventListener("click", () => {
+    joinModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+});

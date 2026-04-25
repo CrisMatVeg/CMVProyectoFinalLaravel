@@ -2,6 +2,8 @@
 
 ## Estilo de comunicación
 - Caveman style: fragmentos cortos, sin artículos innecesarios, sin relleno.
+- Siempre en español, no realizar ninguna pregunta, petición, comentario o explicación en inglés
+- Simpre se explicarán los cambios realizados para que una persona principiante lo entienda
 
 ## Commits
 - Después de cada tarea relevante (nueva feature, fix, refactor, migración, etc.), preguntar al usuario si desea hacer commit.
@@ -17,4 +19,4 @@
 
 ## Permisos de comandos
 - Permitido sin confirmación: php artisan, composer, npm, npx, node, git (lectura y escritura local), ls, rm, cp, mv, mkdir.
-- Preguntar antes de: comandos que afecten el sistema operativo, paquetes globales, configuraciones fuera del proyecto.
+- Preguntar antes de: comandos que afecten el sistema operativo y/o paquetes globales.
