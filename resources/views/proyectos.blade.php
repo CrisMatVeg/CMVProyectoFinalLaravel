@@ -349,6 +349,33 @@
     </form>
   </div>
 </div>
+
+<!-- Modal Unirse a proyecto -->
+<div class="modal-overlay hidden" id="join-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Unirse a un proyecto</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:6px;">Ingresa el código de invitación que recibiste.</p>
+    </header>
+
+    @error('codigo')
+    <div style="color:red;margin-bottom:10px;">{{ $message }}</div>
+    @enderror
+
+    <form method="POST" action="{{ route('invitacion.unirse') }}">
+      @csrf
+      <div class="form-group">
+        <label>Código de invitación</label>
+        <input type="text" name="codigo" placeholder="PROY-XXXXXXXX"
+               style="text-transform:uppercase;letter-spacing:2px;" required>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Unirme</button>
+        <button type="button" class="btn-secondary hover-lift cancel-btn" data-modal="join-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 
 </html>

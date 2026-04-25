@@ -20,10 +20,10 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Equipo</span>
       </div>
-      <div class="menu-item hover-lift">
+      <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
         <span>Proyectos</span>
-      </div>
+      </a>
       <div class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
@@ -38,10 +38,15 @@
     <div class="sidebar-user hover-lift">
       <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
       <div class="user-info">
-        <strong>{{ auth()->user()->name }}</strong>
-        <span class="title-gradient">Productor</span>
+        <strong>{{ auth()->user()->username }}</strong>
+        <span class="title-gradient">Owner</span>
       </div>
-      <div class="logout"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i></div>
+      <form action="{{ route('logout') }}" method="POST" style="margin-left: auto;">
+        @csrf
+        <button type="submit" class="logout" style="background:none; border:none; color:inherit; cursor:pointer;">
+          <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
+        </button>
+      </form>
     </div>
   </aside>
 
@@ -51,6 +56,23 @@
       <!-- Título del proyecto -->
       <h1 class="title-gradient">{{ $proyecto->name }}</h1>
       <p class="subtitle">{{ $proyecto->description }}</p>
+
+      <div style="margin-top:16px;margin-bottom:32px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="btn-secondary hover-lift" style="font-size:13px;padding:8px 16px;width:auto;text-decoration:none;">
+          <i class="fa-solid fa-chart-gantt"></i> Ver Gantt
+        </a>
+        @if($proyecto->created_by === auth()->id())
+        <button type="button" id="open-invite-modal" class="btn-primary hover-lift" style="font-size:13px;padding:8px 16px;width:auto;">
+          <i class="fa-solid fa-link"></i> Invitar personas
+        </button>
+        @endif
+      </div>
+
+      @if(session('success'))
+      <div style="margin-bottom:20px;padding:9px 14px;background:rgba(0,200,150,0.1);border:1px solid var(--teal);border-radius:6px;font-size:13px;color:var(--teal);">
+        <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+      </div>
+      @endif
 
       <!-- STATS GENERALES -->
       <section class="stats">
@@ -63,7 +85,7 @@
         <div class="card hover-lift purple">
           <div class="stat-icon"><i class="fa-solid fa-folder-open fa-lg"></i></div>
           <div class="stat-title">Tareas</div>
-          <div class="stat-value">{{ $proyecto->departamentos->sum(fn($d) => $d->tareas->count()) }}</div>
+          <div class="stat-value">{{ $totalTareas }}</div>
         </div>
 
         <div class="card hover-lift blue">
@@ -78,31 +100,41 @@
         <h2 class="title-gradient">Departamentos</h2>
 
         <div class="department-grid">
-          @foreach($proyecto->departamentos as $departamento)
+          @foreach($tipos->filter(fn($t) => in_array($t->id, $tiposAccesibles)) as $tipo)
             @php
-              $numMiembrosDep = $departamento->usuarios->count();
-              $totalTareasDep = $departamento->tareas->count();
-              $tareasFinalizadasDep = $departamento->tareas->where('estado', 'finalizado')->count();
+              $tareasDelTipo = $proyecto->tareas->where('type_id', $tipo->id);
+              $numMiembrosDep = $tareasDelTipo->flatMap->usuarios->unique('id')->count();
+              $totalTareasDep = $tareasDelTipo->count();
+              $tareasFinalizadasDep = $tareasDelTipo->filter(fn($t) => $t->status && $t->status->name === 'Terminada')->count();
               $progresoDep = $totalTareasDep ? round(($tareasFinalizadasDep / $totalTareasDep) * 100) : 0;
+              
+              $colorMap = [
+                  'Desarrollo' => 'teal',
+                  'Diseño'     => 'magenta',
+                  'Audio'      => 'blue',
+                  'Narrativa'  => 'green',
+                  'Marketing'  => 'purple',
+                  'Arte'       => 'orange',
+              ];
+              $colorClass = $colorMap[$tipo->name] ?? 'teal';
             @endphp
 
-            <div
-              class="card main-card hover-lift {{ $loop->index % 7 === 0 ? 'teal' : ($loop->index % 7 === 1 ? 'magenta' : ($loop->index % 7 === 2 ? 'blue' : ($loop->index % 7 === 3 ? 'green' : ($loop->index % 7 === 4 ? 'purple' : ($loop->index % 7 === 5 ? 'orange' : 'pink'))))) }}">
+            <a href="{{ route('proyecto.tipo', [$proyecto->id, $tipo->id]) }}"
+              class="card main-card hover-lift {{ $colorClass }}">
               <div class="main-card-header">
                 <div class="main-card-icon">
-                  <!-- Icono genérico según el departamento -->
-                  @if($departamento->name === 'Desarrollo') <i class="fa-solid fa-code fa-lg"></i>
-                  @elseif($departamento->name === 'Arte') <i class="fa-solid fa-palette fa-lg"></i>
-                  @elseif($departamento->name === 'Narrativa') <i class="fa-solid fa-scroll fa-lg"></i>
-                  @elseif($departamento->name === 'Diseño') <i class="fa-solid fa-gamepad fa-lg"></i>
-                  @elseif($departamento->name === 'Audio') <i class="fa-solid fa-music fa-lg"></i>
-                  @elseif($departamento->name === 'Marketing') <i class="fa-solid fa-comments-dollar fa-lg"></i>
+                  @if($tipo->name === 'Desarrollo') <i class="fa-solid fa-code fa-lg"></i>
+                  @elseif($tipo->name === 'Arte') <i class="fa-solid fa-palette fa-lg"></i>
+                  @elseif($tipo->name === 'Narrativa') <i class="fa-solid fa-scroll fa-lg"></i>
+                  @elseif($tipo->name === 'Diseño') <i class="fa-solid fa-gamepad fa-lg"></i>
+                  @elseif($tipo->name === 'Audio') <i class="fa-solid fa-music fa-lg"></i>
+                  @elseif($tipo->name === 'Marketing') <i class="fa-solid fa-comments-dollar fa-lg"></i>
                   @else <i class="fa-solid fa-circle fa-lg"></i>
                   @endif
                 </div>
                 <div>
-                  <div class="main-card-title">{{ $departamento->name }}</div>
-                  <div class="main-card-subtitle">{{ $departamento->description }}</div>
+                  <div class="main-card-title">{{ $tipo->name }}</div>
+                  <div class="main-card-subtitle">Tareas de {{ strtolower($tipo->name) }} del proyecto</div>
                 </div>
               </div>
 
@@ -122,11 +154,10 @@
               </div>
 
               <div class="main-card-tags">
-                <div class="main-card-tag">Frontend</div>
-                <div class="main-card-tag">Backend</div>
-                <div class="main-card-tag">DevOps</div>
+                <div class="main-card-tag">Prioridad</div>
+                <div class="main-card-tag">Sprint</div>
               </div>
-            </div>
+            </a>
           @endforeach
         </div>
       </section>
@@ -141,6 +172,162 @@
       </div>
     </footer>
   </main>
+
+  @if($proyecto->created_by === auth()->id())
+  <!-- MODAL SELECCIÓN DE ÁREAS -->
+  <div id="areas-invite-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;z-index:9998;">
+    <div style="background:var(--cardgrey);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;width:100%;max-width:460px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+
+      <button id="close-areas-modal" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h2 class="title-gradient" style="margin-bottom:4px;">Invitar al proyecto</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Selecciona las áreas a las que tendrá acceso el invitado.</p>
+
+      <form method="POST" action="{{ route('invitacion.generar', $proyecto->id) }}">
+        @csrf
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+          @foreach($tipos as $tipo)
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;">
+            <input type="checkbox" name="areas[]" value="{{ $tipo->id }}" style="accent-color:var(--magenta);">
+            {{ $tipo->name }}
+          </label>
+          @endforeach
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+          <button type="submit" class="btn-primary hover-lift" style="font-size:13px;">Generar enlace</button>
+          <button type="button" id="cancel-areas-modal" class="btn-secondary hover-lift" style="font-size:13px;">Cancelar</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    const areasModal = document.getElementById('areas-invite-modal');
+    const openBtn = document.getElementById('open-invite-modal');
+    const closeAreasModal = () => areasModal.style.display = 'none';
+
+    if (openBtn) {
+      openBtn.addEventListener('click', () => areasModal.style.display = 'flex');
+    }
+    document.getElementById('close-areas-modal').addEventListener('click', closeAreasModal);
+    document.getElementById('cancel-areas-modal').addEventListener('click', closeAreasModal);
+    areasModal.addEventListener('click', e => { if (e.target === areasModal) closeAreasModal(); });
+  </script>
+  @endif
+
+  @if(session('invite_url'))
+  <style>
+    #invite-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #invite-modal .invite-card {
+      background: var(--cardgrey);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    #invite-modal .invite-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-top: 5px;
+    }
+    #invite-modal .invite-copy-btn {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--white);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: border-color .2s;
+    }
+    #invite-modal .invite-copy-btn:hover {
+      border-color: var(--magenta);
+    }
+  </style>
+
+  <div id="invite-modal">
+    <div class="invite-card">
+
+      <button id="close-invite-modal" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h2 class="title-gradient" style="margin-bottom:4px;">Enlace de invitación</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Válido 7 días · Comparte el enlace o el código</p>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <div>
+          <label style="font-size:11px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Enlace</label>
+          <div class="invite-row">
+            <i class="fa-solid fa-link" style="color:var(--muted);font-size:12px;flex-shrink:0;"></i>
+            <span style="font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ session('invite_url') }}</span>
+            <button type="button" class="invite-copy-btn" data-value="{{ session('invite_url') }}" data-label="Copiar enlace">Copiar enlace</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:11px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Código</label>
+          <div class="invite-row">
+            <i class="fa-solid fa-key" style="color:var(--muted);font-size:12px;flex-shrink:0;"></i>
+            <span style="font-size:14px;color:var(--white);flex:1;letter-spacing:3px;font-weight:600;">{{ session('invite_code') }}</span>
+            <button type="button" class="invite-copy-btn" data-value="{{ session('invite_code') }}" data-label="Copiar código">Copiar código</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:22px;display:flex;justify-content:flex-end;">
+        <button id="close-invite-modal-btn" class="btn-secondary hover-lift" style="font-size:13px;">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const inviteModal = document.getElementById('invite-modal');
+    const closeInviteModal = () => inviteModal.style.display = 'none';
+
+    document.getElementById('close-invite-modal').addEventListener('click', closeInviteModal);
+    document.getElementById('close-invite-modal-btn').addEventListener('click', closeInviteModal);
+    inviteModal.addEventListener('click', e => { if (e.target === inviteModal) closeInviteModal(); });
+
+    document.querySelectorAll('.invite-copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.dataset.value).then(() => {
+          const original = btn.dataset.label;
+          btn.textContent = '¡Copiado!';
+          setTimeout(() => btn.textContent = original, 2000);
+        });
+      });
+    });
+  </script>
+  @endif
+
 </body>
 
 </html>
