@@ -17,48 +17,39 @@ class Proyecto extends Model
         'created_by',
     ];
 
-    // Relación: un proyecto pertenece a un usuario
+    // Relación: un proyecto pertenece a un usuario (Owner)
     public function creador()
     {
         return $this->belongsTo(Usuario::class, 'created_by');
     }
 
-    public function departamentos()
+    // Relación: miembros del proyecto (pivot proyecto_usuario)
+    public function miembros()
     {
-        return $this->hasMany(Departamento::class, 'project_id');
+        return $this->belongsToMany(Usuario::class, 'proyecto_usuario', 'proyecto_id', 'user_id');
     }
 
+    // Relación: un proyecto tiene muchas tareas
+    public function tareas()
+    {
+        return $this->hasMany(Tarea::class, 'project_id');
+    }
+
+    public function accesos()
+    {
+        return $this->hasMany(ProyectoAcceso::class);
+    }
+
+    // Relación: usuarios involucrados en el proyecto (a través de sus tareas)
     public function usuarios()
     {
         return $this->hasManyThrough(
             Usuario::class,
-            Departamento::class,
-            'project_id', // FK en departamentos
-            'id',         // FK en usuarios
+            Tarea::class,
+            'project_id', // FK en tareas
+            'id',         // FK en usuarios (vía participaciones, esto es más complejo para hasManyThrough directo)
             'id',         // local key proyecto
-            'id'          // local key departamento
+            'id'          // local key tarea
         );
-    }
-
-    protected static function booted()
-    {
-        static::created(function ($proyecto) {
-
-            $departamentos = [
-                'Desarrollo' => 'Programación y lógica del proyecto',
-                'Diseño' => 'Diseño de jugabilidad y experiencia de usuario',
-                'Audio' => 'Música y efectos de sonido',
-                'Arte' => 'Arte conceptual y assets gráficos',
-                'Narrativa' => 'Historia, guiones y diálogos',
-                'Marketing' => 'Promoción y estrategia de comunicación',
-            ];
-
-            foreach ($departamentos as $nombre => $descripcion) {
-                $proyecto->departamentos()->create([
-                    'name' => $nombre,
-                    'description' => $descripcion,
-                ]);
-            }
-        });
     }
 }
