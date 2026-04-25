@@ -14,9 +14,19 @@ class cUsuario extends Controller
         return view('login');
     }
 
-    public function showRegistro()
+    public function showRegistro(Request $request)
     {
-        return view('registro');
+        $invitacion = null;
+        if ($request->has('code')) {
+            $invitacion = \App\Models\Invitacion::with('proyecto')
+                ->where('codigo', $request->code)
+                ->vigente()
+                ->first();
+            if ($invitacion) {
+                $request->session()->put('invite_code', $request->code);
+            }
+        }
+        return view('registro', compact('invitacion'));
     }
 
     public function login(Request $request)
@@ -66,6 +76,31 @@ class cUsuario extends Controller
 
         // Iniciar sesión automáticamente
         Auth::login($usuario);
+
+        $codigoPendiente = $request->session()->pull('invite_code')
+                        ?? $request->input('invite_code');
+
+        if ($codigoPendiente) {
+            $inv = \App\Models\Invitacion::with('proyecto')
+                ->where('codigo', $codigoPendiente)->first();
+            if ($inv && $inv->esValida()) {
+                $inv->proyecto->miembros()->attach($usuario->id);
+                $inv->increment('uses_count');
+
+                if (!empty($inv->areas)) {
+                    foreach ($inv->areas as $tipoId) {
+                        \App\Models\ProyectoAcceso::firstOrCreate([
+                            'proyecto_id' => $inv->proyecto->id,
+                            'user_id'     => $usuario->id,
+                            'tipo_id'     => $tipoId,
+                        ]);
+                    }
+                }
+
+                return redirect()->route('proyecto', $inv->proyecto->id)
+                    ->with('success', '¡Bienvenido! Te uniste a ' . $inv->proyecto->name);
+            }
+        }
 
         return redirect()->route('proyectos');
     }

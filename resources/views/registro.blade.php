@@ -72,6 +72,23 @@
         a:hover{
             text-decoration:underline;
         }
+
+        .invite-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 0, 128, 0.1);
+            border: 1px solid var(--magenta);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .invite-banner i {
+            color: var(--magenta);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -88,9 +105,19 @@
                 </p>
             </header>
 
+            @if(isset($invitacion) && $invitacion)
+            <div class="invite-banner">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                <p>Te invitaron al proyecto <strong>{{ $invitacion->proyecto->name }}</strong>. Crea tu cuenta para unirte.</p>
+            </div>
+            @endif
+
             <!-- FORM -->
             <form class="auth-form" method="post" action="{{ route('registro.post') }}">
                 @csrf
+                @if(isset($invitacion) && $invitacion)
+                <input type="hidden" name="invite_code" value="{{ $invitacion->codigo }}">
+                @endif
                 <div class="form-group">
                     <label for="username">Nombre de usuario</label>
                     <input type="text" id="username" name="username" required>
