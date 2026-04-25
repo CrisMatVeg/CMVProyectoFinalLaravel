@@ -14,20 +14,71 @@ class Tarea extends Model
     protected $fillable = [
         'title',
         'description',
-        'estado',
-        'department_id',
+        'project_id',
+        'type_id',
+        'status_id',
+        'estimated_hours',
+        'start_date',
+        'end_date',
+        'is_milestone',
     ];
 
-    // Relación con el departamento
-    public function departamento()
+    protected $casts = [
+        'is_milestone' => 'boolean',
+    ];
+
+    public function proyecto()
     {
-        return $this->belongsTo(Departamento::class, 'department_id');
+        return $this->belongsTo(Proyecto::class, 'project_id');
     }
 
-    // Relación con los usuarios asignados a la tarea
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'type_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Estado::class, 'status_id');
+    }
+
     public function usuarios()
     {
-        return $this->belongsToMany(Usuario::class, 'tarea_usuario', 'task_id', 'user_id')
+        return $this->belongsToMany(Usuario::class, 'participaciones', 'task_id', 'user_id')
+                    ->withPivot(['proposed_at', 'accepted_at', 'actual_hours'])
                     ->withTimestamps();
+    }
+
+    // Tareas de las que esta depende (requisitos previos)
+    public function dependencias()
+    {
+        return $this->belongsToMany(
+            Tarea::class,
+            'tarea_dependencias',
+            'task_id',
+            'depends_on_id'
+        )->with('status');
+    }
+
+    // Tareas que dependen de esta
+    public function dependientes()
+    {
+        return $this->belongsToMany(
+            Tarea::class,
+            'tarea_dependencias',
+            'depends_on_id',
+            'task_id'
+        );
+    }
+
+    // True si alguna tarea requerida no está Terminada
+    public function isBlocked(): bool
+    {
+        if (!$this->relationLoaded('dependencias') || $this->dependencias->isEmpty()) {
+            return false;
+        }
+        return $this->dependencias->contains(
+            fn($d) => !$d->status || $d->status->name !== 'Terminada'
+        );
     }
 }

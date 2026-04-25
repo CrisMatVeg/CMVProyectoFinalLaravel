@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Tarea;
 use App\Models\Usuario;
+use App\Models\Proyecto;
 
 class cTareaUsuario extends Controller
 {
@@ -19,9 +20,11 @@ class cTareaUsuario extends Controller
         $tarea = Tarea::findOrFail($request->task_id);
         $tarea->usuarios()->syncWithoutDetaching($request->user_id);
 
-        return response()->json([
-            'message' => 'Usuario asignado a la tarea correctamente.'
-        ]);
+        // Auto-añadir al usuario como miembro del proyecto si aún no lo es
+        $proyecto = $tarea->proyecto;
+        $proyecto->miembros()->syncWithoutDetaching($request->user_id);
+
+        return redirect()->back()->with('success', 'Usuario asignado correctamente.');
     }
 
     // Quitar un usuario de una tarea
@@ -35,8 +38,6 @@ class cTareaUsuario extends Controller
         $tarea = Tarea::findOrFail($request->task_id);
         $tarea->usuarios()->detach($request->user_id);
 
-        return response()->json([
-            'message' => 'Usuario removido de la tarea correctamente.'
-        ]);
+        return redirect()->back()->with('success', 'Usuario removido correctamente.');
     }
 }

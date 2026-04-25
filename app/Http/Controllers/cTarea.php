@@ -4,61 +4,81 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tarea;
-use App\Models\Departamento;
 
 class cTarea extends Controller
 {
-    // Listar tareas de un departamento
-    public function index($departmentId)
+    public function index($projectId)
     {
-        $tareas = Tarea::where('department_id', $departmentId)->get();
+        $tareas = Tarea::where('project_id', $projectId)
+            ->with(['tipo', 'status', 'usuarios', 'dependencias'])
+            ->get();
         return response()->json($tareas);
     }
 
-    // Mostrar una tarea
     public function show($id)
     {
-        $tarea = Tarea::findOrFail($id);
+        $tarea = Tarea::with(['tipo', 'status', 'usuarios', 'dependencias'])->findOrFail($id);
         return response()->json($tarea);
     }
 
-    // Crear una tarea
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'estado' => 'required|in:pendiente,wip,finalizado',
-            'department_id' => 'required|exists:departamentos,id',
+            'title'           => 'required|string|max:255',
+            'description'     => 'nullable|string',
+            'project_id'      => 'required|exists:proyectos,id',
+            'type_id'         => 'required|exists:tipos,id',
+            'status_id'       => 'required|exists:estados,id',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'start_date'      => 'nullable|date',
+            'end_date'        => 'nullable|date|after_or_equal:start_date',
+            'is_milestone'    => 'nullable|boolean',
+            'depends_on'      => 'nullable|array',
+            'depends_on.*'    => 'exists:tareas,id',
         ]);
+
+        $data['is_milestone'] = $request->boolean('is_milestone');
 
         $tarea = Tarea::create($data);
 
-        return response()->json($tarea, 201);
+        $depIds = $request->input('depends_on', []);
+        if (!empty($depIds)) {
+            $tarea->dependencias()->sync($depIds);
+        }
+
+        return redirect()->back()->with('success', 'Tarea creada correctamente.');
     }
 
-    // Actualizar una tarea
     public function update(Request $request, $id)
     {
         $tarea = Tarea::findOrFail($id);
 
         $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'estado' => 'required|in:pendiente,wip,finalizado',
+            'title'           => 'required|string|max:255',
+            'description'     => 'nullable|string',
+            'type_id'         => 'required|exists:tipos,id',
+            'status_id'       => 'required|exists:estados,id',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'start_date'      => 'nullable|date',
+            'end_date'        => 'nullable|date|after_or_equal:start_date',
+            'is_milestone'    => 'nullable|boolean',
+            'depends_on'      => 'nullable|array',
+            'depends_on.*'    => 'exists:tareas,id',
         ]);
+
+        $data['is_milestone'] = $request->boolean('is_milestone');
 
         $tarea->update($data);
 
-        return response()->json($tarea);
+        // Sync siempre (vacío = sin dependencias)
+        $tarea->dependencias()->sync($request->input('depends_on', []));
+
+        return redirect()->back()->with('success', 'Tarea actualizada correctamente.');
     }
 
-    // Eliminar una tarea
     public function destroy($id)
     {
-        $tarea = Tarea::findOrFail($id);
-        $tarea->delete();
-
-        return response()->json(['message' => 'Tarea eliminada']);
+        Tarea::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Tarea eliminada correctamente.');
     }
 }
