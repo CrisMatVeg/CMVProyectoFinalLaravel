@@ -5,16 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TareaUsuario extends Model
+class Estado extends Model
 {
     use HasFactory;
 
-    protected $table = 'tarea_usuario';
-
-    public $timestamps = true;
+    protected $table = 'estados';
 
     protected $fillable = [
-        'task_id',
-        'user_id',
+        'name',
     ];
+
+    public function tareas()
+    {
+        return $this->hasMany(Tarea::class, 'status_id');
+    }
 }

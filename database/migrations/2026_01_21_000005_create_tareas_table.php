@@ -10,9 +10,10 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('estado', ['pendiente', 'wip', 'finalizado'])
-                  ->default('pendiente');
-            $table->foreignId('department_id')->constrained('departamentos')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('proyectos')->onDelete('cascade');
+            $table->foreignId('type_id')->constrained('tipos')->onDelete('cascade');
+            $table->foreignId('status_id')->constrained('estados')->onDelete('cascade');
+            $table->decimal('estimated_hours', 8, 2)->default(0);
             $table->timestamps();
         });
         
