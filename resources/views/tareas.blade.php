@@ -284,6 +284,10 @@
                 <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
                 <span>Ver Gantt</span>
             </a>
+            <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+                <span>Archivos</span>
+            </a>
         </nav>
 
         <div class="sidebar-user hover-lift">

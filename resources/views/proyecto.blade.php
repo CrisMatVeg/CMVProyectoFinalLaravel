@@ -28,6 +28,10 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </a>
+      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+        <span>Archivos</span>
+      </a>
       @if($proyecto->created_by === auth()->id())
       <a href="{{ route('proyecto.miembros', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-users"></i></span>

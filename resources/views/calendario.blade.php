@@ -461,6 +461,10 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </div>
+      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+        <span>Archivos</span>
+      </a>
     </nav>
     <div class="sidebar-user hover-lift">
       <a href="{{ route('perfil') }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;">

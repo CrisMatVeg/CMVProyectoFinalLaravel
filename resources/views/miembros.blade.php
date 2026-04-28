@@ -38,6 +38,10 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </a>
+      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+        <span>Archivos</span>
+      </a>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
         <span>Miembros</span>
