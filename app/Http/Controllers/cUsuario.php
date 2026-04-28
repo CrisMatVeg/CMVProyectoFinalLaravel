@@ -54,6 +54,41 @@ class cUsuario extends Controller
         return redirect()->route('home');
     }
 
+    public function showPerfil()
+    {
+        return view('perfil', ['usuario' => Auth::user()]);
+    }
+
+    public function actualizarPerfil(Request $request)
+    {
+        $usuario = Auth::user();
+
+        $request->validate([
+            'username'    => 'required|unique:usuarios,username,' . $usuario->id,
+            'description' => 'required',
+            'email'       => 'required|email|unique:usuarios,email,' . $usuario->id,
+        ]);
+
+        if ($request->filled('password_nuevo')) {
+            $passwordActualConcatenada = $usuario->username . $request->password_actual;
+            if (!Hash::check($passwordActualConcatenada, $usuario->password)) {
+                return back()->withErrors(['password_actual' => 'La contraseña actual es incorrecta.'])->withInput();
+            }
+        }
+
+        $usuario->username    = $request->username;
+        $usuario->description = $request->description;
+        $usuario->email       = $request->email;
+
+        if ($request->filled('password_nuevo')) {
+            $usuario->password = Hash::make($request->username . $request->password_nuevo);
+        }
+
+        $usuario->save();
+
+        return back()->with('success', 'Perfil actualizado correctamente.');
+    }
+
     public function registro(Request $request)
     {
         // Validación
