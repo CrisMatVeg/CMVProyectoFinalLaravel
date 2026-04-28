@@ -172,7 +172,15 @@
   <header>
     <div class="title-gradient logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
     <div>
-      <div class="user-avatar">CM</div>
+      <a href="{{ route('perfil') }}" title="Editar perfil" style="text-decoration:none;">
+        <div class="user-avatar">
+          @php
+            $partes = explode(' ', trim($usuario->description));
+            $iniciales = strtoupper(substr($partes[0], 0, 1)) . (isset($partes[1]) ? strtoupper(substr($partes[1], 0, 1)) : '');
+          @endphp
+          {{ $iniciales }}
+        </div>
+      </a>
       <form action="{{ route('logout') }}" method="POST" style="display:inline;">
         @csrf
         <button type="submit" style="background:none; border:none; cursor:pointer;">
@@ -241,20 +249,16 @@
         </div>
 
         <div class="projects-grid">
-          <article class="main-card hover-lift">
-            <h3>Echoes</h3>
-            <span>Diseño de niveles</span>
-          </article>
-
-          <article class="main-card hover-lift">
-            <h3>Skybound</h3>
-            <span>Programación gameplay</span>
-          </article>
-
-          <article class="main-card hover-lift">
-            <h3>Void Signal</h3>
-            <span>Arte conceptual</span>
-          </article>
+          @forelse ($proyectosParticipando as $proy)
+            <article class="main-card hover-lift">
+              <a href="{{ route('proyecto', $proy->id) }}">
+                <h3>{{ $proy->name }}</h3>
+                <span>{{ $proy->description }}</span>
+              </a>
+            </article>
+          @empty
+            <p>Todavía no te has unido a ningún proyecto.</p>
+          @endforelse
         </div>
       </section>
 

@@ -15,32 +15,40 @@
     <div class="logo title-gradient"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
 
     <nav class="menu">
-      <span class="menu-section">Menu</span>
+      <span class="menu-section">Proyecto</span>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Equipo</span>
       </div>
+      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
+        <span>Gantt</span>
+      </a>
+      <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
+        <span>Calendario</span>
+      </a>
+      @if($proyecto->created_by === auth()->id())
+      <a href="{{ route('proyecto.miembros', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+        <span>Miembros</span>
+      </a>
+      @endif
+      <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
         <span>Proyectos</span>
       </a>
-      <div class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
-        <span>Calendario</span>
-      </div>
-      <span class="menu-section">Sistema</span>
-      <div class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
-        <span>Ajustes</span>
-      </div>
     </nav>
 
     <div class="sidebar-user hover-lift">
-      <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
-      <div class="user-info">
-        <strong>{{ auth()->user()->username }}</strong>
-        <span class="title-gradient">Owner</span>
-      </div>
+      <a href="{{ route('perfil') }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;">
+        <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="user-info">
+          <strong>{{ auth()->user()->username }}</strong>
+          <span class="title-gradient">{{ $proyecto->created_by === auth()->id() ? 'Owner' : 'Miembro' }}</span>
+        </div>
+      </a>
       <form action="{{ route('logout') }}" method="POST" style="margin-left: auto;">
         @csrf
         <button type="submit" class="logout" style="background:none; border:none; color:inherit; cursor:pointer;">
@@ -60,6 +68,9 @@
       <div style="margin-top:16px;margin-bottom:32px;display:flex;gap:10px;flex-wrap:wrap;">
         <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="btn-secondary hover-lift" style="font-size:13px;padding:8px 16px;width:auto;text-decoration:none;">
           <i class="fa-solid fa-chart-gantt"></i> Ver Gantt
+        </a>
+        <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="btn-secondary hover-lift" style="font-size:13px;padding:8px 16px;width:auto;text-decoration:none;">
+          <i class="fa-solid fa-calendar-days"></i> Ver Calendario
         </a>
         @if($proyecto->created_by === auth()->id())
         <button type="button" id="open-invite-modal" class="btn-primary hover-lift" style="font-size:13px;padding:8px 16px;width:auto;">
@@ -107,7 +118,7 @@
               $totalTareasDep = $tareasDelTipo->count();
               $tareasFinalizadasDep = $tareasDelTipo->filter(fn($t) => $t->status && $t->status->name === 'Terminada')->count();
               $progresoDep = $totalTareasDep ? round(($tareasFinalizadasDep / $totalTareasDep) * 100) : 0;
-              
+
               $colorMap = [
                   'Desarrollo' => 'teal',
                   'Diseño'     => 'magenta',
@@ -161,6 +172,7 @@
           @endforeach
         </div>
       </section>
+
     </div>
 
     <footer class="footer magenta">

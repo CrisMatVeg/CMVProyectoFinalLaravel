@@ -355,13 +355,19 @@
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Diagrama Gantt</span>
       </div>
+      <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
+        <span>Calendario</span>
+      </a>
     </nav>
     <div class="sidebar-user hover-lift">
-      <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
-      <div class="user-info">
-        <strong>{{ auth()->user()->username }}</strong>
-        <span class="title-gradient">Owner</span>
-      </div>
+      <a href="{{ route('perfil') }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;">
+        <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="user-info">
+          <strong>{{ auth()->user()->username }}</strong>
+          <span class="title-gradient">{{ $proyecto->created_by === auth()->id() ? 'Owner' : 'Miembro' }}</span>
+        </div>
+      </a>
       <form action="{{ route('logout') }}" method="POST" style="margin-left:auto;">
         @csrf
         <button type="submit" class="logout" style="background:none;border:none;color:inherit;cursor:pointer;">

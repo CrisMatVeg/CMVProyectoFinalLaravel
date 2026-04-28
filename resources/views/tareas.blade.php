@@ -287,14 +287,16 @@
         </nav>
 
         <div class="sidebar-user hover-lift">
-            <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
-            <div class="user-info">
-                <strong>{{ auth()->user()->username }}</strong>
-                <span class="title-gradient">Owner</span>
-            </div>
-            <form action="{{ route('logout') }}" method="POST" style="margin-left: auto;">
+            <a href="{{ route('perfil') }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;cursor:pointer;">
+                <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="user-info">
+                    <strong>{{ auth()->user()->username }}</strong>
+                    <span class="title-gradient">{{ $esOwner ? 'Owner' : 'Miembro' }}</span>
+                </div>
+            </a>
+            <form action="{{ route('logout') }}" method="POST" style="margin-left:auto;">
                 @csrf
-                <button type="submit" class="logout" style="background:none; border:none; color:inherit; cursor:pointer;">
+                <button type="submit" class="logout" style="background:none;border:none;color:inherit;cursor:pointer;">
                     <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
                 </button>
             </form>
@@ -308,21 +310,23 @@
                     <h1 class="title-gradient">{{ $tipo->name }}</h1>
                     <p class="subtitle">{{ $proyecto->name }} • Listado de tareas y seguimiento</p>
                 </div>
+                @if($esOwner)
                 <button class="btn-primary hover-lift" onclick="openModal('modal-create')">
                     <i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Nueva Tarea
                 </button>
+                @endif
             </div>
 
             <section class="stats" style="margin: 24px 0;">
                 <div class="card hover-lift">
                     <div class="stat-icon"><i class="fa-solid fa-tasks"></i></div>
                     <div class="stat-title">Tareas Totales</div>
-                    <div class="stat-value">{{ $tareas->count() }}</div>
+                    <div class="stat-value">{{ $totalTareas }}</div>
                 </div>
                 <div class="card hover-lift">
                     <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
                     <div class="stat-title">Horas Estimadas</div>
-                    <div class="stat-value">{{ $tareas->sum('estimated_hours') }}h</div>
+                    <div class="stat-value">{{ $totalHoras }}h</div>
                 </div>
                 <div class="card hover-lift">
                     <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
@@ -366,6 +370,7 @@
                                 <button class="action-btn" title="Asignar Usuario" onclick="openAssignModal({{ $tarea->id }}, '{{ $tarea->title }}')">
                                     <i class="fa-solid fa-user-plus"></i>
                                 </button>
+                                @if($esOwner)
                                 <button class="action-btn" title="Editar"
                                     onclick="openEditModal(
                                         {{ $tarea->id }},
@@ -384,6 +389,7 @@
                                     onclick="openDeleteModal({{ $tarea->id }}, @js($tarea->title))">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
+                                @endif
                             </div>
                         </div>
 
@@ -420,7 +426,11 @@
                 @empty
                     <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
                         <i class="fa-solid fa-clipboard-list fa-3x" style="color: var(--muted); margin-bottom: 16px;"></i>
-                        <p class="subtitle">No hay tareas en esta categoría. ¡Crea la primera!</p>
+                        @if($esOwner)
+                            <p class="subtitle">No hay tareas en esta categoría. ¡Crea la primera!</p>
+                        @else
+                            <p class="subtitle">No tienes tareas asignadas en este departamento.</p>
+                        @endif
                     </div>
                 @endforelse
             </section>
@@ -662,12 +672,15 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
 
         // Override para create: construir dep list
-        document.querySelector('[onclick="openModal(\'modal-create\')"]').addEventListener('click', function() {
-            document.getElementById('create-milestone-cb').checked = false;
-            toggleMilestoneCreate(false);
-            buildDepList('create-dep-list', null, []);
-            openModal('modal-create');
-        });
+        const createBtn = document.querySelector('[onclick="openModal(\'modal-create\')"]');
+        if (createBtn) {
+            createBtn.addEventListener('click', function() {
+                document.getElementById('create-milestone-cb').checked = false;
+                toggleMilestoneCreate(false);
+                buildDepList('create-dep-list', null, []);
+                openModal('modal-create');
+            });
+        }
 
         function openAssignModal(id, title) {
             document.getElementById('assign-task-id').value = id;
