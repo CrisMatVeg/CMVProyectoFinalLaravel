@@ -17,13 +17,13 @@ class DatabaseSeeder extends Seeder
         // Tipos de tareas
         $tipos = ['Desarrollo', 'Diseño', 'Audio', 'Narrativa', 'Marketing', 'Arte'];
         foreach ($tipos as $tipo) {
-            Tipo::create(['name' => $tipo]);
+            Tipo::firstOrCreate(['name' => $tipo]);
         }
 
         // Estados de tareas
         $estados = ['Pendiente', 'En Proceso', 'Terminada'];
         foreach ($estados as $estado) {
-            Estado::create(['name' => $estado]);
+            Estado::firstOrCreate(['name' => $estado]);
         }
 
         // Usuario de prueba (password = username + password concatenados, igual que el registro)

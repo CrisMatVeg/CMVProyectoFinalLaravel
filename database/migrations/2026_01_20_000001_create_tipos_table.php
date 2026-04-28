@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,6 +17,16 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->timestamps();
         });
+
+        $now = now();
+        DB::table('tipos')->insertOrIgnore([
+            ['name' => 'Desarrollo', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Diseño',     'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Audio',      'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Narrativa',  'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Marketing',  'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Arte',       'created_at' => $now, 'updated_at' => $now],
+        ]);
     }
 
     /**
