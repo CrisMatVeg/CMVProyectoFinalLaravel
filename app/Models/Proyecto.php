@@ -40,6 +40,11 @@ class Proyecto extends Model
         return $this->hasMany(ProyectoAcceso::class);
     }
 
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class);
+    }
+
     // Relación: usuarios involucrados en el proyecto (a través de sus tareas)
     public function usuarios()
     {

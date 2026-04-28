@@ -6,6 +6,7 @@ use App\Http\Controllers\cProyecto;
 use App\Http\Controllers\cTarea;
 use App\Http\Controllers\cTareaUsuario;
 use App\Http\Controllers\cInvitacion;
+use App\Http\Controllers\cArchivo;
 
 
 Route::get('/', [PageController::class, 'index'])->name('home');
@@ -33,5 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/invitaciones/unirse', [cInvitacion::class, 'unirse'])->name('invitacion.unirse');
     Route::get('/perfil', [cUsuario::class, 'showPerfil'])->name('perfil');
     Route::put('/perfil', [cUsuario::class, 'actualizarPerfil'])->name('perfil.update');
+    Route::get('/proyecto/{proyecto}/archivos', [cArchivo::class, 'index'])->name('proyecto.archivos');
+    Route::post('/proyecto/{proyecto}/archivos', [cArchivo::class, 'store'])->name('proyecto.archivos.store');
+    Route::delete('/archivos/{archivo}', [cArchivo::class, 'destroy'])->name('archivo.destroy');
+    Route::get('/archivos/{archivo}/download', [cArchivo::class, 'download'])->name('archivo.download');
+    Route::get('/archivos/{archivo}/preview', [cArchivo::class, 'preview'])->name('archivo.preview');
 });
 
