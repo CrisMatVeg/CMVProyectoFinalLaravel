@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-hUYzacQL.css",
+    "file": "assets/app-MeV7n1uq.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -21,7 +21,7 @@
     "src": "resources/fonts/fear-robot-19.italic.ttf"
   },
   "resources/js/app.js": {
-    "file": "assets/app-B5i2IGko.js",
+    "file": "assets/app-BIwiusTr.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
