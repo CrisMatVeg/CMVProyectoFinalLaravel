@@ -337,30 +337,34 @@ Unidades de trabajo dentro de un proyecto.
 ---
 
 #### Tabla: `participaciones`
-**Migración:** `2026_01_21_000006_create_participaciones_table.php`
+**Migraciones:**
+- `2026_01_21_000006_create_participaciones_table.php` — creación inicial
+- `2026_05_11_000001_simplify_participaciones_table.php` — eliminación de columnas de seguimiento
 
-Tabla intermedia (pivot con datos extra) entre usuarios y tareas. Registra quién trabaja en qué tarea y cuántas horas reales lleva.
+Tabla intermedia (pivot) entre usuarios y tareas. Registra únicamente quién trabaja en qué tarea.
+
+> **Nota:** Las columnas `proposed_at`, `accepted_at` y `actual_hours` existieron en el diseño original pero fueron eliminadas en la migración de simplificación. La tabla quedó reducida a lo esencial.
 
 | Columna | Tipo | Descripción |
 |---|---|---|
 | id | integer (PK) | Identificador único |
 | task_id | FK → tareas | Tarea asignada |
 | user_id | FK → usuarios | Usuario asignado |
-| proposed_at | timestamp (nullable) | Cuándo se propuso la asignación |
-| accepted_at | timestamp (nullable) | Cuándo se aceptó |
-| actual_hours | decimal(8,2) | Horas reales trabajadas |
+| created_at / updated_at | timestamps | Fechas automáticas |
 
 ---
 
 #### Tabla: `proyecto_usuario`
 **Migración:** `2026_04_23_000002_create_proyecto_usuario_table.php`
 
-Pivot simple que registra qué usuarios son miembros de qué proyectos.
+Pivot que registra qué usuarios son miembros de qué proyectos.
 
 | Columna | Tipo | Descripción |
 |---|---|---|
+| id | integer (PK) | Identificador único de la fila |
 | proyecto_id | FK → proyectos | ID del proyecto |
 | user_id | FK → usuarios | ID del miembro |
+| created_at / updated_at | timestamps | Fechas automáticas |
 
 Restricción unique: un usuario no puede ser miembro dos veces del mismo proyecto.
 
@@ -494,7 +498,11 @@ Recorre todas las dependencias de la tarea. Si alguna no tiene estado "Terminada
 
 ### Modelo Participacion (`app/Models/Participacion.php`)
 
-Pivot con datos adicionales entre usuarios y tareas. No solo registra quién está asignado a qué, sino cuándo se propuso, aceptó y cuántas horas trabajó.
+Pivot simple entre usuarios y tareas. Solo registra la existencia de la asignación (`task_id`, `user_id`). Las columnas de seguimiento (`proposed_at`, `accepted_at`, `actual_hours`) fueron eliminadas en una migración posterior para simplificar el modelo.
+
+**Relaciones:**
+- `tarea()` → belongsTo Tarea
+- `usuario()` → belongsTo Usuario
 
 ---
 
@@ -642,12 +650,23 @@ Igual que store pero modifica una tarea existente. Usa `sync([])` si no hay depe
 
 ### `cTareaUsuario` — Asignaciones
 
-#### `assign(Request)` — Asignar usuario a tarea
-1. Crea la entrada en `participaciones` con `syncWithoutDetaching` (no elimina otras asignaciones)
-2. **Automáticamente** agrega al usuario como miembro del proyecto si no lo era
+#### `assign(Request)` — Asignar usuario individual a tarea
+1. Valida que `user_id` y `task_id` existan en sus tablas
+2. Carga la tarea y su proyecto
+3. **Validación 1 — Owner bloqueado:** si el `user_id` es el creador del proyecto, rechaza con error ("El owner no puede ser asignado a tareas")
+4. **Validación 2 — Pertenencia al área:** comprueba si existen filas en `proyecto_accesos` para ese proyecto. Si existen, el usuario debe tener una fila con el `tipo_id` de la tarea; si no la tiene, rechaza con error ("El usuario no pertenece al departamento de esta tarea")
+5. Si pasa las validaciones: `syncWithoutDetaching($userId)` en `tarea->usuarios()` (no elimina otras asignaciones existentes)
+6. `syncWithoutDetaching($userId)` en `proyecto->miembros()` para asegurarse de que sea miembro del proyecto
+
+#### `assignDepartamento(Request)` — Asignar todos los usuarios de un área a una tarea
+Permite asignar de golpe a todos los miembros de un tipo/área:
+1. Valida `task_id` y `tipo_id`
+2. Consulta `proyecto_accesos` filtrando por `proyecto_id` y `tipo_id`, excluyendo al owner
+3. Por cada `user_id` encontrado: `syncWithoutDetaching` en tarea y en proyecto
 
 #### `remove(Request)` — Quitar usuario de tarea
-Hace `detach` del usuario en la relación many-to-many con la tarea.
+1. Valida `user_id` y `task_id`
+2. Hace `detach($user_id)` en la relación many-to-many de la tarea
 
 ---
 
@@ -664,14 +683,21 @@ Solo el owner puede generar invitaciones. Proceso:
 
 #### `join(Request)` — Procesar enlace de invitación
 Cuando alguien accede a `/join?code=...`:
-- Si **no está autenticado**: redirige al registro, guardando el código en sesión
-- Si **está autenticado**: llama directamente a `unirAlProyecto()`
+1. Normaliza el código (trim + mayúsculas)
+2. Busca la invitación en la BD y llama `esValida()`
+   - Si **no existe o expiró/agotó usos**: redirige a home con mensaje de error — el proceso se detiene aquí
+3. Si la invitación es válida:
+   - Si **no está autenticado**: guarda el código en sesión y redirige a `/registro?code=...`
+   - Si **está autenticado**: llama directamente a `unirAlProyecto()`
 
 #### `unirAlProyecto(Usuario, Invitacion)` — Lógica central
-1. Si el usuario no es miembro: `attach()` al proyecto
-2. Incrementa `uses_count` de la invitación
-3. Por cada área (tipo) en `$invitacion->areas`, crea un `ProyectoAcceso` con `firstOrCreate` (evita duplicados)
-4. Redirige al proyecto con mensaje de bienvenida
+1. Comprueba si el usuario **ya es miembro** del proyecto (`$yaMiembro`)
+2. Si **no era miembro**: `attach()` al proyecto **e** incrementa `uses_count`
+   - Si **ya era miembro**: no se vuelve a agregar y `uses_count` **no se toca**
+3. Independientemente de lo anterior, por cada área en `$invitacion->areas`, crea un `ProyectoAcceso` con `firstOrCreate` (evita duplicados)
+4. Redirige al proyecto con mensaje diferente según el caso:
+   - Era nuevo miembro → "¡Te uniste al proyecto X!"
+   - Ya era miembro → "Ya eres miembro de este proyecto."
 
 ---
 
@@ -731,8 +757,9 @@ Las rutas están definidas en `routes/web.php`. Se dividen en rutas públicas (s
 | POST | `/tareas` | cTarea@store | `tareas.store` | Crear tarea |
 | PUT | `/tareas/{id}` | cTarea@update | `tareas.update` | Actualizar tarea |
 | DELETE | `/tareas/{id}` | cTarea@destroy | `tareas.destroy` | Eliminar tarea |
-| POST | `/tarea/usuario/asignar` | cTareaUsuario@assign | `tarea.usuario.assign` | Asignar usuario |
-| POST | `/tarea/usuario/remover` | cTareaUsuario@remove | `tarea.usuario.remove` | Quitar usuario |
+| POST | `/tarea/usuario/asignar` | cTareaUsuario@assign | `tarea.usuario.assign` | Asignar usuario individual |
+| POST | `/tarea/usuario/remover` | cTareaUsuario@remove | `tarea.usuario.remove` | Quitar usuario de tarea |
+| POST | `/tarea/departamento/asignar` | cTareaUsuario@assignDepartamento | `tarea.departamento.assign` | Asignar todos los usuarios de un área |
 | POST | `/invitaciones/generar/{id}` | cInvitacion@generar | `invitacion.generar` | Generar invitación |
 | POST | `/invitaciones/unirse` | cInvitacion@unirse | `invitacion.unirse` | Unirse con código |
 | GET | `/perfil` | cUsuario@showPerfil | `perfil` | Ver perfil |
@@ -898,26 +925,49 @@ Se retorna URL: http://localhost:8000/join?code=PROY-A3F7B2C1
         ▼
 GET /join?code=PROY-A3F7B2C1
         │
-        ├── Usuario no autenticado →  GET /registro?code=PROY-A3F7B2C1
-        │                                     │
-        │                                     ▼
-        │                              Se guarda el código en sesión
-        │                              Usuario completa registro
-        │                              Al crear la cuenta → se une automáticamente
+        ▼
+¿Invitación existe y es válida? (esValida())
         │
-        └── Usuario autenticado → unirAlProyecto()
-                                          │
-                                          ▼
-                              attach en proyecto_usuario
-                              increment uses_count
-                              ProyectoAcceso::firstOrCreate()
-                              por cada área en invitación
-                              redirect → proyecto con mensaje
+        ├── NO → redirect home + error "enlace inválido o expirado"
+        │
+        └── SÍ
+              │
+              ├── Usuario no autenticado
+              │         │
+              │         ▼
+              │   Guarda código en sesión
+              │   Redirige a /registro?code=PROY-A3F7B2C1
+              │         │
+              │         ▼
+              │   Usuario completa registro
+              │   Al crear la cuenta → se une automáticamente
+              │
+              └── Usuario autenticado → unirAlProyecto()
+                            │
+                            ▼
+              ¿Ya es miembro del proyecto? ($yaMiembro)
+                            │
+                  ┌─────────┴─────────┐
+                  │ NO                │ SÍ
+                  ▼                   ▼
+          attach en              (no se vuelve
+          proyecto_usuario        a agregar)
+          increment uses_count
+                  │                   │
+                  └─────────┬─────────┘
+                            ▼
+              ProyectoAcceso::firstOrCreate()
+              por cada área en invitación
+                            │
+                            ▼
+              redirect → proyecto con mensaje:
+                "¡Te uniste al proyecto X!"  (nuevo miembro)
+                "Ya eres miembro de este proyecto."  (ya existía)
 ```
 
 ### Validación de invitación
 
-Antes de unir al usuario, se verifica que la invitación sea válida con `esValida()`:
+La validación ocurre en `join()` **antes** de cualquier redirección, mediante `esValida()`:
 - No haya expirado (`expires_at > ahora`)
 - No haya alcanzado el máximo de usos (`uses_count < max_uses` o `max_uses` es null)
 
@@ -1137,8 +1187,11 @@ En desarrollo (`npm run dev`), Vite sirve los archivos con Hot Module Replacemen
 ┌──────┴─────────────┐     │
 │  proyecto_usuario  │     │
 │────────────────────│     │
+│ id (PK)            │     │
 │ proyecto_id        │     │
 │ user_id            │     │
+│ created_at         │     │
+│ updated_at         │     │
 └────────────────────┘     │
                            │
 ┌──────────────────────┐   │
