@@ -9,6 +9,7 @@
 - Después de cada tarea relevante (nueva feature, fix, refactor, migración, etc.), preguntar al usuario si desea hacer commit.
 - Generar mensaje de commit en español, en formato convencional: `tipo: descripción breve`.
 - No hacer commit sin confirmación explícita del usuario.
+- El paso a la rama master se hará con merge no fastforward y luego merge fatforward para volver a la developer
 
 ## Navegador
 - NUNCA ejecutar comandos que abran el navegador (start http, start chrome, xdg-open, open https, etc.).
