@@ -27,6 +27,30 @@ class cTareaUsuario extends Controller
         return redirect()->back()->with('success', 'Usuario asignado correctamente.');
     }
 
+    // Asignar todos los usuarios de un departamento (tipo) a una tarea
+    public function assignDepartamento(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|exists:tareas,id',
+            'tipo_id' => 'required|exists:tipos,id',
+        ]);
+
+        $tarea    = Tarea::findOrFail($request->task_id);
+        $proyecto = $tarea->proyecto;
+
+        $userIds = \App\Models\ProyectoAcceso::where('proyecto_id', $proyecto->id)
+            ->where('tipo_id', $request->tipo_id)
+            ->pluck('user_id')
+            ->toArray();
+
+        foreach ($userIds as $userId) {
+            $tarea->usuarios()->syncWithoutDetaching($userId);
+            $proyecto->miembros()->syncWithoutDetaching($userId);
+        }
+
+        return redirect()->back()->with('success', 'Departamento asignado correctamente.');
+    }
+
     // Quitar un usuario de una tarea
     public function remove(Request $request)
     {

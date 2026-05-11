@@ -7,6 +7,7 @@
     <title>PIXEL | {{ $tipo->name }} - {{ $proyecto->name }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
     <style>
         .task-grid {
             display: grid;
@@ -269,7 +270,7 @@
 
 <body class="{{ $colorClass }}">
     <aside class="sidebar">
-        <div class="logo title-gradient"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
+        <div class="logo pixel-logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
         <nav class="menu">
             <span class="menu-section">Proyecto</span>
             <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -282,25 +283,47 @@
             </div>
             <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
                 <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
-                <span>Ver Gantt</span>
+                <span>Gantt</span>
+            </a>
+            <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
+                <span>Calendario</span>
             </a>
             <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
                 <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
                 <span>Archivos</span>
             </a>
+            <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span>Datos predefinidos</span>
+            </a>
+            @if($esOwner)
+            <a href="{{ route('proyecto.miembros', $proyecto->id) }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                <span>Miembros</span>
+            </a>
+            @endif
+            <span class="menu-section">General</span>
+            <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+                <span>Proyectos</span>
+            </a>
         </nav>
 
         <div class="sidebar-user hover-lift">
-            <a href="{{ route('perfil') }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;cursor:pointer;">
+            <a href="{{ route('perfil') }}" class="sidebar-user-link">
                 <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
                 <div class="user-info">
                     <strong>{{ auth()->user()->username }}</strong>
                     <span class="title-gradient">{{ $esOwner ? 'Owner' : 'Miembro' }}</span>
                 </div>
             </a>
-            <form action="{{ route('logout') }}" method="POST" style="margin-left:auto;">
+            <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+            <form action="{{ route('logout') }}" method="POST" class="sidebar-logout-form">
                 @csrf
-                <button type="submit" class="logout" style="background:none;border:none;color:inherit;cursor:pointer;">
+                <button type="submit" class="logout">
                     <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
                 </button>
             </form>
@@ -519,6 +542,8 @@
         <div class="modal-content">
             <h2 class="title-gradient" style="margin-bottom: 8px;">Asignar Colaborador</h2>
             <p class="subtitle" id="assign-task-title" style="font-size: 14px;"></p>
+
+            {{-- Asignar usuario individual --}}
             <form action="{{ route('tarea.usuario.assign') }}" method="POST">
                 @csrf
                 <input type="hidden" name="task_id" id="assign-task-id">
@@ -535,6 +560,21 @@
                     <button type="submit" class="btn-primary" style="flex: 1;">Asignar</button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-assign')">Cancelar</button>
                 </div>
+            </form>
+
+            {{-- Separador --}}
+            <div style="border-top:1px solid var(--border); margin: 20px 0; position:relative; text-align:center;">
+                <span style="background:var(--cardgrey);padding:0 10px;font-size:11px;color:var(--muted);position:relative;top:-9px;letter-spacing:.5px;">O ASIGNAR DEPARTAMENTO COMPLETO</span>
+            </div>
+
+            {{-- Asignar todos los miembros del departamento actual --}}
+            <form action="{{ route('tarea.departamento.assign') }}" method="POST">
+                @csrf
+                <input type="hidden" name="task_id" id="assign-dept-task-id">
+                <input type="hidden" name="tipo_id" value="{{ $tipo->id }}">
+                <button type="submit" class="btn-secondary" style="width:100%;">
+                    <i class="fa-solid fa-users" style="margin-right:6px;"></i>Asignar todo {{ $tipo->name }}
+                </button>
             </form>
         </div>
     </div>
@@ -688,6 +728,7 @@
 
         function openAssignModal(id, title) {
             document.getElementById('assign-task-id').value = id;
+            document.getElementById('assign-dept-task-id').value = id;
             document.getElementById('assign-task-title').innerText = 'Tarea: ' + title;
             openModal('modal-assign');
         }
