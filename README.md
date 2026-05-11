@@ -1064,72 +1064,10 @@ En desarrollo (`npm run dev`), Vite sirve los archivos con Hot Module Replacemen
 
 ---
 
-## 17. Diagrama de la Base de Datos
-
+## 17. Paso a Explotación
 ```
-┌─────────────┐       ┌──────────────────┐       ┌───────────────┐
-│   usuarios  │──────▶│    proyectos     │◀──────│   tipos       │
-│─────────────│ 1   N │──────────────────│ N   N │───────────────│
-│ id          │       │ id               │       │ id            │
-│ username    │       │ name             │       │ name          │
-│ email       │       │ description      │       │ (Desarrollo,  │
-│ password    │       │ created_by       │       │  Diseño, ...) │
-│ description │       └──────────────────┘       └───────────────┘
-│ tipo_id     │                │                         │
-└─────────────┘                │ 1:N                     │
-       │                       ▼                         │
-       │              ┌──────────────────┐               │
-       │              │      tareas      │               │
-       │              │──────────────────│               │
-       │              │ id               │               │
-       │              │ title            │               │
-       │              │ project_id       │               │
-       │              │ type_id ─────────┼───────────────┘
-       │              │ status_id        │──────────────────┐
-       │              │ estimated_hours  │                  │
-       │              │ start_date       │         ┌────────┴─────┐
-       │              │ end_date         │         │   estados    │
-       │              │ is_milestone     │         │──────────────│
-       │              └──────────────────┘         │ (Pendiente,  │
-       │                    │    │                 │  En Proceso, │
-       │                    │    │ M:N (deps)      │  Terminada)  │
-       │                    │    └──────────────┐  └──────────────┘
-       │                    │ M:N               │
-       │            ┌───────┴────────┐          │
-       │            │ participaciones│◀─────────┘
-       │            │────────────────│  self-ref
-       │            │ task_id        │
-       │            │ user_id        │
-       │            └────────────────┘
-       │
-       │ M:N
-┌──────┴─────────────┐
-│  proyecto_usuario  │
-│────────────────────│
-│ proyecto_id        │
-│ user_id            │
-└────────────────────┘
-
-┌──────────────────────┐    ┌──────────────────────┐
-│  proyecto_accesos    │    │    notas_tarea        │
-│──────────────────────│    │──────────────────────│
-│ proyecto_id          │    │ id                   │
-│ user_id              │    │ task_id              │
-│ tipo_id              │    │ user_id              │
-└──────────────────────┘    │ contenido            │
-                            └──────────────────────┘
-
-┌──────────────────────┐    ┌──────────────────────┐
-│    invitaciones      │    │      archivos        │
-│──────────────────────│    │──────────────────────│
-│ proyecto_id          │    │ proyecto_id          │
-│ codigo               │    │ uploaded_by          │
-│ expires_at           │    │ name / path          │
-│ areas (JSON)         │    │ mime_type / size     │
-└──────────────────────┘    │ categoria            │
-                            └──────────────────────┘
+WIP
 ```
-
 ---
 
 *CMVProyectoFinalLaravel — Laravel 12 / PHP 8.2 / MySQL (XAMPP) / Tailwind CSS 4 / Vite 7*
