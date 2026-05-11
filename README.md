@@ -18,7 +18,6 @@
 14. [Flujos de Usuario Paso a Paso](#14-flujos-de-usuario-paso-a-paso)
 15. [Frontend — Tailwind CSS y Vite](#15-frontend--tailwind-css-y-vite)
 16. [Dependencias del Proyecto](#16-dependencias-del-proyecto)
-17. [Diagrama de la Base de Datos](#17-diagrama-de-la-base-de-datos)
 
 ---
 
