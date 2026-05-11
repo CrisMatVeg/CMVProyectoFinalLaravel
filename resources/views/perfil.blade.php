@@ -22,20 +22,20 @@
             max-width: 480px;
         }
 
-        .modal-header {
-            width: 80%;
+        .auth-logo-wrap {
+            margin-bottom: 28px;
         }
 
         .auth-logo {
-            font-family: "Robot";
-            font-size: 50px;
+            font-size: 30px;
             line-height: 1;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .auth-subtitle {
             color: var(--muted);
-            font-size: 15px;
+            font-size: 14px;
+            margin-top: 6px;
         }
 
         .form-group {
@@ -102,10 +102,12 @@
         <section class="main-card">
 
             <!-- HEADER -->
-            <header class="modal-header">
-                <h1 class="title-gradient auth-logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</h1>
+            <div class="auth-logo-wrap">
+                <div class="auth-logo pixel-logo">
+                    <i class="fa-solid fa-dice-d6"></i>PIXEL
+                </div>
                 <p class="auth-subtitle">Editar perfil</p>
-            </header>
+            </div>
 
             @if(session('success'))
             <div class="alert-success">
