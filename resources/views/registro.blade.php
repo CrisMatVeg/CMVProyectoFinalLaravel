@@ -1,126 +1,245 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Registro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
     <style>
-        /* ======================================================
-       LAYOUT
-    ====================================================== */
-        .auth {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    body {
+        flex-direction: column !important;
+        overflow-y: auto !important;
+    }
 
-        .main-card {
-            width: 100%;
-            max-width: 460px;
-        }
+    .auth {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 24px;
+    }
 
-        /* ======================================================
-       HEADER
-    ====================================================== */
-        .modal-header {
-            width: 80%;
-        }
+    .auth-card {
+        width: 100%;
+        max-width: 460px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 36px 32px 32px;
+        box-shadow: var(--shadow-card-hi);
+        position: relative;
+        overflow: hidden;
+    }
 
-        .auth-logo {
-            font-family: "Robot";
-            font-size: 50px;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
+    /* Borde de degradado sutil siempre visible */
+    .auth-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(20,184,166,.35), transparent 40%, transparent 60%, rgba(196,77,186,.35));
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+    }
 
-        .auth-subtitle {
-            color: var(--muted);
-            font-size: 15px;
-        }
+    .auth-card > * { position: relative; }
 
-        /* ======================================================
-       FORM
-    ====================================================== */
-        .form-group {
-            text-align: left;
-        }
+    /* Logo — usa div, no header, para evitar estilos globales de header */
+    .auth-logo-wrap {
+        text-align: center;
+        margin-bottom: 28px;
+    }
 
-        /* ======================================================
-       ACTIONS & INTERACTIONS
-    ====================================================== */
-        .auth-actions {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
+    .auth-logo {
+        font-size: 44px;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
 
-        /* Links */
-        .auth-link {
-            font-size: 13px;
-            color: var(--muted);
-            text-align: center;
-        }
+    .auth-subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 6px;
+    }
 
-        a{
-            color: var(--magenta);
-        }
-        a:hover{
-            text-decoration:underline;
-        }
+    .form-group {
+        text-align: left;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted2);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-group input {
+        width: 100%;
+        border-radius: var(--radius-md);
+    }
+
+    .auth-actions {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .auth-actions .btn-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 13px;
+        border-radius: var(--radius-md);
+        font-size: 15px;
+    }
+
+    .auth-link {
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+    }
+
+    .auth-link a {
+        color: var(--magenta);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-link a:hover { text-decoration: underline; }
+
+    .invite-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(196, 77, 186, 0.08);
+        border: 1px solid rgba(196, 77, 186, 0.30);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .invite-banner i {
+        color: var(--magenta);
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .auth-error {
+        background: rgba(248,113,113,.10);
+        border: 1px solid rgba(248,113,113,.30);
+        border-radius: var(--radius-sm);
+        color: #f87171;
+        font-size: 13px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        text-align: center;
+    }
     </style>
 </head>
 
 <body class="magenta">
 
-    <main class="auth">
-        <section class="main-card">
+    <button class="theme-toggle-btn theme-toggle-fixed" id="theme-btn" title="Cambiar tema">
+        <i class="fa-solid fa-sun" id="theme-icon"></i>
+    </button>
 
-            <!-- HEADER -->
-            <header class="modal-header">
-                <h1 class="title-gradient auth-logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</h1>
-                <p class="auth-subtitle">
-                    Crea tu cuenta
-                </p>
-            </header>
+    <main class="auth">
+        <div class="auth-card">
+
+            <!-- Logo — usa div, no header, para evitar estilos globales de header -->
+            <div class="auth-logo-wrap">
+                <div class="auth-logo pixel-logo">
+                    <i class="fa-solid fa-dice-d6"></i>PIXEL
+                </div>
+                <p class="auth-subtitle">Crea tu cuenta</p>
+            </div>
+
+            @if(isset($invitacion) && $invitacion)
+            <div class="invite-banner">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                <p>Te invitaron al proyecto <strong>{{ $invitacion->proyecto->name }}</strong>. Crea tu cuenta para unirte.</p>
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="auth-error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {{ $errors->first() }}
+            </div>
+            @endif
 
             <!-- FORM -->
-            <form class="auth-form" method="post" action="#">
+            <form method="post" action="{{ route('registro.post') }}">
                 @csrf
+                @if(isset($invitacion) && $invitacion)
+                <input type="hidden" name="invite_code" value="{{ $invitacion->codigo }}">
+                @endif
+
                 <div class="form-group">
-                    <label for="name">Nombre de usuario</label>
-                    <input type="text" id="name" name="name" required>
+                    <label for="username">Nombre de usuario</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Nombre Completo</label>
+                    <input type="text" id="description" name="description" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required autocomplete="new-password">
                 </div>
 
                 <div class="auth-actions">
-                    <button type="submit" class="btn-primary hover-lift">
-                        Crear cuenta
-                    </button></a>
-
+                    <button type="submit" class="btn-primary">Crear cuenta</button>
                     <p class="auth-link">
                         ¿Ya tienes cuenta?
                         <a href="{{ route('login') }}">Inicia sesión</a>
                     </p>
                 </div>
-
             </form>
 
-        </section>
+        </div>
     </main>
+
+    <script>
+        const themeBtn  = document.getElementById('theme-btn');
+        const themeIcon = document.getElementById('theme-icon');
+
+        function updateIcon() {
+            const dark = document.documentElement.dataset.theme !== 'light';
+            themeIcon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        themeBtn.addEventListener('click', () => {
+            if (window.toggleTheme) window.toggleTheme();
+            setTimeout(updateIcon, 0);
+        });
+
+        new MutationObserver(updateIcon).observe(
+            document.documentElement,
+            { attributes: true, attributeFilter: ['data-theme'] }
+        );
+
+        updateIcon();
+    </script>
 
 </body>
 

@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DhARdRYd.css",
+    "file": "assets/app-MeV7n1uq.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -8,8 +8,20 @@
       "app.css"
     ]
   },
+  "resources/fonts/Fredoka-VariableFont_wdth,wght.ttf": {
+    "file": "assets/Fredoka-VariableFont_wdth_wght-DbxtNlKw.ttf",
+    "src": "resources/fonts/Fredoka-VariableFont_wdth,wght.ttf"
+  },
+  "resources/fonts/Poppins-Regular.ttf": {
+    "file": "assets/Poppins-Regular-JiV4gZDp.ttf",
+    "src": "resources/fonts/Poppins-Regular.ttf"
+  },
+  "resources/fonts/fear-robot-19.italic.ttf": {
+    "file": "assets/fear-robot-19.italic-jIwg8d9H.ttf",
+    "src": "resources/fonts/fear-robot-19.italic.ttf"
+  },
   "resources/js/app.js": {
-    "file": "assets/app-CAiCLEjY.js",
+    "file": "assets/app-BIwiusTr.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

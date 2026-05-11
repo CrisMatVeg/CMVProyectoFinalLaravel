@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   @vite('resources/css/app.css')
+  @vite('resources/js/app.js')
 
   <style>
     /* ======================================================
@@ -23,6 +24,16 @@
 
     .logo {
       margin: 0;
+    }
+
+    header>div:last-child {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-perfil-link {
+      text-decoration: none;
     }
 
     /* ======================================================
@@ -55,7 +66,8 @@
       margin-bottom: 32px;
     }
 
-    .create-project-btn {
+    .create-project-btn,
+    .join-project-btn {
       font-size: 14px;
       padding: 10px 18px;
       white-space: nowrap;
@@ -95,11 +107,6 @@
       max-width: 480px;
     }
 
-    .main-card {
-      width: 100%;
-      max-width: 480px;
-    }
-
     .modal-header {
       margin-bottom: 15px;
     }
@@ -122,6 +129,44 @@
         gap: 10px;
       }
     }
+
+    h1 {
+      font-size: 3rem;
+    }
+
+    .project-options {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+    }
+
+    .project-options i {
+      font-size: 1.2rem;
+    }
+
+    .options-menu {
+      padding: 10px;
+      overflow: visible;
+      position: absolute;
+      top: 130%;
+      right: 0;
+      border: 2px solid var(--magenta);
+      border-radius: 6px;
+      min-width: 140px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .options-menu ul {
+      list-style: none;
+      padding: 3px 0;
+      margin: 0;
+    }
+
+    .options-menu li {
+      padding: 8px 12px;
+    }
   </style>
 </head>
 
@@ -129,13 +174,32 @@
   <!-- HEADER -->
   <header>
     <div class="title-gradient logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
-    <div class="user-avatar">CM</div>
+    <div>
+      <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
+        <i class="fa-solid fa-circle-half-stroke"></i>
+      </button>
+      <a href="{{ route('perfil') }}" title="Editar perfil" class="header-perfil-link">
+        <div class="user-avatar">
+          @php
+            $partes = explode(' ', trim($usuario->description));
+            $iniciales = strtoupper(substr($partes[0], 0, 1)) . (isset($partes[1]) ? strtoupper(substr($partes[1], 0, 1)) : '');
+          @endphp
+          {{ $iniciales }}
+        </div>
+      </a>
+      <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="logout">
+          <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
+        </button>
+      </form>
+    </div>
   </header>
 
   <!-- MAIN -->
   <main>
     <div class="projects-container">
-
+      <h1 class="title-gradient">Bienvenido, {{ $usuario->description }}</h1>
       <!-- PRODUCTOR -->
       <section class="projects-section">
         <div class="projects-section-header">
@@ -147,17 +211,36 @@
         </div>
 
         <div class="projects-grid">
+          @forelse ($proyectos as $proyecto)
+            <div class="main-card hover-lift relative" data-project-id="{{ $proyecto->id }}">
+              <!-- Tres puntitos -->
+              <div class="project-options" data-project-id="{{ $proyecto->id }}">
+                <i class="fa-solid fa-ellipsis"></i>
+                <div class="options-menu hidden">
+                  <ul>
+                    <li>
+                      <button type="button" class="open-edit-modal" data-project-id="{{ $proyecto->id }}">
+                        Modificar
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" class="open-delete-modal" data-project-id="{{ $proyecto->id }}">
+                        Eliminar
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
 
-        <a href="{{ route('proyecto') }}" class="main-card hover-lift">
-            <h3>Proyecto Aurora</h3>
-            <span>Juego de exploración narrativa</span>
-        </a>
-
-        <a href="{{ route('proyecto') }}" class="main-card hover-lift">
-            <h3>Neon Depths</h3>
-            <span>Roguelike cyberpunk</span>
-            <a href="{{ route('proyecto') }}"></a>
-        </a>
+              <!-- Contenido principal -->
+              <a href="{{ route('proyecto', $proyecto->id) }}">
+                <h3>{{ $proyecto->name }}</h3>
+                <span>{{ $proyecto->description }}</span>
+              </a>
+            </div>
+          @empty
+            <p>No tienes proyectos todavía.</p>
+          @endforelse
         </div>
       </section>
 
@@ -165,23 +248,23 @@
       <section class="projects-section">
         <div class="projects-section-header">
           <h2 class="title-gradient">Otros proyectos</h2>
+
+          <button class="btn-primary hover-lift join-project-btn">
+            + Unirse a un proyecto
+          </button>
         </div>
 
         <div class="projects-grid">
-          <article class="main-card hover-lift">
-            <h3>Echoes</h3>
-            <span>Diseño de niveles</span>
-          </article>
-
-          <article class="main-card hover-lift">
-            <h3>Skybound</h3>
-            <span>Programación gameplay</span>
-          </article>
-
-          <article class="main-card hover-lift">
-            <h3>Void Signal</h3>
-            <span>Arte conceptual</span>
-          </article>
+          @forelse ($proyectosParticipando as $proy)
+            <article class="main-card hover-lift">
+              <a href="{{ route('proyecto', $proy->id) }}">
+                <h3>{{ $proy->name }}</h3>
+                <span>{{ $proy->description }}</span>
+              </a>
+            </article>
+          @empty
+            <p>Todavía no te has unido a ningún proyecto.</p>
+          @endforelse
         </div>
       </section>
 
@@ -208,15 +291,16 @@
         <h2 class="title-gradient">Crear nuevo proyecto</h2>
       </header>
 
-      <form class="modal-form">
+      <form class="modal-form" method="POST" action="{{ route('proyectos.store') }}">
+        @csrf
         <div class="form-group">
           <label for="project-name">Nombre del proyecto</label>
-          <input type="text" id="project-name" name="project-name" placeholder="Ej: Aurora" required>
+          <input type="text" id="name" name="name" required>
         </div>
 
         <div class="form-group">
           <label for="project-desc">Descripción corta</label>
-          <textarea id="project-desc" name="project-desc" placeholder="Breve descripción" rows="3"></textarea>
+          <textarea id="project-desc" name="description" placeholder="description" rows="3"></textarea>
         </div>
 
         <div class="modal-actions">
@@ -227,6 +311,81 @@
 
     </div>
   </div>
+
+  <!-- Modal Editar -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Modificar proyecto</h2>
+    </header>
+
+    <form id="edit-form" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="form-group">
+        <label for="edit-name">Nombre del proyecto</label>
+        <input type="text" id="edit-name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-desc">Descripción</label>
+        <textarea id="edit-desc" name="description" rows="3"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Guardar cambios</button>
+        <button type="button" class="btn-secondary cancel-btn hover-lift" data-modal="edit-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal-overlay hidden" id="delete-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Eliminar proyecto</h2>
+    </header>
+
+    <p>¿Estás seguro de que quieres eliminar este proyecto?</p>
+
+    <form id="delete-form" method="POST">
+      @csrf
+      @method('DELETE')
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Sí, eliminar</button>
+        <button type="button" class="btn-secondary cancel-btn hover-lift" data-modal="delete-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Unirse a proyecto -->
+<div class="modal-overlay hidden" id="join-modal">
+  <div class="main-card">
+    <header class="modal-header">
+      <h2 class="title-gradient">Unirse a un proyecto</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:6px;">Ingresa el código de invitación que recibiste.</p>
+    </header>
+
+    @error('codigo')
+    <div style="color:red;margin-bottom:10px;">{{ $message }}</div>
+    @enderror
+
+    <form method="POST" action="{{ route('invitacion.unirse') }}">
+      @csrf
+      <div class="form-group">
+        <label>Código de invitación</label>
+        <input type="text" name="codigo" placeholder="PROY-XXXXXXXX"
+               style="text-transform:uppercase;letter-spacing:2px;" required>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary hover-lift">Unirme</button>
+        <button type="button" class="btn-secondary hover-lift cancel-btn" data-modal="join-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 
 </html>
