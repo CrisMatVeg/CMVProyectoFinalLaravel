@@ -55,13 +55,6 @@ XAMPP es un paquete que instala en Windows todo lo necesario para ejecutar aplic
 - **MySQL/MariaDB**: base de datos (usada en este proyecto)
 - **PHP**: lenguaje de programación
 
-En este equipo XAMPP está instalado en el Escritorio, por lo que PHP se ejecuta desde una ruta absoluta como:
-```
-C:\Users\PracticasSoftware4\Desktop\xampp-nuevo\xampp\php\php.exe
-```
-
-> **Nota importante**: PHP no está registrado en el PATH del sistema, por lo que todos los comandos `php` deben ejecutarse usando la ruta completa.
-
 ### Herramientas necesarias
 
 | Herramienta | Versión | Para qué sirve |
