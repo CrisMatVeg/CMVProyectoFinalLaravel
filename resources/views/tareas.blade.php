@@ -51,10 +51,39 @@
             box-shadow: 0 0 0 1px var(--accentwop2);
         }
 
+        /* Tarea retrasada */
+        .task-card.overdue {
+            border-color: rgba(245,158,11,.5);
+            box-shadow: 0 0 0 1px rgba(245,158,11,.15);
+        }
+
         .task-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+        }
+
+        .task-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .task-badges-row {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            min-height: 22px;
+        }
+
+        .task-badges-row--sub {
+            min-height: 22px;
+        }
+
+        .overdue-badge--placeholder {
+            display: inline-block;
+            min-height: 22px;
+            pointer-events: none;
         }
 
         .task-actions {
@@ -63,6 +92,7 @@
         }
 
         .action-btn {
+            position: relative;
             background: var(--usercolor);
             border: 1px solid var(--border);
             color: var(--muted);
@@ -253,6 +283,87 @@
             gap: 6px;
             align-items: flex-start;
         }
+
+        /* Tarea retrasada */
+        .overdue-badge {
+            font-size: 10px;
+            background: rgba(245,158,11,.2);
+            color: #f59e0b;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .overdue-info {
+            font-size: 11px;
+            color: #f59e0b;
+            background: rgba(245,158,11,.08);
+            border: 1px solid rgba(245,158,11,.25);
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            gap: 6px;
+            align-items: flex-start;
+        }
+
+        /* Modal de notas */
+        .nota-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: var(--usercolor);
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+
+        .nota-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .nota-author {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .nota-date {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .nota-body {
+            font-size: 13px;
+            color: var(--white);
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .nota-delete-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color .2s;
+        }
+
+        .nota-delete-btn:hover { color: #ef4444; }
+
+        .notas-empty {
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+            padding: 20px 0;
+        }
     </style>
 </head>
 
@@ -368,36 +479,62 @@
                     @php
                         $isBlocked    = $tarea->isBlocked();
                         $isMilestone  = $tarea->is_milestone;
+                        $isRetrasada  = $tarea->estaRetrasada();
                         $blockingList = $isBlocked
                             ? $tarea->dependencias
                                 ->filter(fn($d) => !$d->status || $d->status->name !== 'Terminada')
                                 ->pluck('title')->implode(', ')
                             : '';
+                        $notasJson = $tarea->notas->map(fn($n) => [
+                            'id'        => $n->id,
+                            'autor'     => $n->usuario->username ?? '—',
+                            'autorId'   => $n->user_id,
+                            'contenido' => $n->contenido,
+                            'fecha'     => $n->created_at->format('d/m/Y H:i'),
+                        ])->values()->toArray();
                     @endphp
-                    <div class="card task-card hover-lift {{ $isBlocked ? 'blocked' : '' }} {{ $isMilestone ? 'milestone' : '' }}">
+                    <div class="card task-card hover-lift {{ $isBlocked ? 'blocked' : '' }} {{ $isMilestone ? 'milestone' : '' }} {{ $isRetrasada ? 'overdue' : '' }}">
 
                         <div class="task-header">
-                            <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
-                                @if($isMilestone)
-                                    <span class="milestone-badge">
-                                        <i class="fa-solid fa-diamond"></i> Milestone
-                                    </span>
-                                @endif
-                                @if($isBlocked)
-                                    <span class="blocked-badge">
-                                        <i class="fa-solid fa-lock"></i> Bloqueada
-                                    </span>
-                                @else
-                                    <span class="status {{ $tarea->status->name === 'Pendiente' ? 'todo' : ($tarea->status->name === 'En Proceso' ? 'wip' : 'done') }}">
-                                        {{ $tarea->status->name }}
-                                    </span>
-                                @endif
+                            <div class="task-badges">
+                                <div class="task-badges-row">
+                                    @if($isMilestone)
+                                        <span class="milestone-badge">
+                                            <i class="fa-solid fa-diamond"></i> Milestone
+                                        </span>
+                                    @endif
+                                    @if($isBlocked)
+                                        <span class="blocked-badge">
+                                            <i class="fa-solid fa-lock"></i> Bloqueada
+                                        </span>
+                                    @else
+                                        <span class="status {{ $tarea->status->name === 'Pendiente' ? 'todo' : ($tarea->status->name === 'En Proceso' ? 'wip' : 'done') }}">
+                                            {{ $tarea->status->name }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="task-badges-row task-badges-row--sub">
+                                    @if($isRetrasada)
+                                        <span class="overdue-badge">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> Retrasada
+                                        </span>
+                                    @else
+                                        <span class="overdue-badge overdue-badge--placeholder"></span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="task-actions">
+                                <button class="action-btn" title="Notas ({{ $tarea->notas->count() }})"
+                                    onclick="openNotasModal({{ $tarea->id }}, @js($tarea->title), @json($notasJson), {{ $esOwner ? 'true' : 'false' }}, {{ auth()->user()->id }})">
+                                    <i class="fa-solid fa-note-sticky"></i>
+                                    @if($tarea->notas->count() > 0)
+                                        <span style="position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:grid;place-items:center;font-weight:700;">{{ $tarea->notas->count() }}</span>
+                                    @endif
+                                </button>
+                                @if($esOwner)
                                 <button class="action-btn" title="Asignar Usuario" onclick="openAssignModal({{ $tarea->id }}, '{{ $tarea->title }}')">
                                     <i class="fa-solid fa-user-plus"></i>
                                 </button>
-                                @if($esOwner)
                                 <button class="action-btn" title="Editar"
                                     onclick="openEditModal(
                                         {{ $tarea->id }},
@@ -415,6 +552,10 @@
                                 <button class="action-btn" title="Eliminar" style="color: #ef4444;"
                                     onclick="openDeleteModal({{ $tarea->id }}, @js($tarea->title))">
                                     <i class="fa-solid fa-trash"></i>
+                                </button>
+                                @else
+                                <button class="action-btn" title="Asignar Usuario" onclick="openAssignModal({{ $tarea->id }}, '{{ $tarea->title }}')">
+                                    <i class="fa-solid fa-user-plus"></i>
                                 </button>
                                 @endif
                             </div>
@@ -757,7 +898,89 @@
             document.getElementById('delete-task-name').textContent = '"' + title + '"';
             openModal('modal-delete');
         }
+
+        // ── Modal de notas ────────────────────────────────────────────────
+        const notaBaseUrl      = "{{ url('tarea') }}";
+        const notaDeleteBase   = "{{ url('tarea/notas') }}";
+        const csrfToken        = "{{ csrf_token() }}";
+
+        function openNotasModal(taskId, taskTitle, notas, esOwner, currentUserId) {
+            document.getElementById('notas-task-title').textContent = taskTitle;
+            document.getElementById('notas-form').action = notaBaseUrl + '/' + taskId + '/notas';
+
+            const list = document.getElementById('notas-list');
+            if (notas.length === 0) {
+                list.innerHTML = '<p class="notas-empty"><i class="fa-solid fa-note-sticky" style="margin-right:6px;opacity:.4;"></i>Aún no hay notas en esta tarea.</p>';
+            } else {
+                list.innerHTML = notas.map(n => {
+                    const canDelete = esOwner || n.autorId === currentUserId;
+                    const deleteBtn = canDelete
+                        ? `<button class="nota-delete-btn" onclick="deleteNota(${n.id})" title="Eliminar nota">
+                                <i class="fa-solid fa-trash-can"></i>
+                           </button>`
+                        : '';
+                    return `
+                        <div class="nota-item" id="nota-item-${n.id}">
+                            <div class="nota-header">
+                                <span class="nota-author"><i class="fa-solid fa-user" style="margin-right:4px;opacity:.7;"></i>${escapeHtml(n.autor)}</span>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span class="nota-date">${n.fecha}</span>
+                                    ${deleteBtn}
+                                </div>
+                            </div>
+                            <div class="nota-body">${escapeHtml(n.contenido)}</div>
+                        </div>`;
+                }).join('');
+            }
+
+            openModal('modal-notas');
+        }
+
+        function deleteNota(notaId) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = notaDeleteBase + '/' + notaId;
+            form.innerHTML = `<input type="hidden" name="_token" value="${csrfToken}">
+                              <input type="hidden" name="_method" value="DELETE">`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
     </script>
+
+    <!-- ═══════════════════════ MODAL NOTAS ═══════════════════════ -->
+    <div id="modal-notas" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <h2 class="title-gradient" style="margin-bottom: 4px;">
+                <i class="fa-solid fa-note-sticky" style="margin-right:8px;"></i>Notas de progreso
+            </h2>
+            <p class="subtitle" id="notas-task-title" style="font-size:13px;margin-bottom:20px;"></p>
+
+            <div id="notas-list" style="max-height:320px;overflow-y:auto;margin-bottom:20px;"></div>
+
+            <form id="notas-form" method="POST">
+                @csrf
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="font-size:13px;">Añadir nota</label>
+                    <textarea name="contenido" rows="3" placeholder="Escribe tu nota de progreso..." required
+                        style="resize:vertical;"></textarea>
+                </div>
+                <div style="display:flex;gap:12px;">
+                    <button type="submit" class="btn-primary" style="flex:1;">
+                        <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Enviar nota
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('modal-notas')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class Tarea extends Model
 {
@@ -45,8 +46,19 @@ class Tarea extends Model
     public function usuarios()
     {
         return $this->belongsToMany(Usuario::class, 'participaciones', 'task_id', 'user_id')
-                    ->withPivot(['proposed_at', 'accepted_at', 'actual_hours'])
                     ->withTimestamps();
+    }
+
+    public function notas()
+    {
+        return $this->hasMany(NotaTarea::class, 'task_id')->with('usuario')->latest();
+    }
+
+    public function estaRetrasada(): bool
+    {
+        if (!$this->end_date) return false;
+        if ($this->status && $this->status->name === 'Terminada') return false;
+        return \Carbon\Carbon::parse($this->end_date)->startOfDay()->isPast();
     }
 
     // Tareas de las que esta depende (requisitos previos)

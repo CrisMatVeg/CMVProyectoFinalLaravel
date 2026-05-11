@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tarea;
-use App\Models\Usuario;
-use App\Models\Proyecto;
 
 class cTareaUsuario extends Controller
 {
@@ -17,12 +15,29 @@ class cTareaUsuario extends Controller
             'task_id' => 'required|exists:tareas,id',
         ]);
 
-        $tarea = Tarea::findOrFail($request->task_id);
-        $tarea->usuarios()->syncWithoutDetaching($request->user_id);
-
-        // Auto-añadir al usuario como miembro del proyecto si aún no lo es
+        $tarea   = Tarea::findOrFail($request->task_id);
+        $userId  = $request->user_id;
         $proyecto = $tarea->proyecto;
-        $proyecto->miembros()->syncWithoutDetaching($request->user_id);
+
+        // Verificar que el usuario pertenece al departamento de la tarea
+        $tieneAcceso = \App\Models\ProyectoAcceso::where('proyecto_id', $proyecto->id)
+            ->where('user_id', $userId)
+            ->where('tipo_id', $tarea->type_id)
+            ->exists();
+
+        // El owner no puede ser invitado a tareas
+        if ($userId == $proyecto->created_by) {
+            return redirect()->back()->with('error', 'El owner del proyecto no puede ser asignado a tareas.');
+        }
+
+        // Si hay registros de acceso por tipo, exigir que el usuario pertenezca al departamento
+        $hayRegistros = \App\Models\ProyectoAcceso::where('proyecto_id', $proyecto->id)->exists();
+        if ($hayRegistros && !$tieneAcceso) {
+            return redirect()->back()->with('error', 'El usuario no pertenece al departamento de esta tarea.');
+        }
+
+        $tarea->usuarios()->syncWithoutDetaching($userId);
+        $proyecto->miembros()->syncWithoutDetaching($userId);
 
         return redirect()->back()->with('success', 'Usuario asignado correctamente.');
     }
@@ -40,6 +55,7 @@ class cTareaUsuario extends Controller
 
         $userIds = \App\Models\ProyectoAcceso::where('proyecto_id', $proyecto->id)
             ->where('tipo_id', $request->tipo_id)
+            ->where('user_id', '!=', $proyecto->created_by)
             ->pluck('user_id')
             ->toArray();
 

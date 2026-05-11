@@ -8,6 +8,7 @@ use App\Http\Controllers\cTareaUsuario;
 use App\Http\Controllers\cInvitacion;
 use App\Http\Controllers\cArchivo;
 use App\Http\Controllers\cPredefinicion;
+use App\Http\Controllers\cNotaTarea;
 
 
 Route::get('/', [PageController::class, 'index'])->name('home');
@@ -32,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tarea/usuario/asignar', [cTareaUsuario::class, 'assign'])->name('tarea.usuario.assign');
     Route::post('/tarea/usuario/remover', [cTareaUsuario::class, 'remove'])->name('tarea.usuario.remove');
     Route::post('/tarea/departamento/asignar', [cTareaUsuario::class, 'assignDepartamento'])->name('tarea.departamento.assign');
+    Route::post('/tarea/{tarea}/notas', [cNotaTarea::class, 'store'])->name('tarea.nota.store');
+    Route::delete('/tarea/notas/{nota}', [cNotaTarea::class, 'destroy'])->name('tarea.nota.destroy');
     Route::post('/invitaciones/generar/{proyecto}', [cInvitacion::class, 'generar'])->name('invitacion.generar');
     Route::post('/invitaciones/unirse', [cInvitacion::class, 'unirse'])->name('invitacion.unirse');
     Route::get('/perfil', [cUsuario::class, 'showPerfil'])->name('perfil');

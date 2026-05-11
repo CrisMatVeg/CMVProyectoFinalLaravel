@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Participacion extends Model
+class NotaTarea extends Model
 {
     use HasFactory;
 
-    protected $table = 'participaciones';
+    protected $table = 'notas_tarea';
 
     protected $fillable = [
         'task_id',
         'user_id',
+        'contenido',
     ];
 
     public function tarea()

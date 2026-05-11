@@ -157,7 +157,7 @@ class PageController extends Controller
 
         $todasLasTareas = Tarea::where('project_id', $proyectoId)
             ->where('type_id', $tipoId)
-            ->with(['status', 'usuarios', 'dependencias.status'])
+            ->with(['status', 'usuarios', 'dependencias.status', 'notas.usuario'])
             ->latest()
             ->get();
 
@@ -185,8 +185,18 @@ class PageController extends Controller
                 ];
             })->values();
 
-        // Todos los miembros del proyecto para el selector de asignación
-        $usuarios = $proyecto->miembros()->get();
+        // Solo miembros del proyecto que pertenecen al departamento de este tipo
+        $userIdsDelTipo = \App\Models\ProyectoAcceso::where('proyecto_id', $proyectoId)
+            ->where('tipo_id', $tipoId)
+            ->pluck('user_id')
+            ->toArray();
+
+        // Fallback legacy: si no hay registros de acceso por tipo, mostrar todos
+        // El owner nunca aparece como usuario invitable a tareas
+        $ownerId  = $proyecto->created_by;
+        $usuarios = empty($userIdsDelTipo)
+            ? $proyecto->miembros()->where('usuarios.id', '!=', $ownerId)->get()
+            : $proyecto->miembros()->whereIn('usuarios.id', $userIdsDelTipo)->where('usuarios.id', '!=', $ownerId)->get();
 
         return view('tareas', compact(
             'proyecto', 'tipo', 'tareas', 'estados',
