@@ -1,137 +1,336 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Gestión de proyectos creativos</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
 
     <style>
-        /* Override layout global */
-        body {
-            height: auto;
-            min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            flex-direction: column;
-        }
+        /* ── LAYOUT GENERAL ── */
+        html, body { height: 100%; overflow: hidden; }
+        body { flex-direction: column !important; display: flex !important; }
 
-        /* ── NAVBAR ── */
+        /* ── NAV — chrome elevado ── */
         .lp-nav {
-            position: sticky;
-            top: 0;
-            z-index: 50;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 48px;
-            height: 68px;
-            background: rgba(26, 26, 26, 0.85);
-            backdrop-filter: blur(12px);
+            padding: 0 32px;
+            height: 64px;
+            background: var(--bg-chrome);
             border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-chrome);
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
         }
 
         .lp-nav-logo {
-            font-family: var(--font-title);
-            font-size: 26px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
+            font-size: 20px;
         }
 
         .lp-nav-links {
             display: flex;
-            gap: 32px;
+            gap: 4px;
             list-style: none;
         }
 
-        .lp-nav-links a {
+        .lp-nav-link {
+            background: transparent;
+            border: none;
+            cursor: pointer;
             color: var(--muted);
-            text-decoration: none;
-            font-size: 14px;
+            font-family: var(--font-main);
+            font-size: 13px;
             font-weight: 500;
-            transition: color 0.2s;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: color 0.2s ease, background 0.2s ease;
         }
 
-        .lp-nav-links a:hover { color: var(--white); }
+        .lp-nav-link:hover   { color: var(--white); background: rgba(255,255,255,.04); }
+        .lp-nav-link.is-active { color: var(--white); background: rgba(255,255,255,.06); }
 
         .lp-nav-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
-        /* ── HERO ── */
-        .lp-hero {
+        .lp-theme-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .lp-theme-btn:hover {
+            background: rgba(255,255,255,.04);
+            color: var(--teal);
+            border-color: var(--border-strong);
+        }
+
+        .btn-nav {
+            font-family: var(--font-title);
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.2s ease,
+                        background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-nav-secondary {
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--white);
+        }
+
+        .btn-nav-secondary:hover {
+            background: rgba(255,255,255,.04);
+            border-color: var(--border-focus);
+        }
+
+        .btn-nav-primary {
+            background: var(--teal);
+            border: 1px solid transparent;
+            color: #111;
+        }
+
+        .btn-nav-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+        /* ── CARRUSEL HORIZONTAL ── */
+        .lp-carousel {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Cuadrícula de fondo con máscara */
+        .lp-carousel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 44px 44px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, #000 50%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, #000 50%, transparent 100%);
+        }
+
+        .lp-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.65s cubic-bezier(0.65, 0.05, 0.36, 1);
+            will-change: transform;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lp-slide {
+            flex: 0 0 100%;
+            height: 100%;
+            padding: 56px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Flechas horizontales */
+        .lp-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-chrome);
+            border: 1px solid var(--border-strong);
+            color: var(--white);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            box-shadow: var(--shadow-card);
+            transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+            z-index: 4;
+        }
+
+        .lp-arrow:hover:not(:disabled) {
+            background: var(--bg-card-hi);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .lp-arrow:disabled { opacity: 0.2; cursor: default; }
+        .lp-arrow-prev { left: 20px; }
+        .lp-arrow-next { right: 20px; }
+
+        /* ── FOOTER BAR — chrome elevado ── */
+        .lp-footer-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 32px;
+            background: var(--bg-chrome);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -1px 0 rgba(255,255,255,.02), 0 -4px 16px -8px rgba(0,0,0,.4);
+            flex-shrink: 0;
+        }
+
+        .lp-dots { display: flex; gap: 6px; }
+
+        .lp-dot {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            padding: 130px 32px 100px;
-            position: relative;
-            overflow: hidden;
+            gap: 4px;
+            color: var(--muted2);
+            font-family: var(--font-main);
+            font-size: 11px;
+            transition: color 0.2s ease;
         }
 
-        /* rejilla de fondo igual que main */
-        .lp-hero::before {
+        .lp-dot-fill {
+            width: 24px;
+            height: 3px;
+            background: rgba(255,255,255,.10);
+            border-radius: 999px;
+            transition: background 0.25s ease, width 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .lp-dot:hover { color: var(--white); }
+        .lp-dot:hover .lp-dot-fill { background: rgba(255,255,255,.20); }
+
+        .lp-dot.is-active .lp-dot-fill {
+            background: var(--teal);
+            width: 40px;
+            box-shadow: 0 0 12px rgba(20,184,166,.5);
+        }
+
+        .lp-dot.is-active { color: var(--white); }
+        .lp-dot-label { letter-spacing: .04em; }
+
+        .lp-counter {
+            font-family: var(--font-title);
+            display: flex;
+            gap: 4px;
+            align-items: baseline;
+            color: var(--muted);
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .lp-counter-num { color: var(--white); font-size: 18px; font-weight: 600; }
+        .lp-counter-sep { opacity: .4; }
+
+        /* ── EYEBROW / SLIDE HEADS ── */
+        .lp-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 14px;
+        }
+
+        .lp-slide-title {
+            font-family: var(--font-title);
+            font-size: clamp(32px, 4vw, 48px);
+            line-height: 1.1;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .grad-soft {
+            background: linear-gradient(90deg, var(--teal), var(--magenta));
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lp-slide-head  { margin-bottom: 40px; max-width: 720px; }
+        .lp-slide-head-center { text-align: center; margin: 0 auto 40px; }
+
+        /* ── SLIDE HERO ── */
+        .lp-slide-hero {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 56px;
+            align-items: center;
+            padding: 56px 80px;
+        }
+
+        /* Glows ambientales */
+        .lp-slide-hero::before,
+        .lp-slide-cta::before {
             content: "";
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 40px 40px;
+                radial-gradient(circle at 15% 30%, rgba(20,184,166,.18), transparent 45%),
+                radial-gradient(circle at 85% 70%, rgba(196,77,186,.15), transparent 50%);
             pointer-events: none;
+            z-index: 0;
         }
 
-        /* glow central */
-        .lp-hero::after {
-            content: "";
-            position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(ellipse at center,
-                rgba(20,184,166,0.12) 0%,
-                rgba(255,0,255,0.08) 40%,
-                transparent 70%);
-            pointer-events: none;
+        [data-theme="light"] .lp-slide-hero::before,
+        [data-theme="light"] .lp-slide-cta::before {
+            background:
+                radial-gradient(circle at 15% 30%, rgba(20,184,166,.14), transparent 45%),
+                radial-gradient(circle at 85% 70%, rgba(196,77,186,.10), transparent 50%);
         }
+
+        .lp-slide > * { position: relative; z-index: 1; }
+
+        .lp-hero-left  { max-width: 480px; }
+        .lp-hero-right { display: flex; align-items: center; justify-content: center; }
 
         .lp-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            letter-spacing: 0.08em;
+            letter-spacing: .08em;
             text-transform: uppercase;
             color: var(--teal);
-            background: rgba(20,184,166,0.1);
-            border: 1px solid rgba(20,184,166,0.3);
-            padding: 6px 16px;
+            background: rgba(20,184,166,.10);
+            border: 1px solid rgba(20,184,166,.25);
+            padding: 6px 14px;
             border-radius: 999px;
-            margin-bottom: 56px;
-            animation: fadeUp 0.6s ease-out forwards;
+            margin-bottom: 28px;
         }
 
-        /* Titular principal: la propuesta de valor */
         .lp-hero-headline {
             font-family: var(--font-title);
-            font-size: clamp(40px, 5.5vw, 72px);
-            line-height: 1.15;
+            font-size: clamp(40px, 4.5vw, 60px);
+            line-height: 1.05;
             color: var(--white);
-            margin-bottom: 32px;
-            max-width: 720px;
-            animation: fadeUp 0.7s 0.1s ease-out both;
+            font-weight: 600;
+            margin-bottom: 24px;
         }
 
         .lp-hero-headline .grad {
@@ -141,747 +340,745 @@
         }
 
         .lp-hero-sub {
-            font-size: 17px;
+            font-size: 16px;
+            line-height: 1.6;
             color: var(--muted);
-            max-width: 480px;
-            line-height: 1.75;
-            margin-bottom: 60px;
-            animation: fadeUp 0.7s 0.2s ease-out both;
+            margin-bottom: 32px;
         }
 
-        .lp-hero-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 88px;
-            animation: fadeUp 0.7s 0.3s ease-out both;
+        .lp-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .btn-hero {
+            font-family: var(--font-title);
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: filter 0.2s ease, transform 0.2s ease,
+                        background 0.2s ease, border-color 0.2s ease;
         }
 
-        .lp-hero-actions .btn-primary {
-            font-size: 16px;
-            padding: 15px 36px;
+        .btn-hero-primary {
+            background: var(--teal);
+            color: #111;
+            border: 1px solid transparent;
         }
 
-        .lp-hero-actions .btn-secondary {
-            font-size: 16px;
-            padding: 15px 32px;
+        .btn-hero-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--border-strong);
         }
 
-        /* ── MOCKUP ── */
-        .lp-mockup {
+        .btn-hero-secondary:hover {
+            background: rgba(255,255,255,.04);
+            border-color: var(--border-focus);
+        }
+
+        /* ── MINI MOCKUP ── */
+        .mm-frame {
             width: 100%;
-            max-width: 900px;
-            background: var(--cardgrey);
-            border-radius: var(--radius-lg);
+            max-width: 520px;
+            background: var(--bg-chrome);
             border: 1px solid var(--border);
-            box-shadow:
-                0 0 0 1px rgba(255,255,255,0.03),
-                0 40px 100px rgba(0,0,0,0.6),
-                0 0 80px rgba(20,184,166,0.08),
-                0 0 120px rgba(255,0,255,0.05);
+            border-radius: 14px;
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.02);
             overflow: hidden;
-            animation: fadeUp 0.8s 0.5s ease-out both;
-            position: relative;
         }
 
-        .lp-mockup-bar {
-            height: 44px;
-            background: #1a1a1a;
-            border-bottom: 1px solid var(--border);
+        .mm-bar {
             display: flex;
             align-items: center;
-            padding: 0 16px;
-            gap: 8px;
+            gap: 6px;
+            padding: 10px 14px;
+            background: rgba(0,0,0,.25);
+            border-bottom: 1px solid var(--border);
         }
 
-        .lp-mockup-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .mm-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .mm-dot-red    { background: #ef4444; }
+        .mm-dot-yellow { background: #f59e0b; }
+        .mm-dot-green  { background: #22c55e; }
+
+        .mm-url {
+            margin-left: 14px;
+            font-size: 11px;
+            color: var(--muted2);
+            font-family: ui-monospace, monospace;
         }
 
-        .lp-mockup-body {
-            display: flex;
-            height: 320px;
-        }
+        .mm-body { display: flex; height: 300px; background: var(--bg-base); }
 
-        .lp-mockup-sidebar {
-            width: 180px;
-            min-width: 180px;
-            background: #1e1e1e;
-            border-right: 1px solid var(--border);
-            padding: 20px 12px;
+        .mm-side {
+            width: 140px;
+            background: var(--bg-chrome);
+            padding: 12px 8px;
             display: flex;
             flex-direction: column;
+            gap: 2px;
+            border-right: 1px solid var(--border);
+        }
+
+        .mm-logo {
+            font-family: var(--font-title);
+            font-size: 13px;
+            color: var(--white);
+            font-weight: 600;
+            padding: 4px 10px 12px;
+            display: flex;
+            align-items: center;
             gap: 6px;
         }
 
-        .lp-mockup-logo {
-            font-family: var(--font-title);
-            font-size: 18px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 16px;
-            padding-left: 4px;
-        }
+        .mm-logo i { color: var(--teal); }
 
-        .lp-mockup-item {
-            height: 32px;
-            border-radius: 8px;
+        .mm-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 0 10px;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--muted);
             font-family: var(--font-title);
+            padding: 6px 10px;
+            border-radius: 6px;
         }
 
-        .lp-mockup-item.active {
-            background: linear-gradient(135deg, rgba(20,184,166,0.2), rgba(255,0,255,0.2));
-            color: white;
-            border: 1px solid rgba(20,184,166,0.25);
+        .mm-item.is-active {
+            background: rgba(20,184,166,.12);
+            color: var(--teal);
+            border: 1px solid rgba(20,184,166,.22);
         }
 
-        .lp-mockup-item i { opacity: 0.7; font-size: 11px; }
-
-        .lp-mockup-content {
+        .mm-content {
             flex: 1;
-            padding: 20px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            overflow: hidden;
+            gap: 10px;
+            min-width: 0;
         }
 
-        .lp-mockup-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .mm-title-row { display: flex; justify-content: space-between; align-items: center; }
+        .mm-heading { font-family: var(--font-title); font-size: 13px; font-weight: 600; color: var(--white); }
 
-        .lp-mockup-heading {
-            font-family: var(--font-title);
-            font-size: 16px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .lp-mockup-btn {
+        .mm-btn {
             font-size: 10px;
-            padding: 5px 12px;
-            border-radius: 8px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            color: white;
-            font-family: var(--font-title);
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--teal);
+            color: #111;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .lp-mockup-stats {
+        .mm-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+        .mm-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .mm-stat-v { font-family: var(--font-title); font-size: 16px; font-weight: 600; color: var(--white); }
+        .mm-stat-l { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+        .mm-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+
+        .mm-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 9px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mm-badge {
+            font-size: 8px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 999px;
+            align-self: flex-start;
+        }
+
+        .mm-card-t { font-size: 10px; font-weight: 600; color: var(--white); font-family: var(--font-title); }
+        .mm-bar-prog { height: 3px; background: rgba(255,255,255,.06); border-radius: 999px; overflow: hidden; }
+        .mm-bar-fill { height: 100%; border-radius: 999px; }
+
+        .mm-teal .mm-badge   { color: rgb(20,184,166);   background: rgba(20,184,166,.10); }
+        .mm-teal .mm-bar-fill { background: rgb(20,184,166); }
+        .mm-mag .mm-badge    { color: rgb(196,77,186);    background: rgba(196,77,186,.10); }
+        .mm-mag .mm-bar-fill { background: rgb(196,77,186); }
+        .mm-blue .mm-badge   { color: rgb(59,130,246);    background: rgba(59,130,246,.10); }
+        .mm-blue .mm-bar-fill { background: rgb(59,130,246); }
+        .mm-green .mm-badge  { color: rgb(74,222,128);    background: rgba(74,222,128,.10); }
+        .mm-green .mm-bar-fill { background: rgb(74,222,128); }
+
+        /* ── SLIDE FEATURES ── */
+        .lp-feat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 18px;
         }
 
-        .lp-mockup-stat {
-            background: #1a1a1a;
+        .lp-feat-card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .lp-mockup-stat-val {
-            font-family: var(--font-title);
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .lp-mockup-stat-label {
-            font-size: 10px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        .lp-mockup-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .lp-mockup-card {
-            background: #1a1a1a;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: var(--radius-md);
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-
-        .lp-mockup-card-badge {
-            font-size: 9px;
-            font-weight: bold;
-            padding: 3px 7px;
-            border-radius: 999px;
-            display: inline-block;
-            width: fit-content;
-        }
-
-        .lp-mockup-card-title {
-            font-size: 11px;
-            font-weight: 600;
-            font-family: var(--font-title);
-        }
-
-        .lp-mockup-card-bar {
-            height: 3px;
-            background: var(--border);
-            border-radius: 999px;
+            gap: 12px;
             overflow: hidden;
-        }
-
-        .lp-mockup-card-fill {
-            height: 100%;
-            border-radius: 999px;
-        }
-
-        /* ── SECCIONES ── */
-        .lp-section {
-            padding: 96px 48px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .lp-section-label {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--teal);
-            margin-bottom: 12px;
-        }
-
-        .lp-section-title {
-            font-family: var(--font-title);
-            font-size: clamp(28px, 4vw, 42px);
-            color: var(--white);
-            margin-bottom: 16px;
-            line-height: 1.15;
-        }
-
-        .lp-section-title span {
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .lp-section-sub {
-            font-size: 16px;
-            color: var(--muted);
-            max-width: 560px;
-            line-height: 1.7;
-            margin-bottom: 56px;
-        }
-
-        /* ── FEATURES GRID ── */
-        .lp-features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .lp-feature-card {
-            background: var(--cardgrey);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
             position: relative;
-            overflow: hidden;
+            transition: background 0.25s ease, border-color 0.25s ease,
+                        transform 0.25s ease, box-shadow 0.25s ease;
         }
 
-        .lp-feature-card::before {
+        /* Halo de color en hover */
+        .lp-feat-card::before {
             content: "";
             position: absolute;
             inset: 0;
-            padding: 1px;
-            border-radius: inherit;
-            background: linear-gradient(135deg, var(--teal), var(--magenta));
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask-composite: exclude;
+            background: radial-gradient(circle at 30% 0%, var(--feat-soft, transparent), transparent 60%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.25s ease;
             pointer-events: none;
         }
 
-        .lp-feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(20,184,166,0.08);
+        .lp-feat-card:hover::before { opacity: 1; }
+        .lp-feat-card > * { position: relative; }
+
+        .lp-feat-card:hover {
+            background: var(--bg-card-hi);
+            border-color: var(--feat-border, var(--border-strong));
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px -16px rgba(0,0,0,.5),
+                        0 8px 24px -12px var(--feat-glow, transparent);
         }
 
-        .lp-feature-card:hover::before { opacity: 1; }
+        /* Por-color de tarjetas de características */
+        .lp-feat-card.fc-teal    { --feat-color: rgb(20,184,166);  --feat-soft: rgba(20,184,166,.10);  --feat-border: rgba(20,184,166,.22);  --feat-glow: rgba(20,184,166,.35); }
+        .lp-feat-card.fc-magenta { --feat-color: rgb(196,77,186);  --feat-soft: rgba(196,77,186,.10);  --feat-border: rgba(196,77,186,.22);  --feat-glow: rgba(196,77,186,.30); }
+        .lp-feat-card.fc-violet  { --feat-color: rgb(168,85,247);  --feat-soft: rgba(168,85,247,.10);  --feat-border: rgba(168,85,247,.22);  --feat-glow: rgba(168,85,247,.32); }
+        .lp-feat-card.fc-blue    { --feat-color: rgb(59,130,246);  --feat-soft: rgba(59,130,246,.10);  --feat-border: rgba(59,130,246,.22);  --feat-glow: rgba(59,130,246,.32); }
+        .lp-feat-card.fc-amber   { --feat-color: rgb(245,158,11);  --feat-soft: rgba(245,158,11,.10);  --feat-border: rgba(245,158,11,.22);  --feat-glow: rgba(245,158,11,.35); }
+        .lp-feat-card.fc-green   { --feat-color: rgb(74,222,128);  --feat-soft: rgba(74,222,128,.10);  --feat-border: rgba(74,222,128,.22);  --feat-glow: rgba(74,222,128,.32); }
 
-        .lp-feature-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
+        .lp-feat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: grid;
             place-items: center;
-            font-size: 20px;
-            background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(255,0,255,0.15));
-            color: var(--teal);
-            border: 1px solid rgba(20,184,166,0.2);
+            font-size: 16px;
+            background: var(--feat-soft, rgba(255,255,255,.05));
+            color: var(--feat-color, var(--white));
+            border: 1px solid var(--feat-border, var(--border));
         }
 
-        .lp-feature-title {
-            font-family: var(--font-title);
-            font-size: 18px;
-            color: var(--white);
-        }
+        .lp-feat-t { font-family: var(--font-title); font-size: 16px; color: var(--white); font-weight: 600; }
+        .lp-feat-d { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-        .lp-feature-desc {
-            font-size: 14px;
-            color: var(--muted);
-            line-height: 1.65;
-        }
-
-        /* ── STEPS ── */
+        /* ── SLIDE STEPS ── */
         .lp-steps {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 32px;
-            counter-reset: steps;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
         }
 
         .lp-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 28px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
 
-        .lp-step-number {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
+        .lp-step::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0% 0%, rgba(20,184,166,.08), transparent 55%);
+            pointer-events: none;
+        }
+
+        .lp-step > * { position: relative; }
+
+        .lp-step:hover {
+            transform: translateY(-3px);
+            border-color: rgba(20,184,166,.25);
+            box-shadow: 0 12px 28px -14px rgba(20,184,166,.3);
+        }
+
+        .lp-step-num {
             font-family: var(--font-title);
-            font-size: 22px;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--teal), var(--magenta));
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .lp-step-title {
-            font-family: var(--font-title);
-            font-size: 18px;
-            color: var(--white);
-        }
-
-        .lp-step-desc {
-            font-size: 14px;
-            color: var(--muted);
-            line-height: 1.65;
-        }
-
-        /* ── STATS BAND ── */
-        .lp-stats-band {
-            background: var(--cardgrey);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .lp-stats-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 56px 48px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 32px;
-            text-align: center;
-        }
-
-        .lp-stat-val {
-            font-family: var(--font-title);
-            font-size: 48px;
-            font-weight: bold;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--teal);
             line-height: 1;
             margin-bottom: 8px;
         }
 
-        .lp-stat-label {
-            font-size: 14px;
-            color: var(--muted);
-            font-weight: 500;
-        }
+        .lp-step-t { font-family: var(--font-title); font-size: 18px; color: var(--white); font-weight: 600; }
+        .lp-step-d { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-        /* ── CTA FINAL ── */
-        .lp-cta {
-            position: relative;
-            overflow: hidden;
-            padding: 96px 48px;
-            text-align: center;
-        }
-
-        .lp-cta::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        .lp-cta-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 300px;
-            background: radial-gradient(ellipse,
-                rgba(20,184,166,0.15) 0%,
-                rgba(255,0,255,0.1) 50%,
-                transparent 70%);
-            pointer-events: none;
-        }
-
-        .lp-cta-content {
-            position: relative;
-            z-index: 1;
-            max-width: 600px;
+        /* ── SLIDE NUMBERS ── */
+        .lp-numbers {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1080px;
             margin: 0 auto;
         }
 
+        .lp-number {
+            position: relative;
+            text-align: center;
+            padding: 36px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .lp-number::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(20,184,166,.10), transparent 60%);
+            pointer-events: none;
+        }
+
+        .lp-number > * { position: relative; }
+
+        .lp-number:hover {
+            transform: translateY(-3px);
+            border-color: rgba(20,184,166,.25);
+            box-shadow: 0 12px 30px -14px rgba(20,184,166,.3);
+        }
+
+        .lp-number-v {
+            font-family: var(--font-title);
+            font-size: clamp(44px, 5vw, 64px);
+            font-weight: 700;
+            background: linear-gradient(180deg, var(--white), var(--teal));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .lp-number-l { font-size: 13px; color: var(--muted); }
+
+        /* ── SLIDE CTA ── */
+        .lp-slide-cta {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lp-cta-card {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 56px 48px;
+            box-shadow: var(--shadow-card-hi),
+                        0 30px 80px -40px rgba(20,184,166,.30),
+                        0 30px 80px -40px rgba(196,77,186,.25);
+            overflow: hidden;
+        }
+
+        /* Borde de degradado */
+        .lp-cta-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(20,184,166,.4), transparent 35%, transparent 65%, rgba(196,77,186,.4));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .lp-cta-card > * { position: relative; }
+
         .lp-cta-title {
             font-family: var(--font-title);
-            font-size: clamp(28px, 4vw, 46px);
-            line-height: 1.15;
-            margin-bottom: 16px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: clamp(28px, 3.5vw, 42px);
+            line-height: 1.1;
+            color: var(--white);
+            font-weight: 600;
+            margin: 12px 0 16px;
         }
 
-        .lp-cta-sub {
-            font-size: 16px;
-            color: var(--muted);
-            margin-bottom: 40px;
-            line-height: 1.7;
-        }
+        .lp-cta-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+        .lp-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-        .lp-cta-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* ── FOOTER ── */
-        .lp-footer {
-            background: var(--cardgrey);
-            border-top: 1px solid var(--border);
-            padding: 40px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-
-        .lp-footer-logo {
-            font-family: var(--font-title);
-            font-size: 22px;
-            background: linear-gradient(90deg, var(--teal), var(--magenta));
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .lp-footer-links {
-            display: flex;
-            gap: 24px;
-            list-style: none;
-        }
-
-        .lp-footer-links a {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-
-        .lp-footer-links a:hover { color: var(--white); }
-
-        .lp-footer-copy {
-            font-size: 13px;
-            color: var(--muted2);
-        }
-
-        /* ── ANIMATIONS ── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Divider */
-        .lp-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
-        }
+        /* ── LIGHT THEME OVERRIDES ── */
+        [data-theme="light"] .btn-nav-primary { color: #fff; }
+        [data-theme="light"] .btn-hero-primary { color: #fff; }
+        [data-theme="light"] .mm-btn { color: #fff; }
+        [data-theme="light"] .mm-item.is-active { color: rgb(20,184,166); }
+        [data-theme="light"] .lp-feat-card:hover,
+        [data-theme="light"] .lp-step:hover,
+        [data-theme="light"] .lp-number:hover { background: var(--bg-card); }
     </style>
 </head>
 
 <body>
 
-    <!-- ══ NAVBAR ══ -->
+    <!-- NAV -->
     <nav class="lp-nav">
-        <a class="lp-nav-logo" href="{{ route('home') }}">
-            <i class="fa-solid fa-dice-d6"></i>PIXEL
+        <a class="lp-nav-logo pixel-logo" href="{{ route('home') }}">
+            <i class="fa-solid fa-dice-d6"></i>
+            <span>PIXEL</span>
         </a>
+
         <ul class="lp-nav-links">
-            <li><a href="#features">Características</a></li>
-            <li><a href="#como-funciona">Cómo funciona</a></li>
+            <li><button class="lp-nav-link is-active" data-index="0">Bienvenida</button></li>
+            <li><button class="lp-nav-link" data-index="1">Características</button></li>
+            <li><button class="lp-nav-link" data-index="2">Cómo funciona</button></li>
+            <li><button class="lp-nav-link" data-index="3">En números</button></li>
+            <li><button class="lp-nav-link" data-index="4">Empezar</button></li>
         </ul>
+
         <div class="lp-nav-actions">
+            <button class="lp-theme-btn" id="lp-theme-btn" aria-label="Cambiar tema">
+                <i class="fa-solid fa-sun" id="lp-theme-icon"></i>
+            </button>
             <a href="{{ route('login') }}">
-                <button class="btn-secondary" style="padding: 9px 20px; font-size: 14px;">Iniciar sesión</button>
-            </a>
-            <a href="{{ route('registro') }}">
-                <button class="btn-primary hover-lift" style="padding: 9px 20px; font-size: 14px;">Registrarse</button>
+                <button class="btn-nav btn-nav-primary">Acceder</button>
             </a>
         </div>
     </nav>
 
-    <!-- ══ HERO ══ -->
-    <section class="lp-hero">
-        <div class="lp-badge"><i class="fa-solid fa-star"></i>Gestión de proyectos para equipos creativos</div>
+    <!-- CARRUSEL -->
+    <div class="lp-carousel">
+        <div class="lp-track" id="lp-track">
 
-        <h1 class="lp-hero-headline">
-            Tu equipo. Tus proyectos.<br><span class="grad">Sin caos.</span>
-        </h1>
-
-        <p class="lp-hero-sub">
-            Organiza tareas por departamento, asigna roles, mide el progreso y lleva tus proyectos de la idea al lanzamiento.
-        </p>
-
-        <div class="lp-hero-actions">
-            <a href="{{ route('registro') }}">
-                <button class="btn-primary hover-lift">
-                    <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>Empezar gratis
-                </button>
-            </a>
-            <a href="{{ route('login') }}">
-                <button class="btn-secondary">
-                    Iniciar sesión <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
-                </button>
-            </a>
-        </div>
-
-        <!-- Mockup CSS del dashboard -->
-        <div class="lp-mockup">
-            <div class="lp-mockup-bar">
-                <div class="lp-mockup-dot" style="background:#ef4444;"></div>
-                <div class="lp-mockup-dot" style="background:#f59e0b;"></div>
-                <div class="lp-mockup-dot" style="background:#22c55e;"></div>
-            </div>
-            <div class="lp-mockup-body">
-                <!-- sidebar mockup -->
-                <div class="lp-mockup-sidebar">
-                    <div class="lp-mockup-logo"><i class="fa-solid fa-dice-d6"></i> PIXEL</div>
-                    <div class="lp-mockup-item active"><i class="fa-solid fa-house"></i> Proyecto</div>
-                    <div class="lp-mockup-item"><i class="fa-solid fa-list-check"></i> Tareas</div>
-                    <div class="lp-mockup-item"><i class="fa-solid fa-users"></i> Equipo</div>
-                    <div class="lp-mockup-item"><i class="fa-solid fa-chart-line"></i> Progreso</div>
-                    <div class="lp-mockup-item"><i class="fa-solid fa-gear"></i> Ajustes</div>
-                </div>
-                <!-- content mockup -->
-                <div class="lp-mockup-content">
-                    <div class="lp-mockup-title-row">
-                        <span class="lp-mockup-heading">Mi Videojuego</span>
-                        <span class="lp-mockup-btn"><i class="fa-solid fa-plus"></i> Nueva tarea</span>
+            <!-- SLIDE 1: BIENVENIDA -->
+            <section class="lp-slide lp-slide-hero">
+                <div class="lp-hero-left">
+                    <div class="lp-badge">
+                        <i class="fa-solid fa-sparkles"></i>
+                        Gestión de proyectos creativos
                     </div>
-                    <div class="lp-mockup-stats">
-                        <div class="lp-mockup-stat">
-                            <div class="lp-mockup-stat-val" style="color: var(--teal);">8</div>
-                            <div class="lp-mockup-stat-label">Miembros</div>
-                        </div>
-                        <div class="lp-mockup-stat">
-                            <div class="lp-mockup-stat-val" style="color: rgb(168,85,247);">24</div>
-                            <div class="lp-mockup-stat-label">Tareas</div>
-                        </div>
-                        <div class="lp-mockup-stat">
-                            <div class="lp-mockup-stat-val" style="color: var(--magenta);">67%</div>
-                            <div class="lp-mockup-stat-label">Progreso</div>
-                        </div>
-                    </div>
-                    <div class="lp-mockup-cards">
-                        <div class="lp-mockup-card">
-                            <span class="lp-mockup-card-badge" style="background:rgba(20,184,166,.15);color:var(--teal);border:1px solid rgba(20,184,166,.3);">Desarrollo</span>
-                            <div class="lp-mockup-card-title">Sistema de combate v2</div>
-                            <div class="lp-mockup-card-bar"><div class="lp-mockup-card-fill" style="width:75%;background:var(--teal);"></div></div>
-                        </div>
-                        <div class="lp-mockup-card">
-                            <span class="lp-mockup-card-badge" style="background:rgba(255,0,255,.15);color:var(--magenta);border:1px solid rgba(255,0,255,.3);">Diseño</span>
-                            <div class="lp-mockup-card-title">UI del menú principal</div>
-                            <div class="lp-mockup-card-bar"><div class="lp-mockup-card-fill" style="width:40%;background:var(--magenta);"></div></div>
-                        </div>
-                        <div class="lp-mockup-card">
-                            <span class="lp-mockup-card-badge" style="background:rgba(59,130,246,.15);color:rgb(59,130,246);border:1px solid rgba(59,130,246,.3);">Audio</span>
-                            <div class="lp-mockup-card-title">Soundtrack nivel 1</div>
-                            <div class="lp-mockup-card-bar"><div class="lp-mockup-card-fill" style="width:90%;background:rgb(59,130,246);"></div></div>
-                        </div>
-                        <div class="lp-mockup-card">
-                            <span class="lp-mockup-card-badge" style="background:rgba(74,222,128,.15);color:rgb(74,222,128);border:1px solid rgba(74,222,128,.3);">Narrativa</span>
-                            <div class="lp-mockup-card-title">Diálogos del tutorial</div>
-                            <div class="lp-mockup-card-bar"><div class="lp-mockup-card-fill" style="width:55%;background:rgb(74,222,128);"></div></div>
-                        </div>
+                    <h1 class="lp-hero-headline">
+                        Tu equipo.<br>
+                        Tus proyectos.<br>
+                        <span class="grad">Sin caos.</span>
+                    </h1>
+                    <p class="lp-hero-sub">
+                        Organiza tareas por departamento, asigna roles, mide el progreso y lleva
+                        tus proyectos de la idea al lanzamiento.
+                    </p>
+                    <div class="lp-hero-actions">
+                        <a href="{{ route('registro') }}">
+                            <button class="btn-hero btn-hero-primary">
+                                <i class="fa-solid fa-rocket"></i> Empezar gratis
+                            </button>
+                        </a>
+                        <a href="{{ route('login') }}">
+                            <button class="btn-hero btn-hero-secondary">
+                                Ver demo <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </a>
                     </div>
                 </div>
-            </div>
+
+                <div class="lp-hero-right">
+                    <div class="mm-frame">
+                        <div class="mm-bar">
+                            <span class="mm-dot mm-dot-red"></span>
+                            <span class="mm-dot mm-dot-yellow"></span>
+                            <span class="mm-dot mm-dot-green"></span>
+                            <span class="mm-url">pixel.app / mi-videojuego</span>
+                        </div>
+                        <div class="mm-body">
+                            <aside class="mm-side">
+                                <div class="mm-logo"><i class="fa-solid fa-dice-d6"></i> PIXEL</div>
+                                <div class="mm-item is-active"><i class="fa-solid fa-house"></i> Proyecto</div>
+                                <div class="mm-item"><i class="fa-solid fa-list-check"></i> Tareas</div>
+                                <div class="mm-item"><i class="fa-solid fa-users"></i> Equipo</div>
+                                <div class="mm-item"><i class="fa-solid fa-chart-line"></i> Progreso</div>
+                            </aside>
+                            <div class="mm-content">
+                                <div class="mm-title-row">
+                                    <div class="mm-heading">Mi Videojuego</div>
+                                    <div class="mm-btn"><i class="fa-solid fa-plus"></i> Nueva tarea</div>
+                                </div>
+                                <div class="mm-stats">
+                                    <div class="mm-stat"><div class="mm-stat-v">8</div><div class="mm-stat-l">Miembros</div></div>
+                                    <div class="mm-stat"><div class="mm-stat-v">24</div><div class="mm-stat-l">Tareas</div></div>
+                                    <div class="mm-stat"><div class="mm-stat-v">67%</div><div class="mm-stat-l">Progreso</div></div>
+                                </div>
+                                <div class="mm-cards">
+                                    <div class="mm-card mm-teal">
+                                        <span class="mm-badge">Desarrollo</span>
+                                        <div class="mm-card-t">Sistema de combate</div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:75%"></div></div>
+                                    </div>
+                                    <div class="mm-card mm-mag">
+                                        <span class="mm-badge">Diseño</span>
+                                        <div class="mm-card-t">UI del menú</div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:40%"></div></div>
+                                    </div>
+                                    <div class="mm-card mm-blue">
+                                        <span class="mm-badge">Audio</span>
+                                        <div class="mm-card-t">Soundtrack nivel 1</div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:90%"></div></div>
+                                    </div>
+                                    <div class="mm-card mm-green">
+                                        <span class="mm-badge">Narrativa</span>
+                                        <div class="mm-card-t">Diálogos tutorial</div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:55%"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: CARACTERÍSTICAS -->
+            <section class="lp-slide">
+                <div class="lp-slide-head">
+                    <p class="lp-eyebrow">Características</p>
+                    <h2 class="lp-slide-title">
+                        Todo lo que necesita <span class="grad-soft">tu equipo creativo</span>
+                    </h2>
+                </div>
+                <div class="lp-feat-grid">
+                    <article class="lp-feat-card fc-teal">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-list-check"></i></div>
+                        <h3 class="lp-feat-t">Gestión de tareas</h3>
+                        <p class="lp-feat-d">Crea, asigna y prioriza tareas dentro de cada departamento. Visualiza el estado en tiempo real.</p>
+                    </article>
+                    <article class="lp-feat-card fc-magenta">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-folder-tree"></i></div>
+                        <h3 class="lp-feat-t">Departamentos</h3>
+                        <p class="lp-feat-d">Desarrollo, diseño, audio, narrativa, arte y comunicación, cada área con su espacio.</p>
+                    </article>
+                    <article class="lp-feat-card fc-violet">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-users"></i></div>
+                        <h3 class="lp-feat-t">Roles por proyecto</h3>
+                        <p class="lp-feat-d">Solo los perfiles adecuados acceden a cada tipo de tarea.</p>
+                    </article>
+                    <article class="lp-feat-card fc-blue">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <h3 class="lp-feat-t">Progreso real</h3>
+                        <p class="lp-feat-d">Métricas claras por proyecto y departamento. Siempre sabes en qué punto está el equipo.</p>
+                    </article>
+                    <article class="lp-feat-card fc-amber">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <h3 class="lp-feat-t">Estimación de horas</h3>
+                        <p class="lp-feat-d">Registra horas estimadas y reales por tarea. Controla la carga del equipo.</p>
+                    </article>
+                    <article class="lp-feat-card fc-green">
+                        <div class="lp-feat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3 class="lp-feat-t">Seguridad y control</h3>
+                        <p class="lp-feat-d">Tú controlas quién entra. Confirmación antes de cualquier acción crítica.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: CÓMO FUNCIONA -->
+            <section class="lp-slide">
+                <div class="lp-slide-head">
+                    <p class="lp-eyebrow">Cómo funciona</p>
+                    <h2 class="lp-slide-title">
+                        De la idea al <span class="grad-soft">lanzamiento</span>
+                    </h2>
+                </div>
+                <div class="lp-steps">
+                    <div class="lp-step">
+                        <div class="lp-step-num">01</div>
+                        <h3 class="lp-step-t">Crea tu proyecto</h3>
+                        <p class="lp-step-d">Registra el proyecto y se generan los 6 departamentos automáticamente con su panel de control.</p>
+                    </div>
+                    <div class="lp-step">
+                        <div class="lp-step-num">02</div>
+                        <h3 class="lp-step-t">Organiza tareas</h3>
+                        <p class="lp-step-d">Entra a cada departamento, crea tareas, asigna colaboradores con el rol adecuado y registra horas.</p>
+                    </div>
+                    <div class="lp-step">
+                        <div class="lp-step-num">03</div>
+                        <h3 class="lp-step-t">Sigue el progreso</h3>
+                        <p class="lp-step-d">Desde el panel del proyecto, visualiza el avance global y por departamento en tiempo real.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: EN NÚMEROS -->
+            <section class="lp-slide">
+                <div class="lp-slide-head lp-slide-head-center">
+                    <p class="lp-eyebrow">En números</p>
+                    <h2 class="lp-slide-title">
+                        Estructura sin <span class="grad-soft">perder agilidad</span>
+                    </h2>
+                </div>
+                <div class="lp-numbers">
+                    <div class="lp-number">
+                        <div class="lp-number-v">6</div>
+                        <div class="lp-number-l">Departamentos por proyecto</div>
+                    </div>
+                    <div class="lp-number">
+                        <div class="lp-number-v">∞</div>
+                        <div class="lp-number-l">Tareas por área</div>
+                    </div>
+                    <div class="lp-number">
+                        <div class="lp-number-v">100%</div>
+                        <div class="lp-number-l">Control del progreso</div>
+                    </div>
+                    <div class="lp-number">
+                        <div class="lp-number-v">0</div>
+                        <div class="lp-number-l">Caos en el equipo</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: EMPEZAR -->
+            <section class="lp-slide lp-slide-cta">
+                <div class="lp-cta-card">
+                    <p class="lp-eyebrow">Listo para empezar</p>
+                    <h2 class="lp-cta-title">
+                        Lleva tu equipo creativo<br>
+                        <span class="grad-soft">al siguiente nivel</span>
+                    </h2>
+                    <p class="lp-cta-sub">Gratis. Sin tarjeta. Sin complicaciones.</p>
+                    <div class="lp-cta-actions">
+                        <a href="{{ route('registro') }}">
+                            <button class="btn-hero btn-hero-primary">
+                                <i class="fa-solid fa-rocket"></i> Crear cuenta gratis
+                            </button>
+                        </a>
+                        <a href="{{ route('login') }}">
+                            <button class="btn-hero btn-hero-secondary">Ya tengo cuenta</button>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /.lp-track -->
+
+        <!-- Flechas horizontales -->
+        <button class="lp-arrow lp-arrow-prev" id="lp-prev" aria-label="Anterior" disabled>
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="lp-arrow lp-arrow-next" id="lp-next" aria-label="Siguiente">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+    </div><!-- /.lp-carousel -->
+
+    <!-- FOOTER BAR con dots + counter -->
+    <div class="lp-footer-bar">
+        <div class="lp-dots">
+            <button class="lp-dot is-active" data-index="0">
+                <span class="lp-dot-fill"></span>
+                <span class="lp-dot-label">Bienvenida</span>
+            </button>
+            <button class="lp-dot" data-index="1">
+                <span class="lp-dot-fill"></span>
+                <span class="lp-dot-label">Características</span>
+            </button>
+            <button class="lp-dot" data-index="2">
+                <span class="lp-dot-fill"></span>
+                <span class="lp-dot-label">Cómo funciona</span>
+            </button>
+            <button class="lp-dot" data-index="3">
+                <span class="lp-dot-fill"></span>
+                <span class="lp-dot-label">En números</span>
+            </button>
+            <button class="lp-dot" data-index="4">
+                <span class="lp-dot-fill"></span>
+                <span class="lp-dot-label">Empezar</span>
+            </button>
         </div>
-    </section>
-
-    <div class="lp-divider"></div>
-
-    <!-- ══ STATS BAND ══ -->
-    <div class="lp-stats-band">
-        <div class="lp-stats-inner">
-            <div>
-                <div class="lp-stat-val">6</div>
-                <div class="lp-stat-label">Departamentos por proyecto</div>
-            </div>
-            <div>
-                <div class="lp-stat-val">∞</div>
-                <div class="lp-stat-label">Tareas por tipo</div>
-            </div>
-            <div>
-                <div class="lp-stat-val">100%</div>
-                <div class="lp-stat-label">Control del progreso</div>
-            </div>
-            <div>
-                <div class="lp-stat-val">0</div>
-                <div class="lp-stat-label">Caos en el equipo</div>
-            </div>
+        <div class="lp-counter">
+            <span class="lp-counter-num" id="lp-counter-num">01</span>
+            <span class="lp-counter-sep">/</span>
+            <span class="lp-counter-tot">05</span>
         </div>
     </div>
 
-    <!-- ══ FEATURES ══ -->
-    <section class="lp-section" id="features">
-        <p class="lp-section-label"><i class="fa-solid fa-sparkles" style="margin-right:6px;"></i>Características</p>
-        <h2 class="lp-section-title">Todo lo que necesita <span>tu equipo creativo</span></h2>
-        <p class="lp-section-sub">
-            Diseñado para estudios de videojuegos, agencias y equipos creativos que necesitan estructura sin perder agilidad.
-        </p>
+    <script>
+        const TOTAL     = 5;
+        const track     = document.getElementById('lp-track');
+        const navLinks  = document.querySelectorAll('.lp-nav-link');
+        const dots      = document.querySelectorAll('.lp-dot');
+        const counterNum = document.getElementById('lp-counter-num');
+        const prevBtn   = document.getElementById('lp-prev');
+        const nextBtn   = document.getElementById('lp-next');
+        const themeBtn  = document.getElementById('lp-theme-btn');
+        const themeIcon = document.getElementById('lp-theme-icon');
+        let slide = 0;
 
-        <div class="lp-features-grid">
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:var(--teal);"><i class="fa-solid fa-list-check"></i></div>
-                <div class="lp-feature-title">Gestión de tareas</div>
-                <p class="lp-feature-desc">Crea, asigna y prioriza tareas dentro de cada departamento. Visualiza el estado en tiempo real.</p>
-            </div>
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:var(--magenta);"><i class="fa-solid fa-folder-tree"></i></div>
-                <div class="lp-feature-title">Departamentos especializados</div>
-                <p class="lp-feature-desc">Desarrolla, diseña, compón, narra, ilustra y comunica — cada área con su propio espacio de trabajo.</p>
-            </div>
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:rgb(168,85,247);"><i class="fa-solid fa-users"></i></div>
-                <div class="lp-feature-title">Roles por proyecto</div>
-                <p class="lp-feature-desc">Asigna colaboradores según su disciplina. Solo los perfiles adecuados acceden a cada tipo de tarea.</p>
-            </div>
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:rgb(59,130,246);"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="lp-feature-title">Progreso en tiempo real</div>
-                <p class="lp-feature-desc">Métricas claras por proyecto y departamento. Siempre sabes en qué punto está el equipo.</p>
-            </div>
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:rgb(251,146,60);"><i class="fa-solid fa-hourglass-half"></i></div>
-                <div class="lp-feature-title">Estimación de horas</div>
-                <p class="lp-feature-desc">Registra horas estimadas y reales por tarea. Controla la carga de trabajo del equipo.</p>
-            </div>
-            <div class="lp-feature-card">
-                <div class="lp-feature-icon" style="color:rgb(74,222,128);"><i class="fa-solid fa-shield-halved"></i></div>
-                <div class="lp-feature-title">Seguridad y control</div>
-                <p class="lp-feature-desc">Solo tú controlas quién entra a tu proyecto. Confirmación antes de cualquier acción destructiva.</p>
-            </div>
-        </div>
-    </section>
+        function updateThemeIcon() {
+            const isDark = document.documentElement.dataset.theme !== 'light';
+            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
 
-    <div class="lp-divider"></div>
+        function goTo(n) {
+            slide = Math.max(0, Math.min(TOTAL - 1, n));
+            track.style.transform = `translateX(-${slide * 100}%)`;
 
-    <!-- ══ CÓMO FUNCIONA ══ -->
-    <section class="lp-section" id="como-funciona">
-        <p class="lp-section-label"><i class="fa-solid fa-map" style="margin-right:6px;"></i>Cómo funciona</p>
-        <h2 class="lp-section-title">De la idea al <span>lanzamiento</span></h2>
-        <p class="lp-section-sub">Tres pasos para tener tu proyecto bajo control desde el primer día.</p>
+            navLinks.forEach((l, i) => l.classList.toggle('is-active', i === slide));
+            dots.forEach((d, i) => d.classList.toggle('is-active', i === slide));
 
-        <div class="lp-steps">
-            <div class="lp-step">
-                <div class="lp-step-number">1</div>
-                <div class="lp-step-title">Crea tu proyecto</div>
-                <p class="lp-step-desc">Registra tu proyecto, define su nombre y descripción. El panel de control se genera automáticamente con los 6 departamentos.</p>
-            </div>
-            <div class="lp-step">
-                <div class="lp-step-number">2</div>
-                <div class="lp-step-title">Organiza tareas por área</div>
-                <p class="lp-step-desc">Entra a cada departamento y crea las tareas necesarias. Asigna estado, horas estimadas y colaboradores con el rol adecuado.</p>
-            </div>
-            <div class="lp-step">
-                <div class="lp-step-number">3</div>
-                <div class="lp-step-title">Sigue el progreso</div>
-                <p class="lp-step-desc">Desde el panel del proyecto, visualiza el avance global y por departamento. Actualiza tareas conforme el equipo avanza.</p>
-            </div>
-        </div>
-    </section>
+            counterNum.textContent = String(slide + 1).padStart(2, '0');
+            prevBtn.disabled = slide === 0;
+            nextBtn.disabled = slide === TOTAL - 1;
+        }
 
-    <div class="lp-divider"></div>
+        prevBtn.addEventListener('click', () => goTo(slide - 1));
+        nextBtn.addEventListener('click', () => goTo(slide + 1));
 
-    <!-- ══ CTA FINAL ══ -->
-    <section class="lp-cta">
-        <div class="lp-cta-glow"></div>
-        <div class="lp-cta-content">
-            <h2 class="lp-cta-title">¿Listo para organizar tu equipo?</h2>
-            <p class="lp-cta-sub">Únete y lleva tus proyectos creativos al siguiente nivel. Gratis, sin complicaciones.</p>
-            <div class="lp-cta-actions">
-                <a href="{{ route('registro') }}">
-                    <button class="btn-primary hover-lift" style="font-size:16px; padding:14px 36px;">
-                        <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>Crear cuenta gratis
-                    </button>
-                </a>
-                <a href="{{ route('login') }}">
-                    <button class="btn-secondary" style="font-size:16px; padding:14px 32px;">Ya tengo cuenta</button>
-                </a>
-            </div>
-        </div>
-    </section>
+        navLinks.forEach((l, i) => l.addEventListener('click', () => goTo(i)));
+        dots.forEach((d, i) => d.addEventListener('click', () => goTo(+d.dataset.index)));
 
-    <!-- ══ FOOTER ══ -->
-    <footer class="lp-footer">
-        <div class="lp-footer-logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
-        <ul class="lp-footer-links">
-            <li><a href="#">Privacidad</a></li>
-            <li><a href="#">Términos</a></li>
-            <li><a href="#">Contacto</a></li>
-        </ul>
-        <span class="lp-footer-copy">© 2025 PIXEL. Todos los derechos reservados.</span>
-    </footer>
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') goTo(slide + 1);
+            if (e.key === 'ArrowLeft')  goTo(slide - 1);
+        });
+
+        themeBtn.addEventListener('click', () => {
+            if (window.toggleTheme) window.toggleTheme();
+            setTimeout(updateThemeIcon, 0);
+        });
+
+        new MutationObserver(updateThemeIcon).observe(
+            document.documentElement,
+            { attributes: true, attributeFilter: ['data-theme'] }
+        );
+
+        updateThemeIcon();
+        goTo(0);
+    </script>
 
 </body>
-
 </html>

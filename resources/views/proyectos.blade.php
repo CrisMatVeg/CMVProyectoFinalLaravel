@@ -29,8 +29,11 @@
     header>div:last-child {
       display: flex;
       align-items: center;
-      gap: 20px;
-      /* separación entre avatar y logout */
+      gap: 14px;
+    }
+
+    .header-perfil-link {
+      text-decoration: none;
     }
 
     /* ======================================================
@@ -172,7 +175,10 @@
   <header>
     <div class="title-gradient logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
     <div>
-      <a href="{{ route('perfil') }}" title="Editar perfil" style="text-decoration:none;">
+      <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
+        <i class="fa-solid fa-circle-half-stroke"></i>
+      </button>
+      <a href="{{ route('perfil') }}" title="Editar perfil" class="header-perfil-link">
         <div class="user-avatar">
           @php
             $partes = explode(' ', trim($usuario->description));
@@ -181,9 +187,9 @@
           {{ $iniciales }}
         </div>
       </a>
-      <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+      <form action="{{ route('logout') }}" method="POST">
         @csrf
-        <button type="submit" style="background:none; border:none; cursor:pointer;">
+        <button type="submit" class="logout">
           <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
         </button>
       </form>

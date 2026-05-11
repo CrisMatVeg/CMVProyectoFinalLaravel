@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Tarea</title>
 
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="./css/fonts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
 
     <!-- ESTILOS ESPECÍFICOS DE LA VISTA -->
     <style>
@@ -80,7 +80,7 @@
     <aside class="sidebar">
 
         <!-- LOGO -->
-        <div class="logo title-gradient"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
+        <div class="logo pixel-logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
 
         <!-- MENU -->
         <nav class="menu">
@@ -128,6 +128,9 @@
                 <strong>Alex Morgan</strong>
                 <span class="title-gradient">Productor</span>
             </div>
+            <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
             <div class="logout"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i></div>
         </div>
 

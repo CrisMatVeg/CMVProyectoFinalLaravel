@@ -7,6 +7,7 @@
     <title>PIXEL | Mi perfil</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
     <style>
         .auth {
             flex: 1;
@@ -92,6 +93,10 @@
 </head>
 
 <body class="magenta">
+
+    <button class="theme-toggle-btn theme-toggle-fixed" onclick="window.toggleTheme()" title="Cambiar tema">
+        <i class="fa-solid fa-circle-half-stroke"></i>
+    </button>
 
     <main class="auth">
         <section class="main-card">
