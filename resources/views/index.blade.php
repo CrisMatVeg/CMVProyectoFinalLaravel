@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8" />
@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
 
@@ -156,7 +157,7 @@
             position: relative;
         }
 
-        /* Flechas horizontales */
+        /* ── Flechas laterales ── */
         .lp-arrow {
             position: absolute;
             top: 50%;
@@ -175,12 +176,10 @@
             transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
             z-index: 4;
         }
-
         .lp-arrow:hover:not(:disabled) {
             background: var(--bg-card-hi);
             transform: translateY(-50%) scale(1.05);
         }
-
         .lp-arrow:disabled { opacity: 0.2; cursor: default; }
         .lp-arrow-prev { left: 20px; }
         .lp-arrow-next { right: 20px; }
@@ -197,42 +196,6 @@
             flex-shrink: 0;
         }
 
-        .lp-dots { display: flex; gap: 6px; }
-
-        .lp-dot {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 8px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--muted2);
-            font-family: var(--font-main);
-            font-size: 11px;
-            transition: color 0.2s ease;
-        }
-
-        .lp-dot-fill {
-            width: 24px;
-            height: 3px;
-            background: rgba(255,255,255,.10);
-            border-radius: 999px;
-            transition: background 0.25s ease, width 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .lp-dot:hover { color: var(--white); }
-        .lp-dot:hover .lp-dot-fill { background: rgba(255,255,255,.20); }
-
-        .lp-dot.is-active .lp-dot-fill {
-            background: var(--teal);
-            width: 40px;
-            box-shadow: 0 0 12px rgba(20,184,166,.5);
-        }
-
-        .lp-dot.is-active { color: var(--white); }
-        .lp-dot-label { letter-spacing: .04em; }
 
         .lp-counter {
             font-family: var(--font-title);
@@ -277,10 +240,10 @@
         /* ── SLIDE HERO ── */
         .lp-slide-hero {
             display: grid;
-            grid-template-columns: 1fr 1.1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 56px;
             align-items: center;
-            padding: 56px 80px;
+            padding: 56px 120px;
         }
 
         /* Glows ambientales */
@@ -306,7 +269,7 @@
         .lp-slide > * { position: relative; z-index: 1; }
 
         .lp-hero-left  { max-width: 480px; }
-        .lp-hero-right { display: flex; align-items: center; justify-content: center; }
+        .lp-hero-right { display: flex; align-items: center; justify-content: flex-end; }
 
         .lp-badge {
             display: inline-flex;
@@ -768,7 +731,7 @@
 
         <div class="lp-nav-actions">
             <button class="lp-theme-btn" id="lp-theme-btn" aria-label="Cambiar tema">
-                <i class="fa-solid fa-sun" id="lp-theme-icon"></i>
+                <i class="fa-solid fa-circle-half-stroke"></i>
             </button>
             <a href="{{ route('login') }}">
                 <button class="btn-nav btn-nav-primary">Acceder</button>
@@ -985,7 +948,7 @@
 
         </div><!-- /.lp-track -->
 
-        <!-- Flechas horizontales -->
+        <!-- Flechas laterales -->
         <button class="lp-arrow lp-arrow-prev" id="lp-prev" aria-label="Anterior" disabled>
             <i class="fa-solid fa-chevron-left"></i>
         </button>
@@ -995,30 +958,8 @@
 
     </div><!-- /.lp-carousel -->
 
-    <!-- FOOTER BAR con dots + counter -->
-    <div class="lp-footer-bar">
-        <div class="lp-dots">
-            <button class="lp-dot is-active" data-index="0">
-                <span class="lp-dot-fill"></span>
-                <span class="lp-dot-label">Bienvenida</span>
-            </button>
-            <button class="lp-dot" data-index="1">
-                <span class="lp-dot-fill"></span>
-                <span class="lp-dot-label">Características</span>
-            </button>
-            <button class="lp-dot" data-index="2">
-                <span class="lp-dot-fill"></span>
-                <span class="lp-dot-label">Cómo funciona</span>
-            </button>
-            <button class="lp-dot" data-index="3">
-                <span class="lp-dot-fill"></span>
-                <span class="lp-dot-label">En números</span>
-            </button>
-            <button class="lp-dot" data-index="4">
-                <span class="lp-dot-fill"></span>
-                <span class="lp-dot-label">Empezar</span>
-            </button>
-        </div>
+    <!-- FOOTER BAR con counter -->
+    <div class="lp-footer-bar" style="justify-content:flex-end;">
         <div class="lp-counter">
             <span class="lp-counter-num" id="lp-counter-num">01</span>
             <span class="lp-counter-sep">/</span>
@@ -1027,29 +968,19 @@
     </div>
 
     <script>
-        const TOTAL     = 5;
-        const track     = document.getElementById('lp-track');
-        const navLinks  = document.querySelectorAll('.lp-nav-link');
-        const dots      = document.querySelectorAll('.lp-dot');
+        const TOTAL      = 5;
+        const track      = document.getElementById('lp-track');
+        const navLinks   = document.querySelectorAll('.lp-nav-link');
         const counterNum = document.getElementById('lp-counter-num');
-        const prevBtn   = document.getElementById('lp-prev');
-        const nextBtn   = document.getElementById('lp-next');
-        const themeBtn  = document.getElementById('lp-theme-btn');
-        const themeIcon = document.getElementById('lp-theme-icon');
+        const prevBtn    = document.getElementById('lp-prev');
+        const nextBtn    = document.getElementById('lp-next');
+        const themeBtn   = document.getElementById('lp-theme-btn');
         let slide = 0;
-
-        function updateThemeIcon() {
-            const isDark = document.documentElement.dataset.theme !== 'light';
-            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        }
 
         function goTo(n) {
             slide = Math.max(0, Math.min(TOTAL - 1, n));
             track.style.transform = `translateX(-${slide * 100}%)`;
-
             navLinks.forEach((l, i) => l.classList.toggle('is-active', i === slide));
-            dots.forEach((d, i) => d.classList.toggle('is-active', i === slide));
-
             counterNum.textContent = String(slide + 1).padStart(2, '0');
             prevBtn.disabled = slide === 0;
             nextBtn.disabled = slide === TOTAL - 1;
@@ -1057,26 +988,12 @@
 
         prevBtn.addEventListener('click', () => goTo(slide - 1));
         nextBtn.addEventListener('click', () => goTo(slide + 1));
-
         navLinks.forEach((l, i) => l.addEventListener('click', () => goTo(i)));
-        dots.forEach((d, i) => d.addEventListener('click', () => goTo(+d.dataset.index)));
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'ArrowRight') goTo(slide + 1);
-            if (e.key === 'ArrowLeft')  goTo(slide - 1);
-        });
 
         themeBtn.addEventListener('click', () => {
             if (window.toggleTheme) window.toggleTheme();
-            setTimeout(updateThemeIcon, 0);
         });
 
-        new MutationObserver(updateThemeIcon).observe(
-            document.documentElement,
-            { attributes: true, attributeFilter: ['data-theme'] }
-        );
-
-        updateThemeIcon();
         goTo(0);
     </script>
 

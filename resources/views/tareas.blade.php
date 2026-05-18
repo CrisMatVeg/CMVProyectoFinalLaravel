@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | {{ $tipo->name }} - {{ $proyecto->name }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     <style>
@@ -385,8 +386,8 @@
         <nav class="menu">
             <span class="menu-section">Proyecto</span>
             <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-                <span class="menu-icon"><i class="fa-solid fa-chevron-left"></i></span>
-                <span>Volver al Proyecto</span>
+                <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
+                <span>Proyecto</span>
             </a>
             <div class="menu-item hover-lift active">
                 <span class="menu-icon"><i class="fa-solid fa-list-check"></i></span>
@@ -400,9 +401,9 @@
                 <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
                 <span>Calendario</span>
             </a>
-            <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-                <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-                <span>Archivos</span>
+            <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+                <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+                <span>Foro</span>
             </a>
             <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
                 <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -416,8 +417,8 @@
             @endif
             <span class="menu-section">General</span>
             <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-                <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-                <span>Proyectos</span>
+                <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+                <span>Mis proyectos</span>
             </a>
         </nav>
 
@@ -455,18 +456,18 @@
                 @endif
             </div>
 
-            <section class="stats" style="margin: 24px 0;">
-                <div class="card hover-lift">
+            <section class="stats" style="margin: 24px 0; grid-template-columns: repeat(3, 1fr);">
+                <div class="card">
                     <div class="stat-icon"><i class="fa-solid fa-tasks"></i></div>
                     <div class="stat-title">Tareas Totales</div>
                     <div class="stat-value">{{ $totalTareas }}</div>
                 </div>
-                <div class="card hover-lift">
+                <div class="card">
                     <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
                     <div class="stat-title">Horas Estimadas</div>
                     <div class="stat-value">{{ $totalHoras }}h</div>
                 </div>
-                <div class="card hover-lift">
+                <div class="card">
                     <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
                     <div class="stat-title">Progreso</div>
                     <div class="stat-value">{{ $progreso }}%</div>
@@ -519,13 +520,18 @@
                                             <i class="fa-solid fa-triangle-exclamation"></i> Retrasada
                                         </span>
                                     @else
-                                        <span class="overdue-badge overdue-badge--placeholder"></span>
+                                        <span class="overdue-badge--placeholder"></span>
                                     @endif
                                 </div>
                             </div>
                             <div class="task-actions">
                                 <button class="action-btn" title="Notas ({{ $tarea->notas->count() }})"
-                                    onclick="openNotasModal({{ $tarea->id }}, @js($tarea->title), @json($notasJson), {{ $esOwner ? 'true' : 'false' }}, {{ auth()->user()->id }})">
+                                    data-task-id="{{ $tarea->id }}"
+                                    data-task-title="{{ $tarea->title }}"
+                                    data-notas="{{ json_encode($notasJson) }}"
+                                    data-es-owner="{{ $esOwner ? '1' : '0' }}"
+                                    data-user-id="{{ auth()->user()->id }}"
+                                    onclick="openNotasModal(this)">
                                     <i class="fa-solid fa-note-sticky"></i>
                                     @if($tarea->notas->count() > 0)
                                         <span style="position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:grid;place-items:center;font-weight:700;">{{ $tarea->notas->count() }}</span>
@@ -552,10 +558,6 @@
                                 <button class="action-btn" title="Eliminar" style="color: #ef4444;"
                                     onclick="openDeleteModal({{ $tarea->id }}, @js($tarea->title))">
                                     <i class="fa-solid fa-trash"></i>
-                                </button>
-                                @else
-                                <button class="action-btn" title="Asignar Usuario" onclick="openAssignModal({{ $tarea->id }}, '{{ $tarea->title }}')">
-                                    <i class="fa-solid fa-user-plus"></i>
                                 </button>
                                 @endif
                             </div>
@@ -631,12 +633,12 @@
 
                 <div class="form-group">
                     <label>Título</label>
-                    <input type="text" name="title" placeholder="Nombre de la tarea" required>
+                    <input type="text" name="title" placeholder="Nombre de la tarea" required maxlength="150">
                 </div>
 
                 <div class="form-group">
                     <label>Descripción</label>
-                    <textarea name="description" rows="2" placeholder="¿Qué hay que hacer?"></textarea>
+                    <textarea name="description" rows="2" placeholder="¿Qué hay que hacer?" maxlength="500"></textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -656,12 +658,12 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label>Fecha Inicio</label>
-                        <input type="date" name="start_date">
+                        <label>Fecha Inicio *</label>
+                        <input type="date" name="start_date" required>
                     </div>
                     <div class="form-group" id="create-enddate-group">
-                        <label>Fecha Fin</label>
-                        <input type="date" name="end_date">
+                        <label>Fecha Fin *</label>
+                        <input type="date" name="end_date" required>
                     </div>
                 </div>
 
@@ -740,12 +742,12 @@
 
                 <div class="form-group">
                     <label>Título</label>
-                    <input type="text" id="edit-title" name="title" required>
+                    <input type="text" id="edit-title" name="title" required maxlength="150">
                 </div>
 
                 <div class="form-group">
                     <label>Descripción</label>
-                    <textarea id="edit-description" name="description" rows="2"></textarea>
+                    <textarea id="edit-description" name="description" rows="2" maxlength="500"></textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -765,12 +767,12 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label>Fecha Inicio</label>
-                        <input type="date" id="edit-start-date" name="start_date">
+                        <label>Fecha Inicio *</label>
+                        <input type="date" id="edit-start-date" name="start_date" required>
                     </div>
                     <div class="form-group" id="edit-enddate-group">
-                        <label>Fecha Fin</label>
-                        <input type="date" id="edit-end-date" name="end_date">
+                        <label>Fecha Fin *</label>
+                        <input type="date" id="edit-end-date" name="end_date" required>
                     </div>
                 </div>
 
@@ -812,10 +814,6 @@
         // ── Helpers de modal ───────────────────────────────────────────────
         function openModal(id)  { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal')) e.target.classList.remove('active');
-        };
 
         // ── Dep list builder ──────────────────────────────────────────────
         function buildDepList(containerId, excludeId, checkedIds) {
@@ -904,7 +902,13 @@
         const notaDeleteBase   = "{{ url('tarea/notas') }}";
         const csrfToken        = "{{ csrf_token() }}";
 
-        function openNotasModal(taskId, taskTitle, notas, esOwner, currentUserId) {
+        function openNotasModal(btn) {
+            const taskId        = btn.dataset.taskId;
+            const taskTitle     = btn.dataset.taskTitle;
+            const notas         = JSON.parse(btn.dataset.notas);
+            const esOwner       = btn.dataset.esOwner === '1';
+            const currentUserId = parseInt(btn.dataset.userId);
+
             document.getElementById('notas-task-title').textContent = taskTitle;
             document.getElementById('notas-form').action = notaBaseUrl + '/' + taskId + '/notas';
 

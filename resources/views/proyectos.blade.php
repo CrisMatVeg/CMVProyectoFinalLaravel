@@ -6,6 +6,7 @@
   <title>PIXEL | Proyectos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
 
@@ -167,6 +168,23 @@
     .options-menu li {
       padding: 8px 12px;
     }
+
+    /* Truncar texto largo en tarjetas de proyecto */
+    .main-card h3 {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .main-card > a span,
+    .main-card > a > span {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-all;
+    }
   </style>
 </head>
 
@@ -219,12 +237,16 @@
                 <div class="options-menu hidden">
                   <ul>
                     <li>
-                      <button type="button" class="open-edit-modal" data-project-id="{{ $proyecto->id }}">
+                      <button type="button" class="open-edit-modal"
+                        data-project-id="{{ $proyecto->id }}"
+                        data-url="{{ route('proyectos.update', $proyecto->id) }}">
                         Modificar
                       </button>
                     </li>
                     <li>
-                      <button type="button" class="open-delete-modal" data-project-id="{{ $proyecto->id }}">
+                      <button type="button" class="open-delete-modal"
+                        data-project-id="{{ $proyecto->id }}"
+                        data-url="{{ route('proyectos.destroy', $proyecto->id) }}">
                         Eliminar
                       </button>
                     </li>
@@ -295,12 +317,12 @@
         @csrf
         <div class="form-group">
           <label for="project-name">Nombre del proyecto</label>
-          <input type="text" id="name" name="name" required>
+          <input type="text" id="name" name="name" required maxlength="80" placeholder="Máx. 80 caracteres">
         </div>
 
         <div class="form-group">
           <label for="project-desc">Descripción corta</label>
-          <textarea id="project-desc" name="description" placeholder="description" rows="3"></textarea>
+          <textarea id="project-desc" name="description" placeholder="Máx. 200 caracteres" rows="3" maxlength="200"></textarea>
         </div>
 
         <div class="modal-actions">
@@ -324,12 +346,12 @@
       @method('PUT')
       <div class="form-group">
         <label for="edit-name">Nombre del proyecto</label>
-        <input type="text" id="edit-name" name="name" required>
+        <input type="text" id="edit-name" name="name" required maxlength="80">
       </div>
 
       <div class="form-group">
         <label for="edit-desc">Descripción</label>
-        <textarea id="edit-desc" name="description" rows="3"></textarea>
+        <textarea id="edit-desc" name="description" rows="3" maxlength="200"></textarea>
       </div>
 
       <div class="modal-actions">

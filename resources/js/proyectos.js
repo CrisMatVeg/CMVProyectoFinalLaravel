@@ -71,12 +71,10 @@ document.querySelectorAll(".open-edit-modal").forEach((btn) => {
         e.stopPropagation();
 
         const projectId = e.currentTarget.dataset.projectId;
-
-        // Aquí puedes rellenar los campos con datos del proyecto
         const card = document.querySelector(
             `.main-card[data-project-id="${projectId}"]`,
         );
-        editForm.action = `/proyectos/${projectId}`; // Ajusta según tu ruta
+        editForm.action = e.currentTarget.dataset.url;
         editForm.querySelector("#edit-name").value =
             card.querySelector("h3").innerText;
         editForm.querySelector("#edit-desc").value =
@@ -91,8 +89,7 @@ document.querySelectorAll(".open-delete-modal").forEach((btn) => {
     btn.addEventListener("click", (e) => {
         e.stopPropagation();
 
-        const projectId = e.currentTarget.dataset.projectId;
-        deleteForm.action = `/proyectos/${projectId}`; // Ajusta según tu ruta
+        deleteForm.action = e.currentTarget.dataset.url;
         deleteModal.classList.remove("hidden");
     });
 });
@@ -105,14 +102,6 @@ document.querySelectorAll(".cancel-btn").forEach((btn) => {
     });
 });
 
-// Cerrar modales al click fuera del modal
-document.querySelectorAll(".modal-overlay").forEach((modal) => {
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.classList.add("hidden");
-        }
-    });
-});
 
 // Modal Unirse a proyecto
 const joinModal = document.getElementById("join-modal");

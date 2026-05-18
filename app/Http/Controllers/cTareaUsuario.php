@@ -19,6 +19,11 @@ class cTareaUsuario extends Controller
         $userId  = $request->user_id;
         $proyecto = $tarea->proyecto;
 
+        // Solo el owner del proyecto puede asignar usuarios a tareas
+        if (auth()->id() !== $proyecto->created_by) {
+            return redirect()->back()->with('error', 'Solo el propietario del proyecto puede asignar usuarios a tareas.');
+        }
+
         // Verificar que el usuario pertenece al departamento de la tarea
         $tieneAcceso = \App\Models\ProyectoAcceso::where('proyecto_id', $proyecto->id)
             ->where('user_id', $userId)

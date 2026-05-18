@@ -45,6 +45,11 @@ class Proyecto extends Model
         return $this->hasMany(Archivo::class);
     }
 
+    public function foroHilos()
+    {
+        return $this->hasMany(ForoHilo::class);
+    }
+
     // Relación: usuarios involucrados en el proyecto (a través de sus tareas)
     public function usuarios()
     {

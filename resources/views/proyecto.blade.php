@@ -6,12 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
   <style>
     .proyecto-actions {
-      margin-top: 16px;
-      margin-bottom: 32px;
+      margin-top: 10px;
+      margin-bottom: 16px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -127,7 +128,7 @@
       <span class="menu-section">Proyecto</span>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
-        <span>Equipo</span>
+        <span>Proyecto</span>
       </div>
       <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
@@ -137,9 +138,9 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </a>
-      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Archivos</span>
+      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+        <span>Foro</span>
       </a>
       <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -153,8 +154,8 @@
       @endif
       <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Proyectos</span>
+        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span>Mis proyectos</span>
       </a>
     </nav>
 
@@ -185,19 +186,13 @@
       <h1 class="title-gradient">{{ $proyecto->name }}</h1>
       <p class="subtitle">{{ $proyecto->description }}</p>
 
+      @if($proyecto->created_by === auth()->id())
       <div class="proyecto-actions">
-        <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="btn-secondary hover-lift btn-sm">
-          <i class="fa-solid fa-chart-gantt"></i> Ver Gantt
-        </a>
-        <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="btn-secondary hover-lift btn-sm">
-          <i class="fa-solid fa-calendar-days"></i> Ver Calendario
-        </a>
-        @if($proyecto->created_by === auth()->id())
         <button type="button" id="open-invite-modal" class="btn-primary hover-lift btn-sm">
           <i class="fa-solid fa-link"></i> Invitar personas
         </button>
-        @endif
       </div>
+      @endif
 
       @if(session('success'))
       <div class="alert-flash">
@@ -210,28 +205,36 @@
         $tareasEnCurso = $proyecto->tareas->filter(fn($t) => $t->status && $t->status->name === 'En curso')->count();
       @endphp
       <section class="stats">
-        <div class="card hover-lift teal">
+        <div class="card teal">
           <div class="stat-icon"><i class="fa-solid fa-people-group fa-lg"></i></div>
-          <div class="stat-title">Miembros</div>
-          <div class="stat-value">{{ $numMiembros }}</div>
+          <div class="stat-text">
+            <div class="stat-title">Miembros</div>
+            <div class="stat-value">{{ $numMiembros }}</div>
+          </div>
         </div>
 
-        <div class="card hover-lift purple">
+        <div class="card purple">
           <div class="stat-icon"><i class="fa-solid fa-folder-open fa-lg"></i></div>
-          <div class="stat-title">Tareas</div>
-          <div class="stat-value">{{ $totalTareas }}</div>
+          <div class="stat-text">
+            <div class="stat-title">Tareas</div>
+            <div class="stat-value">{{ $totalTareas }}</div>
+          </div>
         </div>
 
-        <div class="card hover-lift magenta">
+        <div class="card magenta">
           <div class="stat-icon"><i class="fa-solid fa-spinner fa-lg"></i></div>
-          <div class="stat-title">En curso</div>
-          <div class="stat-value">{{ $tareasEnCurso }}</div>
+          <div class="stat-text">
+            <div class="stat-title">En curso</div>
+            <div class="stat-value">{{ $tareasEnCurso }}</div>
+          </div>
         </div>
 
-        <div class="card hover-lift blue">
+        <div class="card blue">
           <div class="stat-icon"><i class="fa-solid fa-bars-progress fa-lg"></i></div>
-          <div class="stat-title">Progreso</div>
-          <div class="stat-value">{{ $progreso }}%</div>
+          <div class="stat-text">
+            <div class="stat-title">Progreso</div>
+            <div class="stat-value">{{ $progreso }}%</div>
+          </div>
         </div>
       </section>
 
@@ -294,8 +297,42 @@
               </div>
 
               <div class="main-card-tags">
-                <div class="main-card-tag">Prioridad</div>
-                <div class="main-card-tag">Sprint</div>
+                @if($tipo->name === 'Desarrollo')
+                  <div class="main-card-tag">Feature</div>
+                  <div class="main-card-tag">Bug Fix</div>
+                  <div class="main-card-tag">Sprint</div>
+                  <div class="main-card-tag">Optimización</div>
+                @elseif($tipo->name === 'Arte')
+                  <div class="main-card-tag">Concept</div>
+                  <div class="main-card-tag">Assets</div>
+                  <div class="main-card-tag">Animación</div>
+                  <div class="main-card-tag">Revisión</div>
+                @elseif($tipo->name === 'Narrativa')
+                  <div class="main-card-tag">Guión</div>
+                  <div class="main-card-tag">Diálogos</div>
+                  <div class="main-card-tag">Lore</div>
+                  <div class="main-card-tag">Traducción</div>
+                @elseif($tipo->name === 'Diseño')
+                  <div class="main-card-tag">UI/UX</div>
+                  <div class="main-card-tag">Mecánicas</div>
+                  <div class="main-card-tag">Level Design</div>
+                  <div class="main-card-tag">Balanceo</div>
+                @elseif($tipo->name === 'Audio')
+                  <div class="main-card-tag">SFX</div>
+                  <div class="main-card-tag">Música</div>
+                  <div class="main-card-tag">Mezcla</div>
+                  <div class="main-card-tag">Implementación</div>
+                @elseif($tipo->name === 'Marketing')
+                  <div class="main-card-tag">Redes</div>
+                  <div class="main-card-tag">Trailer</div>
+                  <div class="main-card-tag">Comunidad</div>
+                  <div class="main-card-tag">Analytics</div>
+                @else
+                  <div class="main-card-tag">Tareas</div>
+                  <div class="main-card-tag">Sprint</div>
+                  <div class="main-card-tag">Revisión</div>
+                  <div class="main-card-tag">Entrega</div>
+                @endif
               </div>
             </a>
           @endforeach
@@ -351,7 +388,6 @@
     }
     document.getElementById('close-areas-modal').addEventListener('click', closeAreasModal);
     document.getElementById('cancel-areas-modal').addEventListener('click', closeAreasModal);
-    areasModal.addEventListener('click', e => { if (e.target === areasModal) closeAreasModal(); });
   </script>
   @endif
 
@@ -448,7 +484,6 @@
 
     document.getElementById('close-invite-modal').addEventListener('click', closeInviteModal);
     document.getElementById('close-invite-modal-btn').addEventListener('click', closeInviteModal);
-    inviteModal.addEventListener('click', e => { if (e.target === inviteModal) closeInviteModal(); });
 
     document.querySelectorAll('.invite-copy-btn').forEach(btn => {
       btn.addEventListener('click', () => {
