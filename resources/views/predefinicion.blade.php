@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Predefinición — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
   <style>
@@ -246,8 +247,8 @@
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-chevron-left"></i></span>
-        <span>Volver al Proyecto</span>
+        <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Proyecto</span>
       </a>
       <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
@@ -257,13 +258,13 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </a>
-      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Archivos</span>
+      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+        <span>Foro</span>
       </a>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-        <span>Predefinición</span>
+        <span>Datos predefinidos</span>
       </div>
       @if($proyecto->created_by === auth()->id())
       <a href="{{ route('proyecto.miembros', $proyecto->id) }}" class="menu-item hover-lift">
@@ -273,8 +274,8 @@
       @endif
       <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Proyectos</span>
+        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span>Mis proyectos</span>
       </a>
     </nav>
     <div class="sidebar-user hover-lift">
@@ -325,8 +326,15 @@
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
           Selecciona el motor destino. El JSON se adapta automáticamente a su formato.
         </p>
+        @php $hayDatos = $personajes->count() + $items->count() + $dialogos->count() > 0; @endphp
+        @if(!$hayDatos)
+          <p style="font-size:13px;color:#f87171;margin-bottom:12px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
+            No hay datos para exportar. Crea al menos un personaje, ítem o diálogo.
+          </p>
+        @endif
         <div class="motor-grid">
-          <button class="motor-btn unity hover-lift" onclick="exportarDatos('unity')">
+          <button class="motor-btn unity hover-lift" onclick="exportarDatos('unity')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
             <div class="motor-icon unity"><i class="fa-solid fa-cube"></i></div>
             <div>
               <div>Unity</div>
@@ -334,7 +342,7 @@
             </div>
             <i class="fa-solid fa-download" style="margin-left:auto;font-size:12px;opacity:.6;"></i>
           </button>
-          <button class="motor-btn unreal hover-lift" onclick="exportarDatos('unreal')">
+          <button class="motor-btn unreal hover-lift" onclick="exportarDatos('unreal')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
             <div class="motor-icon unreal"><i class="fa-solid fa-dragon"></i></div>
             <div>
               <div>Unreal Engine</div>
@@ -342,7 +350,7 @@
             </div>
             <i class="fa-solid fa-download" style="margin-left:auto;font-size:12px;opacity:.6;"></i>
           </button>
-          <button class="motor-btn godot hover-lift" onclick="exportarDatos('godot')">
+          <button class="motor-btn godot hover-lift" onclick="exportarDatos('godot')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
             <div class="motor-icon godot"><i class="fa-solid fa-robot"></i></div>
             <div>
               <div>Godot</div>
@@ -566,7 +574,7 @@
   </main>
 
   <!-- ══════════ MODAL CREAR PERSONAJE ══════════ -->
-  <div class="modal-overlay" id="modal-add-personaje" onclick="closeOnBackdrop(event,'modal-add-personaje')">
+  <div class="modal-overlay" id="modal-add-personaje">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-person-running" style="margin-right:8px;color:var(--accent);"></i>Nuevo Personaje</div>
@@ -595,7 +603,7 @@
   </div>
 
   <!-- MODAL EDITAR PERSONAJE -->
-  <div class="modal-overlay" id="modal-edit-personaje" onclick="closeOnBackdrop(event,'modal-edit-personaje')">
+  <div class="modal-overlay" id="modal-edit-personaje">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:var(--accent);"></i>Editar Personaje</div>
@@ -624,7 +632,7 @@
   </div>
 
   <!-- ══════════ MODAL CREAR ÍTEM ══════════ -->
-  <div class="modal-overlay" id="modal-add-item" onclick="closeOnBackdrop(event,'modal-add-item')">
+  <div class="modal-overlay" id="modal-add-item">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-swords" style="margin-right:8px;color:#a855f7;"></i>Nuevo Ítem</div>
@@ -658,7 +666,7 @@
   </div>
 
   <!-- MODAL EDITAR ÍTEM -->
-  <div class="modal-overlay" id="modal-edit-item" onclick="closeOnBackdrop(event,'modal-edit-item')">
+  <div class="modal-overlay" id="modal-edit-item">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:#a855f7;"></i>Editar Ítem</div>
@@ -691,7 +699,7 @@
   </div>
 
   <!-- ══════════ MODAL CREAR DIÁLOGO ══════════ -->
-  <div class="modal-overlay" id="modal-add-dialogo" onclick="closeOnBackdrop(event,'modal-add-dialogo')">
+  <div class="modal-overlay" id="modal-add-dialogo">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-comments" style="margin-right:8px;color:#fb923c;"></i>Nueva Línea de Diálogo</div>
@@ -714,7 +722,7 @@
   </div>
 
   <!-- MODAL EDITAR DIÁLOGO -->
-  <div class="modal-overlay" id="modal-edit-dialogo" onclick="closeOnBackdrop(event,'modal-edit-dialogo')">
+  <div class="modal-overlay" id="modal-edit-dialogo">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:#fb923c;"></i>Editar Diálogo</div>
@@ -768,10 +776,6 @@
     // ── Modales ──────────────────────────────────────────────────
     function openModal(id)  { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function closeOnBackdrop(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-    });
 
     // ── Editar Personaje ─────────────────────────────────────────
     function openEditPersonaje(id, game_id, nombre, vida, ataque, defensa, velocidad) {

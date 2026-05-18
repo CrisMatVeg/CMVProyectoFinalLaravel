@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Archivos — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
   <style>
@@ -440,8 +441,8 @@
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-chevron-left"></i></span>
-        <span>Volver al Proyecto</span>
+        <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Proyecto</span>
       </a>
       <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
@@ -467,8 +468,8 @@
       @endif
       <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Proyectos</span>
+        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span>Mis proyectos</span>
       </a>
     </nav>
     <div class="sidebar-user hover-lift">
@@ -668,7 +669,7 @@
   </main>
 
   <!-- MODAL SUBIDA -->
-  <div class="modal-overlay" id="modal-upload" onclick="closeOnBackdrop(event)">
+  <div class="modal-overlay" id="modal-upload">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
         <div class="modal-title"><i class="fa-solid fa-upload" style="margin-right:10px;"></i>Subir archivo</div>
@@ -736,7 +737,7 @@
   </div>
 
   <!-- MODAL PREVISUALIZACIÓN -->
-  <div class="modal-overlay" id="modal-preview" onclick="closePreviewOnBackdrop(event)">
+  <div class="modal-overlay" id="modal-preview">
     <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
@@ -762,10 +763,6 @@
     // ── Modal subida ────────────────────────────────────────
     function openModal()  { document.getElementById('modal-upload').classList.add('active'); }
     function closeModal() { document.getElementById('modal-upload').classList.remove('active'); }
-    function closeOnBackdrop(e) {
-      if (e.target === document.getElementById('modal-upload')) closeModal();
-    }
-
     // Drop zone
     const fileInput  = document.getElementById('file-input');
     const dropZone   = document.getElementById('drop-zone');
@@ -933,10 +930,6 @@
       body.querySelectorAll('audio, video').forEach(m => { m.pause(); m.src = ''; });
       body.innerHTML = '';
       document.getElementById('modal-preview').classList.remove('active');
-    }
-
-    function closePreviewOnBackdrop(e) {
-      if (e.target === document.getElementById('modal-preview')) closePreview();
     }
 
     function escHtml(str) {

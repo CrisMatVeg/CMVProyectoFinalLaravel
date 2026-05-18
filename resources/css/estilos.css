@@ -7,16 +7,16 @@
     --teal: rgb(20, 184, 166);
 
     /* Sistema de profundidad */
-    --bg-base:      #141416;
-    --bg-chrome:    #1d1d20;
-    --bg-card:      #1a1a1d;
-    --bg-card-hi:   #212126;
-    --bg-input:     #1a1a1d;
+    --bg-base:      #1e1e21;
+    --bg-chrome:    #272729;
+    --bg-card:      #242427;
+    --bg-card-hi:   #2c2c31;
+    --bg-input:     #242427;
 
     /* Aliases de compatibilidad con vistas existentes */
     --darkgrey:  var(--bg-base);
     --cardgrey:  var(--bg-chrome);
-    --usercolor: #272730;
+    --usercolor: #31313a;
 
     /* Texto */
     --white:  #ededed;
@@ -272,7 +272,9 @@ footer a:hover {
     transition:
         background 0.15s var(--ease),
         color 0.15s var(--ease),
-        border-color 0.15s var(--ease);
+        border-color 0.15s var(--ease),
+        transform 0.15s var(--ease),
+        box-shadow 0.15s var(--ease);
 }
 
 .menu-icon {
@@ -613,7 +615,8 @@ input::placeholder {
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease,
+                transform 0.2s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -633,7 +636,7 @@ input::placeholder {
     cursor: pointer;
     font-family: var(--font-main);
     font-size: 14px;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .btn-ghost:hover {
@@ -688,6 +691,8 @@ input::placeholder {
 .subtitle {
     color: var(--muted);
     margin-bottom: 20px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Logo unificado — misma fuente, peso y gradiente en todas las vistas */
@@ -751,8 +756,8 @@ input::placeholder {
 ====================================================== */
 .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
 }
 
 /* Halo de color solo aparece en hover */
@@ -781,7 +786,7 @@ input::placeholder {
     display: grid;
     place-items: center;
     font-size: 16px;
-    margin-bottom: 14px;
+    flex-shrink: 0;
     background: var(--accentwop1);
     color: var(--accent);
     border: 1px solid var(--accent-mid);
@@ -790,6 +795,17 @@ input::placeholder {
 .stats .card {
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.stat-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 }
 
 .stat-title {
@@ -800,8 +816,7 @@ input::placeholder {
 
 .stat-value {
     font-family: var(--font-title);
-    font-size: 36px;
-    margin-top: 6px;
+    font-size: 26px;
     font-weight: bold;
     color: var(--accent);
 }
@@ -810,7 +825,7 @@ input::placeholder {
    DEPARTMENTS
 ====================================================== */
 .departments {
-    margin-top: 32px;
+    margin-top: 22px;
 }
 
 .main-content {

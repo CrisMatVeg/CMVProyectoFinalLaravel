@@ -7,6 +7,7 @@
     <title>PIXEL | Tarea</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
 

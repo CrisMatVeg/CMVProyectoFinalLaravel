@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Miembros — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
 </head>
@@ -28,8 +29,8 @@
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-chevron-left"></i></span>
-        <span>Volver al Proyecto</span>
+        <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Proyecto</span>
       </a>
       <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
@@ -39,9 +40,9 @@
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </a>
-      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Archivos</span>
+      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+        <span>Foro</span>
       </a>
       <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -53,8 +54,8 @@
       </div>
       <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Proyectos</span>
+        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span>Mis proyectos</span>
       </a>
     </nav>
     <div class="sidebar-user hover-lift">

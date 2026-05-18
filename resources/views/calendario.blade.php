@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Calendario — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
   <style>
@@ -451,20 +452,20 @@
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-chevron-left"></i></span>
-        <span>Volver al Proyecto</span>
+        <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Proyecto</span>
       </a>
       <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
-        <span>Diagrama Gantt</span>
+        <span>Gantt</span>
       </a>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
       </div>
-      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Archivos</span>
+      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+        <span>Foro</span>
       </a>
       <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -478,8 +479,8 @@
       @endif
       <span class="menu-section">General</span>
       <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Proyectos</span>
+        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span>Mis proyectos</span>
       </a>
     </nav>
     <div class="sidebar-user hover-lift">
@@ -575,7 +576,7 @@
   </main>
 
   <!-- ══ MODAL DE DÍA ══════════════════════════════════════ -->
-  <div class="cal-overlay" id="day-overlay" onclick="handleDayOverlayClick(event)">
+  <div class="cal-overlay" id="day-overlay">
     <div class="cal-modal-box" id="day-modal">
       <button class="cal-modal-close" onclick="closeDayModal()">
         <i class="fa-solid fa-xmark"></i>
@@ -589,7 +590,7 @@
   </div>
 
   <!-- ══ MODAL DE TAREA (detalle) ══════════════════════════ -->
-  <div class="cal-overlay" id="task-overlay" onclick="handleTaskOverlayClick(event)">
+  <div class="cal-overlay" id="task-overlay">
     <div class="cal-modal-box" id="task-modal">
       <button class="cal-modal-close" onclick="closeTaskModal()">
         <i class="fa-solid fa-xmark"></i>
@@ -813,10 +814,6 @@
     function closeDayModal() {
       document.getElementById('day-overlay').classList.remove('open');
     }
-    function handleDayOverlayClick(e) {
-      if (e.target === document.getElementById('day-overlay')) closeDayModal();
-    }
-
     // ── Modal de TAREA (detalle) ─────────────────────────────
     function openTaskFromDay(taskIdx) {
       // Cierra el day modal y abre el task modal con flag de retorno
@@ -880,15 +877,7 @@
       document.getElementById('day-overlay').classList.add('open');
     }
 
-    function handleTaskOverlayClick(e) {
-      if (e.target === document.getElementById('task-overlay')) {
-        if (openedFromDay) {
-          goBackToDay();
-        } else {
-          closeTaskModal();
-        }
-      }
-    }
+
 
     // ── Teclado ──────────────────────────────────────────────
     document.addEventListener('keydown', e => {

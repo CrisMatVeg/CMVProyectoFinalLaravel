@@ -9,6 +9,7 @@ use App\Http\Controllers\cInvitacion;
 use App\Http\Controllers\cArchivo;
 use App\Http\Controllers\cPredefinicion;
 use App\Http\Controllers\cNotaTarea;
+use App\Http\Controllers\cForo;
 
 
 Route::get('/', [PageController::class, 'index'])->name('home');
@@ -44,6 +45,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/archivos/{archivo}', [cArchivo::class, 'destroy'])->name('archivo.destroy');
     Route::get('/archivos/{archivo}/download', [cArchivo::class, 'download'])->name('archivo.download');
     Route::get('/archivos/{archivo}/preview', [cArchivo::class, 'preview'])->name('archivo.preview');
+
+    // Foro
+    Route::get('/proyecto/{proyecto}/foro',                                 [cForo::class, 'index'])->name('proyecto.foro');
+    Route::post('/proyecto/{proyecto}/foro',                                [cForo::class, 'store'])->name('proyecto.foro.store');
+    Route::get('/proyecto/{proyecto}/foro/{hilo}',                          [cForo::class, 'show'])->name('proyecto.foro.show');
+    Route::post('/proyecto/{proyecto}/foro/{hilo}/respuestas',              [cForo::class, 'storeRespuesta'])->name('proyecto.foro.respuesta.store');
+    Route::delete('/proyecto/{proyecto}/foro/{hilo}',                       [cForo::class, 'destroy'])->name('proyecto.foro.destroy');
+    Route::delete('/proyecto/{proyecto}/foro/{hilo}/respuestas/{mensaje}',  [cForo::class, 'destroyRespuesta'])->name('proyecto.foro.respuesta.destroy');
+    Route::get('/foro/archivos/{archivo}/download',                         [cForo::class, 'downloadArchivo'])->name('foro.archivo.download');
+    Route::get('/foro/archivos/{archivo}/preview',                          [cForo::class, 'previewArchivo'])->name('foro.archivo.preview');
 
     // Predefinición de datos (por proyecto)
     Route::get('/proyecto/{proyecto}/predefinicion', [cPredefinicion::class, 'index'])->name('proyecto.predefinicion');
