@@ -53,7 +53,6 @@ class Usuario extends Authenticatable
     public function tareas()
     {
         return $this->belongsToMany(Tarea::class, 'participaciones', 'user_id', 'task_id')
-                    ->withPivot(['proposed_at', 'accepted_at', 'actual_hours'])
                     ->withTimestamps();
     }
 
