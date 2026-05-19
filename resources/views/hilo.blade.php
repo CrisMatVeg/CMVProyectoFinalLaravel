@@ -7,15 +7,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
+  @if(config('broadcasting.default') === 'pusher')
   <script>
-    window.__REVERB_CONFIG__ = {
-      key:     '{{ config("broadcasting.connections.reverb.key") }}',
-      host:    '{{ config("broadcasting.connections.reverb.options.host") }}',
-      port:     {{ config("broadcasting.connections.reverb.options.port", 443) }},
-      scheme:  '{{ config("broadcasting.connections.reverb.options.scheme", "https") }}',
-      appBase: '{{ rtrim(parse_url(config("app.url"), PHP_URL_PATH) ?? "", "/") }}',
+    window.__BROADCAST_CONFIG__ = {
+      provider: 'pusher',
+      key:      '{{ config("broadcasting.connections.pusher.key") }}',
+      cluster:  '{{ config("broadcasting.connections.pusher.options.cluster") }}',
+      appBase:  '{{ rtrim(parse_url(config("app.url"), PHP_URL_PATH) ?? "", "/") }}',
     };
   </script>
+  @else
+  <script>
+    window.__BROADCAST_CONFIG__ = {
+      provider: 'reverb',
+      key:      '{{ config("broadcasting.connections.reverb.key") }}',
+      host:     '{{ config("broadcasting.connections.reverb.options.host") }}',
+      port:      {{ config("broadcasting.connections.reverb.options.port", 443) }},
+      scheme:   '{{ config("broadcasting.connections.reverb.options.scheme", "https") }}',
+      appBase:  '{{ rtrim(parse_url(config("app.url"), PHP_URL_PATH) ?? "", "/") }}',
+    };
+  </script>
+  @endif
   @vite('resources/js/app.js')
   @livewireStyles
   @php $livewireBase = rtrim(parse_url(config('app.url'), PHP_URL_PATH) ?? '', '/'); @endphp
