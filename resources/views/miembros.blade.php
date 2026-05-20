@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Miembros — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,6 +44,10 @@
       <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
         <span>Foro</span>
+      </a>
+      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
+        <span>Archivos</span>
       </a>
       <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
