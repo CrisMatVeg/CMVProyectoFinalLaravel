@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Gestión de proyectos creativos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
