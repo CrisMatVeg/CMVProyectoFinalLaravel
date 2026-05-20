@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIXEL | Archivos — {{ $proyecto->name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -273,7 +274,14 @@
       border-color: var(--accent);
       background: rgba(20,184,166,.08);
     }
-    .tipo-check input { accent-color: var(--accent); }
+    .tipo-check input {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
 
     /* Flash messages */
     .flash {
@@ -451,6 +459,10 @@
       <a href="{{ route('proyecto.calendario', $proyecto->id) }}" class="menu-item hover-lift">
         <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
         <span>Calendario</span>
+      </a>
+      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
+        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
+        <span>Foro</span>
       </a>
       <div class="menu-item hover-lift active">
         <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
@@ -717,8 +729,8 @@
             @php $hex = $colorHex[$tipo->name] ?? '#14b8a6'; @endphp
             <label class="tipo-check">
               <input type="checkbox" name="tipo_ids[]" value="{{ $tipo->id }}">
-              <span style="width:8px;height:8px;border-radius:50%;background:{{ $hex }};flex-shrink:0;"></span>
-              {{ $tipo->name }}
+              <span style="width:8px;height:8px;border-radius:50%;background:{{ $hex }};flex-shrink:0;display:inline-block;"></span>
+              <span>{{ $tipo->name }}</span>
             </label>
             @endforeach
           </div>
