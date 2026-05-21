@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Registro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,7 +163,7 @@
             <!-- Logo — usa div, no header, para evitar estilos globales de header -->
             <div class="auth-logo-wrap">
                 <div class="auth-logo pixel-logo">
-                    <i class="fa-solid fa-dice-d6"></i>PIXEL
+                    <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL
                 </div>
                 <p class="auth-subtitle">Crea tu cuenta</p>
             </div>

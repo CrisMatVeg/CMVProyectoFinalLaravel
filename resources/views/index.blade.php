@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Gestión de proyectos creativos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -400,7 +400,7 @@
             gap: 6px;
         }
 
-        .mm-logo i { color: var(--teal); }
+        .mm-logo img { height: 1.3em; width: auto; }
 
         .mm-item {
             display: flex;
@@ -701,6 +701,7 @@
 
         .lp-cta-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
         .lp-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .lp-cta-logo { display: block; width: 140px; height: auto; margin: 0 auto 24px; filter: drop-shadow(0 0 24px rgba(20,184,166,.5)) drop-shadow(0 0 48px rgba(196,77,186,.3)); }
 
         /* ── LIGHT THEME OVERRIDES ── */
         [data-theme="light"] .btn-nav-primary { color: #fff; }
@@ -718,7 +719,7 @@
     <!-- NAV -->
     <nav class="lp-nav">
         <a class="lp-nav-logo pixel-logo" href="{{ route('home') }}">
-            <i class="fa-solid fa-dice-d6"></i>
+            <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;">
             <span>PIXEL</span>
         </a>
 
@@ -784,7 +785,7 @@
                         </div>
                         <div class="mm-body">
                             <aside class="mm-side">
-                                <div class="mm-logo"><i class="fa-solid fa-dice-d6"></i> PIXEL</div>
+                                <div class="mm-logo"><img src="{{ asset('isotipo.png') }}" alt=""> PIXEL</div>
                                 <div class="mm-item is-active"><i class="fa-solid fa-house"></i> Proyecto</div>
                                 <div class="mm-item"><i class="fa-solid fa-list-check"></i> Tareas</div>
                                 <div class="mm-item"><i class="fa-solid fa-users"></i> Equipo</div>
@@ -928,6 +929,7 @@
             <!-- SLIDE 5: EMPEZAR -->
             <section class="lp-slide lp-slide-cta">
                 <div class="lp-cta-card">
+                    <img src="{{ asset('isotipo.png') }}" alt="Pixel" class="lp-cta-logo">
                     <p class="lp-eyebrow">Listo para empezar</p>
                     <h2 class="lp-cta-title">
                         Lleva tu equipo creativo<br>

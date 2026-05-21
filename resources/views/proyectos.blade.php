@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
   <title>PIXEL | Proyectos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -192,7 +192,7 @@
 <body class="magenta">
   <!-- HEADER -->
   <header>
-    <div class="title-gradient logo"><i class="fa-solid fa-dice-d6"></i>PIXEL</div>
+    <div class="title-gradient logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;">PIXEL</div>
     <div>
       <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
         <i class="fa-solid fa-circle-half-stroke"></i>
