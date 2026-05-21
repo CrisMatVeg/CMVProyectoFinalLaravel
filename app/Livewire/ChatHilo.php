@@ -57,8 +57,7 @@ class ChatHilo extends Component
         $proyecto = Proyecto::findOrFail($this->proyectoId);
         $userId   = Auth::id();
 
-        $esMiembro = $proyecto->created_by === $userId
-                  || $proyecto->miembros()->where('user_id', $userId)->exists();
+        $esMiembro = $proyecto->miembros()->where('id', $userId)->exists();
         if (!$esMiembro) {
             abort(403);
         }

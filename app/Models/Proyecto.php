@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ProyectoAcceso;
+use App\Models\Usuario;
 
 class Proyecto extends Model
 {
@@ -23,10 +25,15 @@ class Proyecto extends Model
         return $this->belongsTo(Usuario::class, 'created_by');
     }
 
-    // Relación: miembros del proyecto (pivot proyecto_usuario)
     public function miembros()
     {
-        return $this->belongsToMany(Usuario::class, 'proyecto_usuario', 'proyecto_id', 'user_id');
+        $ids = ProyectoAcceso::where('proyecto_id', $this->id)
+            ->pluck('user_id')
+            ->push($this->created_by)
+            ->unique()
+            ->values();
+
+        return Usuario::whereIn('id', $ids);
     }
 
     // Relación: un proyecto tiene muchas tareas

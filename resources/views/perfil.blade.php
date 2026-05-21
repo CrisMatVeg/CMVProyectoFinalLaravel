@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIXEL | Mi perfil</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -105,7 +106,7 @@
             <!-- HEADER -->
             <div class="auth-logo-wrap">
                 <div class="auth-logo pixel-logo">
-                    <i class="fa-solid fa-dice-d6"></i>PIXEL
+                    <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL
                 </div>
                 <p class="auth-subtitle">Editar perfil</p>
             </div>

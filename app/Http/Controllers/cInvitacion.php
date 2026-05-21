@@ -78,10 +78,9 @@ class cInvitacion extends Controller
     {
         $proyecto = $invitacion->proyecto;
 
-        $yaMiembro = $proyecto->miembros()->where('user_id', $usuario->id)->exists();
+        $yaMiembro = $proyecto->miembros()->where('id', $usuario->id)->exists();
 
         if (!$yaMiembro) {
-            $proyecto->miembros()->attach($usuario->id);
             $invitacion->increment('uses_count');
         }
 
