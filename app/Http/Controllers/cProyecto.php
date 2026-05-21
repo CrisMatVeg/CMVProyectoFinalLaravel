@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Proyecto;
-use App\Models\ProyectoAcceso;
-use App\Models\Tipo;
 use Illuminate\Support\Facades\Auth;
 
 class cProyecto extends Controller
@@ -22,17 +20,6 @@ class cProyecto extends Controller
             'description' => $data['description'],
             'created_by' => Auth::id(),
         ]);
-
-        $proyecto->miembros()->attach(Auth::id());
-
-        // Owner recibe acceso a todas las áreas del proyecto
-        foreach (Tipo::pluck('id') as $tipoId) {
-            ProyectoAcceso::create([
-                'proyecto_id' => $proyecto->id,
-                'user_id'     => Auth::id(),
-                'tipo_id'     => $tipoId,
-            ]);
-        }
 
         return redirect()->route('proyectos');
     }

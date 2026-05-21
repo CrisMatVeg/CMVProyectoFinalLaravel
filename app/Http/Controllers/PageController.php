@@ -62,7 +62,6 @@ class PageController extends Controller
             ->pluck('tipo_id')
             ->toArray();
 
-        // Sin rows → acceso legacy completo (todos los tipos)
         if (empty($tiposAccesibles)) {
             $tiposAccesibles = $tipos->pluck('id')->toArray();
         }
@@ -133,7 +132,7 @@ class PageController extends Controller
         }
 
         $miembros = $proyecto->miembros()
-            ->where('usuarios.id', '!=', $proyecto->created_by)
+            ->where('id', '!=', $proyecto->created_by)
             ->with(['tareas' => fn($q) => $q->where('project_id', $id)->with('tipo', 'status')])
             ->get()
             ->each(function ($m) use ($id) {
@@ -191,12 +190,10 @@ class PageController extends Controller
             ->pluck('user_id')
             ->toArray();
 
-        // Fallback legacy: si no hay registros de acceso por tipo, mostrar todos
-        // El owner nunca aparece como usuario invitable a tareas
         $ownerId  = $proyecto->created_by;
         $usuarios = empty($userIdsDelTipo)
-            ? $proyecto->miembros()->where('usuarios.id', '!=', $ownerId)->get()
-            : $proyecto->miembros()->whereIn('usuarios.id', $userIdsDelTipo)->where('usuarios.id', '!=', $ownerId)->get();
+            ? $proyecto->miembros()->where('id', '!=', $ownerId)->get()
+            : $proyecto->miembros()->whereIn('id', $userIdsDelTipo)->where('id', '!=', $ownerId)->get();
 
         return view('tareas', compact(
             'proyecto', 'tipo', 'tareas', 'estados',

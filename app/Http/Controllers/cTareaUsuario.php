@@ -42,7 +42,6 @@ class cTareaUsuario extends Controller
         }
 
         $tarea->usuarios()->syncWithoutDetaching($userId);
-        $proyecto->miembros()->syncWithoutDetaching($userId);
 
         return redirect()->back()->with('success', 'Usuario asignado correctamente.');
     }
@@ -66,7 +65,6 @@ class cTareaUsuario extends Controller
 
         foreach ($userIds as $userId) {
             $tarea->usuarios()->syncWithoutDetaching($userId);
-            $proyecto->miembros()->syncWithoutDetaching($userId);
         }
 
         return redirect()->back()->with('success', 'Departamento asignado correctamente.');

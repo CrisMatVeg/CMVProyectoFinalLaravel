@@ -119,7 +119,6 @@ class cUsuario extends Controller
             $inv = \App\Models\Invitacion::with('proyecto')
                 ->where('codigo', $codigoPendiente)->first();
             if ($inv && $inv->esValida()) {
-                $inv->proyecto->miembros()->attach($usuario->id);
                 $inv->increment('uses_count');
 
                 if (!empty($inv->areas)) {

@@ -200,8 +200,7 @@ class cForo extends Controller
     private function verificarMiembro(Proyecto $proyecto): void
     {
         $userId = Auth::id();
-        $esMiembro = $proyecto->miembros()->where('user_id', $userId)->exists()
-                  || $proyecto->created_by === $userId;
+        $esMiembro = $proyecto->miembros()->where('id', $userId)->exists();
 
         if (!$esMiembro) {
             abort(403);
