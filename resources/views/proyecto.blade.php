@@ -131,7 +131,7 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Proyecto</span>
       </div>
-      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Gantt</span>
       </a>

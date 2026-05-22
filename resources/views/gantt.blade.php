@@ -58,6 +58,34 @@
     }
     .filter-reset:hover { color: var(--white); border-color: var(--accent); }
 
+    @media (max-width: 767px) {
+      /* Filtros */
+      .gantt-filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 14px;
+      }
+      .gantt-filters select,
+      .gantt-filters input[type="date"] {
+        min-width: 0;
+        width: 100%;
+      }
+      .gantt-filters > label:nth-child(5),
+      .filter-reset {
+        grid-column: 1 / 3;
+        margin-left: 0;
+      }
+      .filter-reset {
+        align-self: auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+    }
+
     /* Leyenda */
     .gantt-legend {
       display: flex;
@@ -331,6 +359,27 @@
       overflow: visible;
       z-index: 5;
     }
+
+    /* ── Mobile ───────────────────────────────────────── */
+    @media (max-width: 767px) {
+      #gantt-container,
+      .gantt-legend { display: none; }
+      .gantt-desktop-only {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 48px 24px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-lg);
+        text-align: center;
+        color: var(--muted);
+      }
+    }
+    @media (min-width: 768px) {
+      .gantt-desktop-only { display: none; }
+    }
   </style>
 </head>
 
@@ -354,7 +403,7 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Proyecto</span>
       </a>
-      <div class="menu-item hover-lift active">
+      <div class="menu-item hover-lift active" data-mobile-hide="true">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Gantt</span>
       </div>
@@ -471,6 +520,12 @@
           <div class="legend-arrow"></div>
           <span>Dependencia</span>
         </div>
+      </div>
+
+      <!-- Aviso solo mobile -->
+      <div class="gantt-desktop-only">
+        <i class="fa-solid fa-desktop" style="font-size:2rem;opacity:.4;"></i>
+        <span style="font-size:14px;">El diagrama de Gantt solo está disponible en escritorio.</span>
       </div>
 
       <!-- GANTT -->
@@ -758,9 +813,11 @@
           </div>
         </div>`;
 
-      // Scroll hacia hoy
+      // Scroll hacia hoy (en mobile usa gantt-wrap como scroll container)
       const rp = container.querySelector('.gantt-right');
-      if (rp && showToday) rp.scrollLeft = Math.max(0, todayPx - 200);
+      const gw = container.querySelector('.gantt-wrap');
+      const scrollTarget = (window.innerWidth < 768 && gw) ? gw : rp;
+      if (scrollTarget && showToday) scrollTarget.scrollLeft = Math.max(0, todayPx - 110);
     }
 
     // ── Init ──────────────────────────────────────────────────────────────
