@@ -711,6 +711,174 @@
         [data-theme="light"] .lp-feat-card:hover,
         [data-theme="light"] .lp-step:hover,
         [data-theme="light"] .lp-number:hover { background: var(--bg-card); }
+
+        /* ══════════════════════════════════════════════════
+           RESPONSIVE — Tablet (768px – 1023px)
+        ══════════════════════════════════════════════════ */
+        @media (max-width: 1023px) {
+            .lp-nav { padding: 0 20px; }
+
+            .lp-slide { padding: 36px 40px; }
+
+            .lp-slide-hero {
+                padding: 36px 40px;
+                gap: 32px;
+            }
+
+            .lp-feat-grid { grid-template-columns: repeat(2, 1fr); }
+
+            .lp-numbers { grid-template-columns: repeat(2, 1fr); }
+
+            .mm-frame { max-width: 380px; }
+        }
+
+        /* ══════════════════════════════════════════════════
+           RESPONSIVE — Mobile (< 768px)
+        ══════════════════════════════════════════════════ */
+        @media (max-width: 767px) {
+
+            /* ── NAV ── */
+            .lp-nav { padding: 0 14px; height: 54px; }
+            .lp-nav-links { display: none; }
+            .lp-nav-logo span { font-size: 17px; }
+            .lp-nav-logo img  { height: 36px; }
+            .btn-nav { padding: 7px 14px; font-size: 12px; }
+
+            /* ── SLIDES: padding móvil, sin overflow horizontal ── */
+            .lp-slide {
+                padding: 22px 18px 16px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Títulos de sección más compactos */
+            .lp-eyebrow    { font-size: 10px; letter-spacing: .10em; margin-bottom: 8px; }
+            .lp-slide-title { font-size: clamp(20px, 6.5vw, 28px); line-height: 1.15; }
+            .lp-slide-head  { margin-bottom: 16px; }
+
+            /* ── SLIDE 1: HERO ── */
+            .lp-slide-hero {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 22px 18px 16px;
+                align-content: center;
+            }
+
+            /* Texto hero */
+            .lp-hero-left  { max-width: 100%; }
+            .lp-badge       { font-size: 10px; padding: 5px 12px; margin-bottom: 14px; }
+            .lp-hero-headline { font-size: clamp(26px, 8vw, 36px); margin-bottom: 12px; }
+            .lp-hero-sub      { font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
+            .btn-hero          { padding: 10px 18px; font-size: 13px; gap: 7px; }
+
+            /* Mockup compacto: vuelve a mostrarse pero adaptado */
+            .lp-hero-right {
+                display: flex;
+                justify-content: center;
+            }
+            .mm-frame { max-width: 100%; width: 100%; }
+            .mm-body  { height: 160px; }
+            .mm-side  { display: none; }
+            .mm-content { padding: 10px; gap: 7px; }
+            .mm-title-row { gap: 6px; }
+            .mm-heading { font-size: 12px; }
+            .mm-btn     { font-size: 9px; padding: 3px 8px; }
+            .mm-stats   { gap: 6px; }
+            .mm-stat    { padding: 6px 8px; }
+            .mm-stat-v  { font-size: 14px; }
+            .mm-stat-l  { font-size: 8px; }
+            .mm-cards   { gap: 6px; }
+            .mm-card    { padding: 7px; gap: 4px; }
+            .mm-badge   { font-size: 7px; padding: 2px 6px; }
+            .mm-card-t  { font-size: 9px; }
+
+            /* ── SLIDE 2: CARACTERÍSTICAS ── 2 col compacto ── */
+            .lp-feat-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .lp-feat-card {
+                padding: 14px 12px;
+                gap: 7px;
+            }
+            .lp-feat-icon { width: 32px; height: 32px; font-size: 13px; border-radius: 8px; }
+            .lp-feat-t    { font-size: 13px; line-height: 1.2; }
+            .lp-feat-d    { font-size: 11px; line-height: 1.5; }
+
+            /* ── SLIDE 3: CÓMO FUNCIONA ── número a la izquierda ── */
+            .lp-steps { grid-template-columns: 1fr; gap: 10px; }
+            .lp-step {
+                display: grid;
+                grid-template-columns: 52px 1fr;
+                grid-template-rows: auto auto;
+                column-gap: 14px;
+                row-gap: 3px;
+                padding: 14px 16px;
+            }
+            .lp-step-num {
+                grid-column: 1;
+                grid-row: 1 / 3;
+                font-size: 30px;
+                margin-bottom: 0;
+                align-self: center;
+                line-height: 1;
+            }
+            .lp-step-t {
+                grid-column: 2;
+                grid-row: 1;
+                font-size: 14px;
+                align-self: end;
+            }
+            .lp-step-d {
+                grid-column: 2;
+                grid-row: 2;
+                font-size: 12px;
+                line-height: 1.5;
+                align-self: start;
+            }
+
+            /* ── SLIDE 4: EN NÚMEROS ── 2x2 compacto ── */
+            .lp-numbers  { grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 100%; }
+            .lp-number   { padding: 18px 10px; }
+            .lp-number-v { font-size: clamp(30px, 9vw, 46px); margin-bottom: 6px; }
+            .lp-number-l { font-size: 11px; line-height: 1.4; }
+
+            /* ── SLIDE 5: CTA ── */
+            .lp-cta-card  { padding: 28px 20px; }
+            .lp-cta-title { font-size: clamp(20px, 6.5vw, 28px); line-height: 1.15; }
+            .lp-cta-sub   { font-size: 13px; margin-bottom: 20px; }
+            .lp-cta-logo  { width: 80px; margin-bottom: 14px; }
+            .lp-slide-cta { justify-content: center; }
+
+            /* ── FLECHAS: ocultas en mobile, se navega con swipe ── */
+            .lp-arrow { display: none; }
+
+            /* ── FOOTER BAR ── */
+            .lp-footer-bar { padding: 10px 16px; }
+
+            /* ── DOTS ── */
+            .lp-dots { display: flex; gap: 6px; align-items: center; }
+            .lp-dot {
+                width: 6px; height: 6px;
+                border-radius: 50%;
+                background: var(--border-strong);
+                transition: background 0.2s ease, width 0.2s ease;
+                cursor: pointer;
+                border: none;
+            }
+            .lp-dot.is-active {
+                background: var(--teal);
+                width: 18px;
+                border-radius: 3px;
+            }
+        }
+
+        /* Pantallas muy pequeñas (<400px): números 1 columna */
+        @media (max-width: 400px) {
+            .lp-numbers    { grid-template-columns: 1fr; }
+            .lp-feat-grid  { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 
@@ -978,7 +1146,30 @@
         const prevBtn    = document.getElementById('lp-prev');
         const nextBtn    = document.getElementById('lp-next');
         const themeBtn   = document.getElementById('lp-theme-btn');
+        const footerBar  = document.querySelector('.lp-footer-bar');
         let slide = 0;
+        let dots = [];
+
+        // Crear dots de navegación en mobile
+        function buildDots() {
+            if (window.innerWidth >= 768) return;
+            const container = document.createElement('div');
+            container.className = 'lp-dots';
+            for (let i = 0; i < TOTAL; i++) {
+                const d = document.createElement('button');
+                d.className = 'lp-dot';
+                d.setAttribute('aria-label', `Ir a slide ${i + 1}`);
+                d.addEventListener('click', () => goTo(i));
+                container.appendChild(d);
+                dots.push(d);
+            }
+            footerBar.insertBefore(container, footerBar.firstChild);
+            footerBar.style.justifyContent = 'space-between';
+        }
+
+        function updateDots(n) {
+            dots.forEach((d, i) => d.classList.toggle('is-active', i === n));
+        }
 
         function goTo(n) {
             slide = Math.max(0, Math.min(TOTAL - 1, n));
@@ -987,16 +1178,26 @@
             counterNum.textContent = String(slide + 1).padStart(2, '0');
             prevBtn.disabled = slide === 0;
             nextBtn.disabled = slide === TOTAL - 1;
+            updateDots(slide);
         }
 
         prevBtn.addEventListener('click', () => goTo(slide - 1));
         nextBtn.addEventListener('click', () => goTo(slide + 1));
         navLinks.forEach((l, i) => l.addEventListener('click', () => goTo(i)));
 
+        // Swipe táctil
+        let touchStartX = 0;
+        track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend', e => {
+            const delta = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(delta) > 50) goTo(delta > 0 ? slide + 1 : slide - 1);
+        });
+
         themeBtn.addEventListener('click', () => {
             if (window.toggleTheme) window.toggleTheme();
         });
 
+        buildDots();
         goTo(0);
     </script>
 
