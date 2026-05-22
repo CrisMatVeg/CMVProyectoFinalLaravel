@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ confirmOpen: false, confirmId: null }">
     @error('contenido')
         <div class="flash error"><i class="fa-solid fa-circle-xmark"></i> {{ $message }}</div>
     @enderror
@@ -37,9 +37,7 @@
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
                                     <div x-show="open" @click.outside="open = false" class="msg-menu-dropdown" x-cloak>
-                                        <button wire:click="eliminarRespuesta({{ $mensaje->id }})"
-                                                wire:confirm="¿Eliminar esta respuesta?"
-                                                @click="open = false"
+                                        <button @click="confirmId = {{ $mensaje->id }}; confirmOpen = true; open = false"
                                                 class="msg-menu-item del">
                                             <i class="fa-solid fa-trash"></i> Eliminar
                                         </button>
@@ -59,6 +57,27 @@
                                          alt="{{ $adj->original_name }}"
                                          loading="lazy"
                                          onclick="openPreview({ dataset: { previewId: '{{ $adj->id }}', previewCat: 'imagen', previewUrl: '{{ asset('storage/'.$adj->path) }}', previewName: '{{ addslashes($adj->original_name) }}' } })">
+                                    <div class="msg-adjunto img-card-mobile">
+                                        <div class="file-icon imagen"><i class="fa-solid fa-file-image"></i></div>
+                                        <div class="msg-adjunto-info">
+                                            <span class="msg-adjunto-name" title="{{ $adj->original_name }}">{{ $adj->original_name }}</span>
+                                            <span class="msg-adjunto-size">{{ $adj->size_formateado }}</span>
+                                        </div>
+                                        <div class="msg-adjunto-actions">
+                                            <button class="file-btn" title="Vista previa"
+                                                    onclick="openPreview(this)"
+                                                    data-preview-id="{{ $adj->id }}"
+                                                    data-preview-cat="imagen"
+                                                    data-preview-url="{{ asset('storage/'.$adj->path) }}"
+                                                    data-preview-name="{{ addslashes($adj->original_name) }}">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <a href="{{ route('foro.archivo.download', $adj->id) }}"
+                                               class="file-btn" title="Descargar">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 @else
                                     <div class="msg-adjunto">
                                         <div class="file-icon {{ $adj->categoria }}">
@@ -135,6 +154,18 @@
                         </span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal confirmación eliminar respuesta --}}
+    <div x-show="confirmOpen" class="confirm-modal-overlay" style="display:none;" @click.self="confirmOpen = false">
+        <div class="confirm-modal">
+            <p class="confirm-modal-title">Eliminar respuesta</p>
+            <p class="confirm-modal-desc">¿Eliminar esta respuesta? Esta acción no se puede deshacer.</p>
+            <div class="confirm-modal-actions">
+                <button @click="confirmOpen = false" class="btn-ghost" style="padding:8px 20px;">Cancelar</button>
+                <button @click="$wire.eliminarRespuesta(confirmId); confirmOpen = false" class="btn-danger">Eliminar</button>
             </div>
         </div>
     </div>

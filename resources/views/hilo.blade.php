@@ -371,6 +371,85 @@
       white-space: nowrap;
     }
 
+    /* Tarjeta alternativa para imágenes (visible solo en mobile) */
+    .img-card-mobile { display: none; }
+
+    /* ── Mobile: reply box fijo arriba de la bottom nav ─ */
+    @media (max-width: 767px) {
+      .reply-box {
+        position: fixed;
+        bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom));
+        left: 0;
+        right: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        margin-top: 0;
+        z-index: 90;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+      }
+      /* Espacio para que los mensajes no queden tapados por el reply-box fijo */
+      .mensajes-list {
+        padding-bottom: 130px;
+      }
+      footer { display: none; }
+      .img-thumb-adjunto { display: none !important; }
+      .img-card-mobile { display: flex; }
+    }
+
+    /* ── Modal confirmación ─────────────────────────── */
+    .confirm-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      backdrop-filter: blur(2px);
+    }
+    .confirm-modal {
+      background: var(--cardgrey);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .confirm-modal-title {
+      font-family: var(--font-title);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .confirm-modal-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .confirm-modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-danger:hover { background: #dc2626; }
+
     /* ── Modal preview ───────────────────────────────── */
     .modal-overlay {
       position: fixed;
@@ -430,7 +509,7 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Proyecto</span>
       </a>
-      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Gantt</span>
       </a>
@@ -512,15 +591,26 @@
             </div>
           </div>
           @if($hilo->user_id === auth()->id() || $proyecto->created_by === auth()->id())
-          <form action="{{ route('proyecto.foro.destroy', [$proyecto->id, $hilo->id]) }}"
-                method="POST"
-                onsubmit="return confirm('¿Eliminar este hilo y todos sus mensajes?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="file-btn del" title="Eliminar hilo">
+          <div x-data="{ hiloConfirm: false }">
+            <button @click="hiloConfirm = true" class="file-btn del" title="Eliminar hilo">
               <i class="fa-solid fa-trash"></i>
             </button>
-          </form>
+            <form action="{{ route('proyecto.foro.destroy', [$proyecto->id, $hilo->id]) }}"
+                  method="POST" id="delete-hilo-form">
+              @csrf
+              @method('DELETE')
+            </form>
+            <div x-show="hiloConfirm" class="confirm-modal-overlay" style="display:none;" @click.self="hiloConfirm = false">
+              <div class="confirm-modal">
+                <p class="confirm-modal-title">Eliminar hilo</p>
+                <p class="confirm-modal-desc">¿Eliminar este hilo y todos sus mensajes? Esta acción no se puede deshacer.</p>
+                <div class="confirm-modal-actions">
+                  <button @click="hiloConfirm = false" class="btn-ghost" style="padding:8px 20px;">Cancelar</button>
+                  <button @click="document.getElementById('delete-hilo-form').submit()" class="btn-danger">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          </div>
           @endif
         </div>
 
@@ -536,6 +626,26 @@
                alt="{{ $adj->original_name }}"
                loading="lazy"
                onclick="openPreview({ dataset: { previewId: '{{ $adj->id }}', previewCat: 'imagen', previewUrl: '{{ asset('storage/'.$adj->path) }}', previewName: '{{ addslashes($adj->original_name) }}' } })">
+          <div class="msg-adjunto img-card-mobile">
+            <div class="file-icon imagen"><i class="fa-solid fa-file-image"></i></div>
+            <div class="msg-adjunto-info">
+              <span class="msg-adjunto-name" title="{{ $adj->original_name }}">{{ $adj->original_name }}</span>
+              <span class="msg-adjunto-size">{{ $adj->size_formateado }}</span>
+            </div>
+            <div class="msg-adjunto-actions">
+              <button class="file-btn" title="Vista previa"
+                      onclick="openPreview(this)"
+                      data-preview-id="{{ $adj->id }}"
+                      data-preview-cat="imagen"
+                      data-preview-url="{{ asset('storage/'.$adj->path) }}"
+                      data-preview-name="{{ addslashes($adj->original_name) }}">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              <a href="{{ route('foro.archivo.download', $adj->id) }}" class="file-btn" title="Descargar">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
           @else
           <div class="msg-adjunto">
             <div class="file-icon {{ $adj->categoria }}"><i class="fa-solid {{ $ico }}"></i></div>
