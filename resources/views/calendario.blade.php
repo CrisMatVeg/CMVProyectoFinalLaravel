@@ -86,6 +86,32 @@
     }
     .cal-filter-reset:hover { color: var(--white); border-color: var(--accent); }
 
+    @media (max-width: 767px) {
+      .cal-filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 14px;
+      }
+      .cal-filters label {
+        width: 100%;
+      }
+      .cal-filters select {
+        min-width: 0;
+        width: 100%;
+      }
+      .cal-filter-reset {
+        grid-column: 1 / 3;
+        margin-left: 0;
+        align-self: auto;
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+    }
+
     /* ── Grid del calendario ──────────────────────────────── */
     .cal-grid-wrap {
       border: 1px solid var(--border);
@@ -456,7 +482,7 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Proyecto</span>
       </a>
-      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Gantt</span>
       </a>
@@ -901,6 +927,19 @@
       renderCalendar();
       document.getElementById('f-tipo').addEventListener('change', renderCalendar);
       document.getElementById('f-estado').addEventListener('change', renderCalendar);
+
+      // Swipe horizontal en mobile para cambiar de mes
+      const calWrap = document.getElementById('cal-grid-wrap');
+      let swipeStartX = null;
+      calWrap.addEventListener('touchstart', e => {
+        swipeStartX = e.touches[0].clientX;
+      }, { passive: true });
+      calWrap.addEventListener('touchend', e => {
+        if (swipeStartX === null) return;
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        if (Math.abs(dx) > 50) changeMonth(dx < 0 ? 1 : -1);
+        swipeStartX = null;
+      }, { passive: true });
     });
   </script>
 </body>

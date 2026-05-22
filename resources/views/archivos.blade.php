@@ -63,6 +63,28 @@
     }
     .filter-select:focus { outline: none; border-color: var(--accent); }
 
+    /* ── Filtros mobile ───────────────────────────── */
+    @media (max-width: 767px) {
+      .filter-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 14px;
+      }
+      .filter-bar .filter-group:first-child {
+        grid-column: 1 / 3;
+      }
+      .filter-bar .filter-group:nth-child(2) {
+        margin-left: 0 !important;
+      }
+      .filter-select,
+      #search-input {
+        width: 100% !important;
+        box-sizing: border-box;
+      }
+      .file-thumb { display: none; }
+    }
+
     /* ── Grid de archivos ──────────────────────────── */
     .files-grid {
       display: grid;
@@ -452,7 +474,7 @@
         <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
         <span>Proyecto</span>
       </a>
-      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
         <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
         <span>Gantt</span>
       </a>

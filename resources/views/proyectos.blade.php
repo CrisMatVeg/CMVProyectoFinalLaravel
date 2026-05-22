@@ -85,6 +85,33 @@
         gap: 10px;
         text-align: center;
       }
+
+      .projects-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+
+      .projects-section h2 {
+        font-size: 20px;
+        white-space: nowrap;
+      }
+
+      .create-project-btn,
+      .join-project-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .projects-container {
+        padding: 20px 16px;
+        gap: 28px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
     }
 
     /* ======================================================
@@ -107,6 +134,21 @@
     .main-card {
       width: 100%;
       max-width: 480px;
+    }
+
+    /* Reset del layout flex-row que estilos.css aplica a .main-card en mobile */
+    .modal-overlay .main-card {
+      display: block;
+      width: 90%;
+      max-width: 440px;
+      text-align: center;
+      padding: 28px 26px;
+    }
+
+    .modal-overlay .main-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 10px 0 20px;
     }
 
     .modal-header {
