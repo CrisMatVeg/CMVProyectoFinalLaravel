@@ -366,6 +366,56 @@
             text-align: center;
             padding: 20px 0;
         }
+
+        @media (max-width: 767px) {
+            .task-grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px;
+                margin-top: 12px;
+            }
+            .task-card.card {
+                padding: 12px;
+            }
+            .task-card {
+                gap: 6px;
+            }
+            .task-header {
+                align-items: center;
+            }
+            .task-badges {
+                gap: 2px;
+            }
+            .overdue-badge--placeholder { display: none; }
+            .task-badges-row--sub { min-height: 0; }
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+            .task-actions { gap: 5px; }
+            .main-card-title { font-size: 14px; }
+            .task-desc {
+                font-size: 12px !important;
+                margin-bottom: 2px !important;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .task-meta {
+                margin-top: 0;
+                padding-top: 8px;
+            }
+            .task-badge {
+                font-size: 10px;
+                padding: 2px 7px;
+            }
+            .user-mini-avatar {
+                width: 24px;
+                height: 24px;
+                font-size: 9px;
+            }
+        }
     </style>
 </head>
 
@@ -394,7 +444,7 @@
                 <span class="menu-icon"><i class="fa-solid fa-list-check"></i></span>
                 <span>{{ $tipo->name }}</span>
             </div>
-            <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift">
+            <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
                 <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
                 <span>Gantt</span>
             </a>
