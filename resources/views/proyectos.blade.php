@@ -228,24 +228,41 @@
       overflow: hidden;
       word-break: break-all;
     }
+
+    .logo img {
+      height: 60px;
+      width: auto;
+    }
+
+    .join-modal-hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .join-modal-error {
+      color: red;
+      margin-bottom: 10px;
+    }
+
+    .codigo-input {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
   </style>
 </head>
 
 <body class="magenta">
   <!-- HEADER -->
   <header>
-    <div class="title-gradient logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;">PIXEL</div>
+    <div class="title-gradient logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <div>
       <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
         <i class="fa-solid fa-circle-half-stroke"></i>
       </button>
       <a href="{{ route('perfil') }}" title="Editar perfil" class="header-perfil-link">
         <div class="user-avatar">
-          @php
-            $partes = explode(' ', trim($usuario->description));
-            $iniciales = strtoupper(substr($partes[0], 0, 1)) . (isset($partes[1]) ? strtoupper(substr($partes[1], 0, 1)) : '');
-          @endphp
-          {{ $iniciales }}
+            {{ $usuario->initials }}
         </div>
       </a>
       <form action="{{ route('logout') }}" method="POST">
@@ -430,19 +447,18 @@
   <div class="main-card">
     <header class="modal-header">
       <h2 class="title-gradient">Unirse a un proyecto</h2>
-      <p style="color:var(--muted);font-size:14px;margin-top:6px;">Ingresa el código de invitación que recibiste.</p>
+      <p class="join-modal-hint">Ingresa el código de invitación que recibiste.</p>
     </header>
 
     @error('codigo')
-    <div style="color:red;margin-bottom:10px;">{{ $message }}</div>
+    <div class="join-modal-error">{{ $message }}</div>
     @enderror
 
     <form method="POST" action="{{ route('invitacion.unirse') }}">
       @csrf
       <div class="form-group">
         <label>Código de invitación</label>
-        <input type="text" name="codigo" placeholder="PROY-XXXXXXXX"
-               style="text-transform:uppercase;letter-spacing:2px;" required>
+        <input type="text" name="codigo" placeholder="PROY-XXXXXXXX" class="codigo-input" required>
       </div>
       <div class="modal-actions">
         <button type="submit" class="btn-primary hover-lift">Unirme</button>

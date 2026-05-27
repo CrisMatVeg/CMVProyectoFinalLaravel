@@ -218,6 +218,8 @@
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
+            font-size: 13px;
+            margin-bottom: 8px;
         }
 
         /* Selector de dependencias */
@@ -367,6 +369,39 @@
             padding: 20px 0;
         }
 
+        .stats-tareas        { margin: 24px 0; grid-template-columns: repeat(3, 1fr); }
+        .notas-count-badge   { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 9px; display: grid; place-items: center; font-weight: 700; }
+        .action-btn-delete   { color: #ef4444; }
+        .blocked-info-icon   { margin-top: 1px; flex-shrink: 0; }
+        .task-meta-badges    { display: flex; gap: 6px; flex-wrap: wrap; }
+        .task-badge-date     { background: rgba(99,102,241,.2); color: #818cf8; }
+        .task-empty          { grid-column: 1 / -1; text-align: center; padding: 48px; }
+        .task-empty-icon     { color: var(--muted); margin-bottom: 16px; }
+        .modal-title         { margin-bottom: 20px; }
+        .modal-title-sm      { margin-bottom: 8px; }
+        .modal-title-xs      { margin-bottom: 4px; }
+        .milestone-icon-gold { color: #fbbf24; margin-right: 6px; }
+        .form-row-2col       { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-footer         { display: flex; gap: 12px; margin-top: 12px; }
+        .form-footer-center  { display: flex; gap: 12px; justify-content: center; }
+        .form-footer-btns    { display: flex; gap: 12px; }
+        .btn-flex-1          { flex: 1; }
+        .btn-full            { width: 100%; }
+        .btn-delete          { background: #ef4444 !important; border-color: #ef4444 !important; }
+        .assign-subtitle     { font-size: 14px; }
+        .assign-separator    { border-top: 1px solid var(--border); margin: 20px 0; position: relative; text-align: center; }
+        .assign-separator span { background: var(--cardgrey); padding: 0 10px; font-size: 11px; color: var(--muted); position: relative; top: -9px; letter-spacing: .5px; }
+        .modal-delete-box    { max-width: 400px; text-align: center; }
+        .delete-warning-icon { color: #ef4444; margin-bottom: 16px; }
+        .delete-h2           { margin-bottom: 8px; font-family: var(--font-title); }
+        .delete-subtitle     { margin-bottom: 24px; font-size: 14px; }
+        .notas-modal-box     { max-width: 520px; }
+        .notas-subtitle      { font-size: 13px; margin-bottom: 20px; }
+        #notas-list          { max-height: 320px; overflow-y: auto; margin-bottom: 20px; }
+        .form-group-sm       { margin-bottom: 10px; }
+        .label-sm            { font-size: 13px; }
+        .textarea-resize-v   { resize: vertical; }
+
         @media (max-width: 767px) {
             .task-grid {
                 grid-template-columns: 1fr !important;
@@ -423,17 +458,17 @@
     $colorMap = [
         'Desarrollo' => 'teal',
         'Diseño'     => 'magenta',
-        'Audio'      => 'blue',
-        'Narrativa'  => 'green',
-        'Marketing'  => 'purple',
-        'Arte'       => 'orange',
+        'Audio'      => 'green',
+        'Narrativa'  => 'purple',
+        'Marketing'  => 'orange',
+        'Arte'       => 'blue',
     ];
     $colorClass = $colorMap[$tipo->name] ?? 'teal';
 @endphp
 
 <body class="{{ $colorClass }}">
     <aside class="sidebar">
-        <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+        <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
         <nav class="menu">
             <span class="menu-section">Proyecto</span>
             <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -495,19 +530,19 @@
 
     <main>
         <div class="main-content">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div class="page-header-bar">
                 <div>
                     <h1 class="title-gradient">{{ $tipo->name }}</h1>
                     <p class="subtitle">{{ $proyecto->name }} • Listado de tareas y seguimiento</p>
                 </div>
                 @if($esOwner)
                 <button class="btn-primary hover-lift" onclick="openModal('modal-create')">
-                    <i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Nueva Tarea
+                    <i class="fa-solid fa-plus btn-icon-mr"></i>Nueva Tarea
                 </button>
                 @endif
             </div>
 
-            <section class="stats" style="margin: 24px 0; grid-template-columns: repeat(3, 1fr);">
+            <section class="stats stats-tareas">
                 <div class="card">
                     <div class="stat-icon"><i class="fa-solid fa-tasks"></i></div>
                     <div class="stat-title">Tareas Totales</div>
@@ -585,7 +620,7 @@
                                     onclick="openNotasModal(this)">
                                     <i class="fa-solid fa-note-sticky"></i>
                                     @if($tarea->notas->count() > 0)
-                                        <span style="position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:grid;place-items:center;font-weight:700;">{{ $tarea->notas->count() }}</span>
+                                        <span class="notas-count-badge">{{ $tarea->notas->count() }}</span>
                                     @endif
                                 </button>
                                 @if($esOwner)
@@ -606,7 +641,7 @@
                                     )">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button class="action-btn" title="Eliminar" style="color: #ef4444;"
+                                <button class="action-btn action-btn-delete" title="Eliminar"
                                     onclick="openDeleteModal({{ $tarea->id }}, @js($tarea->title))">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -616,21 +651,21 @@
 
                         @if($isBlocked)
                             <div class="blocked-info">
-                                <i class="fa-solid fa-circle-exclamation" style="margin-top:1px;flex-shrink:0;"></i>
+                                <i class="fa-solid fa-circle-exclamation blocked-info-icon"></i>
                                 <span>Esperando: <strong>{{ $blockingList }}</strong></span>
                             </div>
                         @endif
 
                         <h3 class="main-card-title">{{ $tarea->title }}</h3>
-                        <p class="subtitle task-desc" style="font-size: 13px; margin-bottom: 8px;">{{ $tarea->description }}</p>
+                        <p class="subtitle task-desc">{{ $tarea->description }}</p>
 
                         <div class="task-meta">
-                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <div class="task-meta-badges">
                                 <div class="task-badge">
                                     <i class="fa-solid fa-hourglass-half"></i> {{ $tarea->estimated_hours }}h
                                 </div>
                                 @if($tarea->start_date)
-                                    <div class="task-badge" style="background:rgba(99,102,241,.2);color:#818cf8;">
+                                    <div class="task-badge task-badge-date">
                                         <i class="fa-solid fa-calendar"></i> {{ \Carbon\Carbon::parse($tarea->start_date)->format('d/m') }}
                                     </div>
                                 @endif
@@ -645,8 +680,8 @@
                         </div>
                     </div>
                 @empty
-                    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
-                        <i class="fa-solid fa-clipboard-list fa-3x" style="color: var(--muted); margin-bottom: 16px;"></i>
+                    <div class="card task-empty">
+                        <i class="fa-solid fa-clipboard-list fa-3x task-empty-icon"></i>
                         @if($esOwner)
                             <p class="subtitle">No hay tareas en esta categoría. ¡Crea la primera!</p>
                         @else
@@ -666,7 +701,7 @@
     <!-- ═══════════════════════ MODAL CREAR ═══════════════════════ -->
     <div id="modal-create" class="modal">
         <div class="modal-content">
-            <h2 class="title-gradient" style="margin-bottom: 20px;">Nueva Tarea</h2>
+            <h2 class="title-gradient modal-title">Nueva Tarea</h2>
             <form action="{{ route('tareas.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="project_id" value="{{ $proyecto->id }}">
@@ -677,7 +712,7 @@
                     <input type="checkbox" name="is_milestone" value="1" id="create-milestone-cb"
                            onchange="toggleMilestoneCreate(this.checked)">
                     <div>
-                        <span><i class="fa-solid fa-diamond" style="color:#fbbf24;margin-right:6px;"></i>Marcar como Milestone</span>
+                        <span><i class="fa-solid fa-diamond milestone-icon-gold"></i>Marcar como Milestone</span>
                         <small>Hito clave del proyecto (entrega, evento, lanzamiento…)</small>
                     </div>
                 </label>
@@ -692,7 +727,7 @@
                     <textarea name="description" rows="2" placeholder="¿Qué hay que hacer?" maxlength="500"></textarea>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-row-2col">
                     <div class="form-group">
                         <label>Estado Inicial</label>
                         <select name="status_id" required>
@@ -707,7 +742,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-row-2col">
                     <div class="form-group">
                         <label>Fecha Inicio *</label>
                         <input type="date" name="start_date" required>
@@ -723,8 +758,8 @@
                     <div class="dep-list" id="create-dep-list"></div>
                 </div>
 
-                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" class="btn-primary" style="flex: 1;">Crear Tarea</button>
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary btn-flex-1">Crear Tarea</button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-create')">Cancelar</button>
                 </div>
             </form>
@@ -734,8 +769,8 @@
     <!-- ═══════════════════════ MODAL ASIGNAR ═══════════════════════ -->
     <div id="modal-assign" class="modal">
         <div class="modal-content">
-            <h2 class="title-gradient" style="margin-bottom: 8px;">Asignar Colaborador</h2>
-            <p class="subtitle" id="assign-task-title" style="font-size: 14px;"></p>
+            <h2 class="title-gradient modal-title-sm">Asignar Colaborador</h2>
+            <p class="subtitle assign-subtitle" id="assign-task-title"></p>
 
             {{-- Asignar usuario individual --}}
             <form action="{{ route('tarea.usuario.assign') }}" method="POST">
@@ -750,15 +785,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" class="btn-primary" style="flex: 1;">Asignar</button>
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary btn-flex-1">Asignar</button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-assign')">Cancelar</button>
                 </div>
             </form>
 
             {{-- Separador --}}
-            <div style="border-top:1px solid var(--border); margin: 20px 0; position:relative; text-align:center;">
-                <span style="background:var(--cardgrey);padding:0 10px;font-size:11px;color:var(--muted);position:relative;top:-9px;letter-spacing:.5px;">O ASIGNAR DEPARTAMENTO COMPLETO</span>
+            <div class="assign-separator">
+                <span>O ASIGNAR DEPARTAMENTO COMPLETO</span>
             </div>
 
             {{-- Asignar todos los miembros del departamento actual --}}
@@ -766,8 +801,8 @@
                 @csrf
                 <input type="hidden" name="task_id" id="assign-dept-task-id">
                 <input type="hidden" name="tipo_id" value="{{ $tipo->id }}">
-                <button type="submit" class="btn-secondary" style="width:100%;">
-                    <i class="fa-solid fa-users" style="margin-right:6px;"></i>Asignar todo {{ $tipo->name }}
+                <button type="submit" class="btn-secondary btn-full">
+                    <i class="fa-solid fa-users btn-icon-mr-sm"></i>Asignar todo {{ $tipo->name }}
                 </button>
             </form>
         </div>
@@ -776,7 +811,7 @@
     <!-- ═══════════════════════ MODAL EDITAR ═══════════════════════ -->
     <div id="modal-edit" class="modal">
         <div class="modal-content">
-            <h2 class="title-gradient" style="margin-bottom: 20px;">Editar Tarea</h2>
+            <h2 class="title-gradient modal-title">Editar Tarea</h2>
             <form id="edit-form" method="POST">
                 @csrf @method('PUT')
                 <input type="hidden" name="type_id" value="{{ $tipo->id }}">
@@ -786,7 +821,7 @@
                     <input type="checkbox" name="is_milestone" value="1" id="edit-milestone-cb"
                            onchange="toggleMilestoneEdit(this.checked)">
                     <div>
-                        <span><i class="fa-solid fa-diamond" style="color:#fbbf24;margin-right:6px;"></i>Marcar como Milestone</span>
+                        <span><i class="fa-solid fa-diamond milestone-icon-gold"></i>Marcar como Milestone</span>
                         <small>Hito clave del proyecto (entrega, evento, lanzamiento…)</small>
                     </div>
                 </label>
@@ -801,7 +836,7 @@
                     <textarea id="edit-description" name="description" rows="2" maxlength="500"></textarea>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-row-2col">
                     <div class="form-group">
                         <label>Estado</label>
                         <select id="edit-status-id" name="status_id" required>
@@ -816,7 +851,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-row-2col">
                     <div class="form-group">
                         <label>Fecha Inicio *</label>
                         <input type="date" id="edit-start-date" name="start_date" required>
@@ -832,8 +867,8 @@
                     <div class="dep-list" id="edit-dep-list"></div>
                 </div>
 
-                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" class="btn-primary" style="flex: 1;">Guardar Cambios</button>
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary btn-flex-1">Guardar Cambios</button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-edit')">Cancelar</button>
                 </div>
             </form>
@@ -842,15 +877,15 @@
 
     <!-- ═══════════════════════ MODAL ELIMINAR ═══════════════════════ -->
     <div id="modal-delete" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <i class="fa-solid fa-triangle-exclamation fa-2x" style="color: #ef4444; margin-bottom: 16px;"></i>
-            <h2 style="margin-bottom: 8px; font-family: var(--font-title);">¿Eliminar tarea?</h2>
-            <p class="subtitle" id="delete-task-name" style="margin-bottom: 24px; font-size: 14px;"></p>
+        <div class="modal-content modal-delete-box">
+            <i class="fa-solid fa-triangle-exclamation fa-2x delete-warning-icon"></i>
+            <h2 class="delete-h2">¿Eliminar tarea?</h2>
+            <p class="subtitle delete-subtitle" id="delete-task-name"></p>
             <form id="delete-form" method="POST">
                 @csrf @method('DELETE')
-                <div style="display: flex; gap: 12px; justify-content: center;">
-                    <button type="submit" class="btn-primary" style="background: #ef4444; border-color: #ef4444; flex: 1;">
-                        <i class="fa-solid fa-trash" style="margin-right: 6px;"></i>Eliminar
+                <div class="form-footer-center">
+                    <button type="submit" class="btn-primary btn-delete btn-flex-1">
+                        <i class="fa-solid fa-trash btn-icon-mr-sm"></i>Eliminar
                     </button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-delete')">Cancelar</button>
                 </div>
@@ -1012,24 +1047,24 @@
 
     <!-- ═══════════════════════ MODAL NOTAS ═══════════════════════ -->
     <div id="modal-notas" class="modal">
-        <div class="modal-content" style="max-width: 520px;">
-            <h2 class="title-gradient" style="margin-bottom: 4px;">
-                <i class="fa-solid fa-note-sticky" style="margin-right:8px;"></i>Notas de progreso
+        <div class="modal-content notas-modal-box">
+            <h2 class="title-gradient modal-title-xs">
+                <i class="fa-solid fa-note-sticky btn-icon-mr-lg"></i>Notas de progreso
             </h2>
-            <p class="subtitle" id="notas-task-title" style="font-size:13px;margin-bottom:20px;"></p>
+            <p class="subtitle notas-subtitle" id="notas-task-title"></p>
 
-            <div id="notas-list" style="max-height:320px;overflow-y:auto;margin-bottom:20px;"></div>
+            <div id="notas-list"></div>
 
             <form id="notas-form" method="POST">
                 @csrf
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label style="font-size:13px;">Añadir nota</label>
+                <div class="form-group form-group-sm">
+                    <label class="label-sm">Añadir nota</label>
                     <textarea name="contenido" rows="3" placeholder="Escribe tu nota de progreso..." required
-                        style="resize:vertical;"></textarea>
+                        class="textarea-resize-v"></textarea>
                 </div>
-                <div style="display:flex;gap:12px;">
-                    <button type="submit" class="btn-primary" style="flex:1;">
-                        <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Enviar nota
+                <div class="form-footer-btns">
+                    <button type="submit" class="btn-primary btn-flex-1">
+                        <i class="fa-solid fa-paper-plane btn-icon-mr-sm"></i>Enviar nota
                     </button>
                     <button type="button" class="btn-secondary" onclick="closeModal('modal-notas')">Cancelar</button>
                 </div>

@@ -237,14 +237,43 @@
       border-radius: 20px;
       padding: 3px 10px;
       font-size: 11px; color: var(--muted);
+      margin-left: 8px;
     }
+
+    .header-mb-24        { margin-bottom: 24px; }
+    .export-desc         { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .export-warn         { font-size: 13px; color: #f87171; margin-bottom: 12px; }
+    .motor-disabled      { opacity: .4; cursor: not-allowed; }
+    .motor-subtitle      { font-size: 11px; font-weight: 400; opacity: .7; }
+    .motor-download-icon { margin-left: auto; font-size: 12px; opacity: .6; }
+    .section-icon-accent { color: var(--accent); margin-right: 8px; }
+    .section-icon-purple { color: #a855f7; margin-right: 8px; }
+    .section-icon-orange { color: #fb923c; margin-right: 8px; }
+    .icon-accent         { color: var(--accent); }
+    .table-wrapper       { background: var(--cardgrey); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .th-center           { text-align: center; }
+    .td-bold             { font-weight: 600; }
+    .td-center-green     { text-align: center; color: #4ade80; }
+    .td-center-red       { text-align: center; color: #ef4444; }
+    .td-center-blue      { text-align: center; color: #3b82f6; }
+    .td-center-orange    { text-align: center; color: #fb923c; }
+    .td-center-bold      { text-align: center; font-weight: 600; }
+    .td-right            { text-align: right; }
+    .row-actions-end     { justify-content: flex-end; }
+    .empty-icon          { opacity: .25; font-size: 1.5rem; display: block; margin-bottom: 10px; }
+    .td-muted-200        { color: var(--muted); max-width: 200px; }
+    .text-clamp-2        { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .td-order            { text-align: center; font-family: 'Courier New', monospace; font-weight: 700; color: var(--accent); }
+    .td-mono-muted       { font-family: 'Courier New', monospace; font-size: 12px; color: var(--muted); }
+    .td-max-260          { max-width: 260px; }
+    .textarea-tall       { min-height: 90px; }
   </style>
 </head>
 
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -308,7 +337,7 @@
     <div class="main-content">
 
       <!-- Header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+      <div class="page-header-bar header-mb-24">
         <div>
           <h1 class="title-gradient">Predefinición de Datos</h1>
           <p class="subtitle">{{ $proyecto->name }}</p>
@@ -325,43 +354,43 @@
       <!-- Panel de exportación -->
       <div class="export-panel">
         <div class="export-title">
-          <i class="fa-solid fa-file-export" style="color:var(--accent);"></i>
+          <i class="fa-solid fa-file-export icon-accent"></i>
           Exportar datos del juego
         </div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
+        <p class="export-desc">
           Selecciona el motor destino. El JSON se adapta automáticamente a su formato.
         </p>
         @php $hayDatos = $personajes->count() + $items->count() + $dialogos->count() > 0; @endphp
         @if(!$hayDatos)
-          <p style="font-size:13px;color:#f87171;margin-bottom:12px;">
-            <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
+          <p class="export-warn">
+            <i class="fa-solid fa-circle-exclamation btn-icon-mr-sm"></i>
             No hay datos para exportar. Crea al menos un personaje, ítem o diálogo.
           </p>
         @endif
         <div class="motor-grid">
-          <button class="motor-btn unity hover-lift" onclick="exportarDatos('unity')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
+          <button class="motor-btn unity hover-lift {{ !$hayDatos ? 'motor-disabled' : '' }}" onclick="exportarDatos('unity')" {{ !$hayDatos ? 'disabled' : '' }}>
             <div class="motor-icon unity"><i class="fa-solid fa-cube"></i></div>
             <div>
               <div>Unity</div>
-              <div style="font-size:11px;font-weight:400;opacity:.7;">Nomenclatura C# (m_Field)</div>
+              <div class="motor-subtitle">Nomenclatura C# (m_Field)</div>
             </div>
-            <i class="fa-solid fa-download" style="margin-left:auto;font-size:12px;opacity:.6;"></i>
+            <i class="fa-solid fa-download motor-download-icon"></i>
           </button>
-          <button class="motor-btn unreal hover-lift" onclick="exportarDatos('unreal')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
+          <button class="motor-btn unreal hover-lift {{ !$hayDatos ? 'motor-disabled' : '' }}" onclick="exportarDatos('unreal')" {{ !$hayDatos ? 'disabled' : '' }}>
             <div class="motor-icon unreal"><i class="fa-solid fa-dragon"></i></div>
             <div>
               <div>Unreal Engine</div>
-              <div style="font-size:11px;font-weight:400;opacity:.7;">Array con clave "Name" (DataTable)</div>
+              <div class="motor-subtitle">Array con clave "Name" (DataTable)</div>
             </div>
-            <i class="fa-solid fa-download" style="margin-left:auto;font-size:12px;opacity:.6;"></i>
+            <i class="fa-solid fa-download motor-download-icon"></i>
           </button>
-          <button class="motor-btn godot hover-lift" onclick="exportarDatos('godot')" {{ !$hayDatos ? 'disabled' : '' }} style="{{ !$hayDatos ? 'opacity:.4;cursor:not-allowed;' : '' }}">
+          <button class="motor-btn godot hover-lift {{ !$hayDatos ? 'motor-disabled' : '' }}" onclick="exportarDatos('godot')" {{ !$hayDatos ? 'disabled' : '' }}>
             <div class="motor-icon godot"><i class="fa-solid fa-robot"></i></div>
             <div>
               <div>Godot</div>
-              <div style="font-size:11px;font-weight:400;opacity:.7;">Diccionario anidado por ID</div>
+              <div class="motor-subtitle">Diccionario anidado por ID</div>
             </div>
-            <i class="fa-solid fa-download" style="margin-left:auto;font-size:12px;opacity:.6;"></i>
+            <i class="fa-solid fa-download motor-download-icon"></i>
           </button>
         </div>
       </div>
@@ -369,19 +398,19 @@
       <!-- Tabs -->
       <div class="tabs-bar">
         <button class="tab-btn active" onclick="switchTab(this, 'personajes')">
-          <i class="fa-solid fa-person-running" style="margin-right:6px;"></i>
+          <i class="fa-solid fa-person-running btn-icon-mr-sm"></i>
           Personajes
-          <span class="stat-chip" style="margin-left:8px;">{{ $personajes->count() }}</span>
+          <span class="stat-chip">{{ $personajes->count() }}</span>
         </button>
         <button class="tab-btn" onclick="switchTab(this, 'items')">
-          <i class="fa-solid fa-swords" style="margin-right:6px;"></i>
+          <i class="fa-solid fa-swords btn-icon-mr-sm"></i>
           Ítems
-          <span class="stat-chip" style="margin-left:8px;">{{ $items->count() }}</span>
+          <span class="stat-chip">{{ $items->count() }}</span>
         </button>
         <button class="tab-btn" onclick="switchTab(this, 'dialogos')">
-          <i class="fa-solid fa-comments" style="margin-right:6px;"></i>
+          <i class="fa-solid fa-comments btn-icon-mr-sm"></i>
           Diálogos
-          <span class="stat-chip" style="margin-left:8px;">{{ $dialogos->count() }}</span>
+          <span class="stat-chip">{{ $dialogos->count() }}</span>
         </button>
       </div>
 
@@ -389,23 +418,22 @@
       <div class="tab-panel active" id="panel-personajes">
         <div class="section-header">
           <div class="section-title">
-            <i class="fa-solid fa-person-running" style="color:var(--accent);margin-right:8px;"></i>Personajes
+            <i class="fa-solid fa-person-running section-icon-accent"></i>Personajes
           </div>
-          <button class="btn-primary hover-lift" onclick="openModal('modal-add-personaje')"
-                  style="width:auto;padding:9px 18px;font-size:13px;">
-            <i class="fa-solid fa-plus" style="margin-right:6px;"></i>Nuevo Personaje
+          <button class="btn-primary hover-lift btn-modal-sm" onclick="openModal('modal-add-personaje')">
+            <i class="fa-solid fa-plus btn-icon-mr-sm"></i>Nuevo Personaje
           </button>
         </div>
-        <div style="background:var(--cardgrey);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+        <div class="table-wrapper">
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th style="text-align:center;">Vida</th>
-                <th style="text-align:center;">Ataque</th>
-                <th style="text-align:center;">Defensa</th>
-                <th style="text-align:center;">Velocidad</th>
+                <th class="th-center">Vida</th>
+                <th class="th-center">Ataque</th>
+                <th class="th-center">Defensa</th>
+                <th class="th-center">Velocidad</th>
                 <th></th>
               </tr>
             </thead>
@@ -413,13 +441,13 @@
               @forelse($personajes as $p)
               <tr>
                 <td><span class="game-id-badge">{{ $p->game_id }}</span></td>
-                <td style="font-weight:600;">{{ $p->nombre }}</td>
-                <td style="text-align:center;color:#4ade80;">{{ $p->vida }}</td>
-                <td style="text-align:center;color:#ef4444;">{{ $p->ataque }}</td>
-                <td style="text-align:center;color:#3b82f6;">{{ $p->defensa }}</td>
-                <td style="text-align:center;color:#fb923c;">{{ $p->velocidad }}</td>
-                <td style="text-align:right;">
-                  <div class="row-actions" style="justify-content:flex-end;">
+                <td class="td-bold">{{ $p->nombre }}</td>
+                <td class="td-center-green">{{ $p->vida }}</td>
+                <td class="td-center-red">{{ $p->ataque }}</td>
+                <td class="td-center-blue">{{ $p->defensa }}</td>
+                <td class="td-center-orange">{{ $p->velocidad }}</td>
+                <td class="td-right">
+                  <div class="row-actions row-actions-end">
                     <button class="row-btn" title="Editar"
                             onclick="openEditPersonaje({{ $p->id }}, '{{ addslashes($p->game_id) }}', '{{ addslashes($p->nombre) }}', {{ $p->vida }}, {{ $p->ataque }}, {{ $p->defensa }}, {{ $p->velocidad }})">
                       <i class="fa-solid fa-pen"></i>
@@ -435,7 +463,7 @@
               @empty
               <tr class="empty-row">
                 <td colspan="7">
-                  <i class="fa-solid fa-person-running" style="opacity:.25;font-size:1.5rem;display:block;margin-bottom:10px;"></i>
+                  <i class="fa-solid fa-person-running empty-icon"></i>
                   Sin personajes — crea el primero con el botón de arriba.
                 </td>
               </tr>
@@ -449,22 +477,21 @@
       <div class="tab-panel" id="panel-items">
         <div class="section-header">
           <div class="section-title">
-            <i class="fa-solid fa-swords" style="color:#a855f7;margin-right:8px;"></i>Ítems
+            <i class="fa-solid fa-swords section-icon-purple"></i>Ítems
           </div>
-          <button class="btn-primary hover-lift" onclick="openModal('modal-add-item')"
-                  style="width:auto;padding:9px 18px;font-size:13px;">
-            <i class="fa-solid fa-plus" style="margin-right:6px;"></i>Nuevo Ítem
+          <button class="btn-primary hover-lift btn-modal-sm" onclick="openModal('modal-add-item')">
+            <i class="fa-solid fa-plus btn-icon-mr-sm"></i>Nuevo Ítem
           </button>
         </div>
-        <div style="background:var(--cardgrey);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+        <div class="table-wrapper">
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th style="text-align:center;">Precio</th>
-                <th style="text-align:center;">Tipo</th>
+                <th class="th-center">Precio</th>
+                <th class="th-center">Tipo</th>
                 <th></th>
               </tr>
             </thead>
@@ -472,19 +499,19 @@
               @forelse($items as $item)
               <tr>
                 <td><span class="game-id-badge">{{ $item->game_id }}</span></td>
-                <td style="font-weight:600;">{{ $item->nombre }}</td>
-                <td style="color:var(--muted);max-width:200px;">
-                  <span style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+                <td class="td-bold">{{ $item->nombre }}</td>
+                <td class="td-muted-200">
+                  <span class="text-clamp-2">
                     {{ $item->descripcion ?: '—' }}
                   </span>
                 </td>
-                <td style="text-align:center;font-weight:600;">{{ number_format($item->precio) }}</td>
-                <td style="text-align:center;">
+                <td class="td-center-bold">{{ number_format($item->precio) }}</td>
+                <td class="th-center">
                   @php $tc = match($item->tipo) { 'Arma' => 'tipo-arma', 'Consumible' => 'tipo-consumible', 'Misión' => 'tipo-mision', default => '' }; @endphp
                   <span class="tipo-badge {{ $tc }}">{{ $item->tipo }}</span>
                 </td>
-                <td style="text-align:right;">
-                  <div class="row-actions" style="justify-content:flex-end;">
+                <td class="td-right">
+                  <div class="row-actions row-actions-end">
                     <button class="row-btn" title="Editar"
                             onclick="openEditItem({{ $item->id }}, '{{ addslashes($item->game_id) }}', '{{ addslashes($item->nombre) }}', '{{ addslashes($item->descripcion ?? '') }}', {{ $item->precio }}, '{{ $item->tipo }}')">
                       <i class="fa-solid fa-pen"></i>
@@ -500,7 +527,7 @@
               @empty
               <tr class="empty-row">
                 <td colspan="6">
-                  <i class="fa-solid fa-swords" style="opacity:.25;font-size:1.5rem;display:block;margin-bottom:10px;"></i>
+                  <i class="fa-solid fa-swords empty-icon"></i>
                   Sin ítems — crea el primero con el botón de arriba.
                 </td>
               </tr>
@@ -514,19 +541,18 @@
       <div class="tab-panel" id="panel-dialogos">
         <div class="section-header">
           <div class="section-title">
-            <i class="fa-solid fa-comments" style="color:#fb923c;margin-right:8px;"></i>Diálogos
+            <i class="fa-solid fa-comments section-icon-orange"></i>Diálogos
           </div>
-          <button class="btn-primary hover-lift" onclick="openModal('modal-add-dialogo')"
-                  style="width:auto;padding:9px 18px;font-size:13px;">
-            <i class="fa-solid fa-plus" style="margin-right:6px;"></i>Nueva Línea
+          <button class="btn-primary hover-lift btn-modal-sm" onclick="openModal('modal-add-dialogo')">
+            <i class="fa-solid fa-plus btn-icon-mr-sm"></i>Nueva Línea
           </button>
         </div>
-        <div style="background:var(--cardgrey);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+        <div class="table-wrapper">
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID Conversación</th>
-                <th style="text-align:center;">Orden</th>
+                <th class="th-center">Orden</th>
                 <th>Personaje ID</th>
                 <th>Texto</th>
                 <th></th>
@@ -536,13 +562,13 @@
               @forelse($dialogos as $d)
               <tr>
                 <td><span class="game-id-badge">{{ $d->id_conversacion }}</span></td>
-                <td style="text-align:center;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);">{{ $d->orden }}</td>
-                <td style="font-family:'Courier New',monospace;font-size:12px;color:var(--muted);">{{ $d->personaje_id }}</td>
-                <td style="max-width:260px;">
-                  <span style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $d->texto }}</span>
+                <td class="td-order">{{ $d->orden }}</td>
+                <td class="td-mono-muted">{{ $d->personaje_id }}</td>
+                <td class="td-max-260">
+                  <span class="text-clamp-2">{{ $d->texto }}</span>
                 </td>
-                <td style="text-align:right;">
-                  <div class="row-actions" style="justify-content:flex-end;">
+                <td class="td-right">
+                  <div class="row-actions row-actions-end">
                     <button class="row-btn" title="Editar"
                             onclick="openEditDialogo({{ $d->id }}, '{{ addslashes($d->id_conversacion) }}', {{ $d->orden }}, '{{ addslashes($d->personaje_id) }}', '{{ addslashes($d->texto) }}')">
                       <i class="fa-solid fa-pen"></i>
@@ -558,7 +584,7 @@
               @empty
               <tr class="empty-row">
                 <td colspan="5">
-                  <i class="fa-solid fa-comments" style="opacity:.25;font-size:1.5rem;display:block;margin-bottom:10px;"></i>
+                  <i class="fa-solid fa-comments empty-icon"></i>
                   Sin diálogos — añade la primera línea con el botón de arriba.
                 </td>
               </tr>
@@ -581,9 +607,9 @@
   <!-- ══════════ MODAL CREAR PERSONAJE ══════════ -->
   <div class="modal-overlay" id="modal-add-personaje">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-person-running" style="margin-right:8px;color:var(--accent);"></i>Nuevo Personaje</div>
-        <button onclick="closeModal('modal-add-personaje')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-person-running section-icon-accent"></i>Nuevo Personaje</div>
+        <button onclick="closeModal('modal-add-personaje')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form action="{{ route('proyecto.predefinicion.personajes.store', $proyecto->id) }}" method="POST">
         @csrf
@@ -600,8 +626,8 @@
           <div class="form-group"><label>Velocidad (Float) *</label><input type="number" name="velocidad" min="0" step="0.01" placeholder="3.5" required></div>
         </div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-add-personaje')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-plus" style="margin-right:6px;"></i>Crear</button>
+          <button type="button" onclick="closeModal('modal-add-personaje')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-plus btn-icon-mr-sm"></i>Crear</button>
         </div>
       </form>
     </div>
@@ -610,9 +636,9 @@
   <!-- MODAL EDITAR PERSONAJE -->
   <div class="modal-overlay" id="modal-edit-personaje">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:var(--accent);"></i>Editar Personaje</div>
-        <button onclick="closeModal('modal-edit-personaje')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-pen section-icon-accent"></i>Editar Personaje</div>
+        <button onclick="closeModal('modal-edit-personaje')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="form-edit-personaje" method="POST">
         @csrf @method('PUT')
@@ -629,8 +655,8 @@
           <div class="form-group"><label>Velocidad (Float) *</label><input type="number" name="velocidad" id="edit-p-velocidad" min="0" step="0.01" required></div>
         </div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-edit-personaje')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-check" style="margin-right:6px;"></i>Guardar</button>
+          <button type="button" onclick="closeModal('modal-edit-personaje')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-check btn-icon-mr-sm"></i>Guardar</button>
         </div>
       </form>
     </div>
@@ -639,9 +665,9 @@
   <!-- ══════════ MODAL CREAR ÍTEM ══════════ -->
   <div class="modal-overlay" id="modal-add-item">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-swords" style="margin-right:8px;color:#a855f7;"></i>Nuevo Ítem</div>
-        <button onclick="closeModal('modal-add-item')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-swords section-icon-purple"></i>Nuevo Ítem</div>
+        <button onclick="closeModal('modal-add-item')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form action="{{ route('proyecto.predefinicion.items.store', $proyecto->id) }}" method="POST">
         @csrf
@@ -663,8 +689,8 @@
           </div>
         </div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-add-item')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-plus" style="margin-right:6px;"></i>Crear</button>
+          <button type="button" onclick="closeModal('modal-add-item')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-plus btn-icon-mr-sm"></i>Crear</button>
         </div>
       </form>
     </div>
@@ -673,9 +699,9 @@
   <!-- MODAL EDITAR ÍTEM -->
   <div class="modal-overlay" id="modal-edit-item">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:#a855f7;"></i>Editar Ítem</div>
-        <button onclick="closeModal('modal-edit-item')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-pen section-icon-purple"></i>Editar Ítem</div>
+        <button onclick="closeModal('modal-edit-item')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="form-edit-item" method="POST">
         @csrf @method('PUT')
@@ -696,8 +722,8 @@
           </div>
         </div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-edit-item')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-check" style="margin-right:6px;"></i>Guardar</button>
+          <button type="button" onclick="closeModal('modal-edit-item')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-check btn-icon-mr-sm"></i>Guardar</button>
         </div>
       </form>
     </div>
@@ -706,9 +732,9 @@
   <!-- ══════════ MODAL CREAR DIÁLOGO ══════════ -->
   <div class="modal-overlay" id="modal-add-dialogo">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-comments" style="margin-right:8px;color:#fb923c;"></i>Nueva Línea de Diálogo</div>
-        <button onclick="closeModal('modal-add-dialogo')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-comments section-icon-orange"></i>Nueva Línea de Diálogo</div>
+        <button onclick="closeModal('modal-add-dialogo')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form action="{{ route('proyecto.predefinicion.dialogos.store', $proyecto->id) }}" method="POST">
         @csrf
@@ -717,10 +743,10 @@
           <div class="form-group"><label>Orden (Int) *</label><input type="number" name="orden" min="0" placeholder="1" required></div>
         </div>
         <div class="form-group"><label>Personaje ID *</label><input type="text" name="personaje_id" placeholder="ej: CHAR_001" required></div>
-        <div class="form-group"><label>Texto *</label><textarea name="texto" placeholder="Escribe el diálogo…" required style="min-height:90px;"></textarea></div>
+        <div class="form-group"><label>Texto *</label><textarea name="texto" placeholder="Escribe el diálogo…" required class="textarea-tall"></textarea></div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-add-dialogo')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-plus" style="margin-right:6px;"></i>Crear</button>
+          <button type="button" onclick="closeModal('modal-add-dialogo')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-plus btn-icon-mr-sm"></i>Crear</button>
         </div>
       </form>
     </div>
@@ -729,9 +755,9 @@
   <!-- MODAL EDITAR DIÁLOGO -->
   <div class="modal-overlay" id="modal-edit-dialogo">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div class="modal-title"><i class="fa-solid fa-pen" style="margin-right:8px;color:#fb923c;"></i>Editar Diálogo</div>
-        <button onclick="closeModal('modal-edit-dialogo')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-pen section-icon-orange"></i>Editar Diálogo</div>
+        <button onclick="closeModal('modal-edit-dialogo')" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="form-edit-dialogo" method="POST">
         @csrf @method('PUT')
@@ -740,10 +766,10 @@
           <div class="form-group"><label>Orden (Int) *</label><input type="number" name="orden" id="edit-d-orden" min="0" required></div>
         </div>
         <div class="form-group"><label>Personaje ID *</label><input type="text" name="personaje_id" id="edit-d-personaje_id" required></div>
-        <div class="form-group"><label>Texto *</label><textarea name="texto" id="edit-d-texto" required style="min-height:90px;"></textarea></div>
+        <div class="form-group"><label>Texto *</label><textarea name="texto" id="edit-d-texto" required class="textarea-tall"></textarea></div>
         <div class="modal-actions">
-          <button type="button" onclick="closeModal('modal-edit-dialogo')" class="btn-secondary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift" style="width:auto;padding:9px 18px;font-size:13px;"><i class="fa-solid fa-check" style="margin-right:6px;"></i>Guardar</button>
+          <button type="button" onclick="closeModal('modal-edit-dialogo')" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm"><i class="fa-solid fa-check btn-icon-mr-sm"></i>Guardar</button>
         </div>
       </form>
     </div>

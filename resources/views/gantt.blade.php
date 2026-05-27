@@ -15,6 +15,7 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+      margin-top: 24px;
       margin-bottom: 28px;
       padding: 16px 20px;
       background: var(--cardgrey);
@@ -360,6 +361,18 @@
       z-index: 5;
     }
 
+    .label-inline    { flex-direction: row !important; align-items: center; gap: 6px; }
+    .checkbox-accent { accent-color: var(--accent); }
+    .legend-bar-teal    { background: #14b8a6; }
+    .legend-item-flex   { display: flex; align-items: center; gap: 3px; }
+    .legend-bar-ms      { background: #fbbf24; color: #1a1a1a; font-size: 8px; display: flex; align-items: center; padding: 0 4px; }
+    .legend-diamond-ms  { background: #fbbf24; flex-shrink: 0; }
+    .legend-bar-pending { background: repeating-linear-gradient(135deg,#3b82f6,#3b82f6 4px,rgba(0,0,0,.3) 4px,rgba(0,0,0,.3) 8px); }
+    .gantt-mobile-icon  { font-size: 2rem; opacity: .4; }
+    .gantt-mobile-text  { font-size: 14px; }
+    #gantt-empty { display: none; text-align: center; padding: 60px; color: var(--muted); }
+    #gantt-empty i { margin-bottom: 12px; display: block; }
+
     /* ── Mobile ───────────────────────────────────────── */
     @media (max-width: 767px) {
       #gantt-container,
@@ -387,16 +400,16 @@
   $colorMap = [
     'Desarrollo' => ['class' => 'teal',    'hex' => '#14b8a6'],
     'Diseño'     => ['class' => 'magenta', 'hex' => '#ff00ff'],
-    'Audio'      => ['class' => 'blue',    'hex' => '#3b82f6'],
-    'Narrativa'  => ['class' => 'green',   'hex' => '#4ade80'],
-    'Marketing'  => ['class' => 'purple',  'hex' => '#a855f7'],
-    'Arte'       => ['class' => 'orange',  'hex' => '#fb923c'],
+    'Audio'      => ['class' => 'green',   'hex' => '#4ade80'],
+    'Narrativa'  => ['class' => 'purple',  'hex' => '#a855f7'],
+    'Marketing'  => ['class' => 'orange',  'hex' => '#fb923c'],
+    'Arte'       => ['class' => 'blue',    'hex' => '#3b82f6'],
   ];
 @endphp
 
 <body class="teal">
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -458,12 +471,12 @@
   <main>
     <div class="main-content">
       <h1 class="title-gradient">
-        <i class="fa-solid fa-chart-gantt" style="margin-right:10px;"></i>Diagrama Gantt
+        <i class="fa-solid fa-chart-gantt btn-icon-mr-lg"></i>Diagrama Gantt
       </h1>
       <p class="subtitle">{{ $proyecto->name }} · {{ $proyecto->tareas->count() }} tareas en total</p>
 
       <!-- FILTROS -->
-      <div class="gantt-filters" style="margin-top:24px;">
+      <div class="gantt-filters">
         <label>Estado
           <select id="f-estado">
             <option value="">Todos</option>
@@ -486,8 +499,8 @@
         <label>Hasta
           <input type="date" id="f-hasta">
         </label>
-        <label style="flex-direction:row;align-items:center;gap:6px;">
-          <input type="checkbox" id="f-milestones" style="accent-color:var(--accent);">
+        <label class="label-inline">
+          <input type="checkbox" id="f-milestones" class="checkbox-accent">
           <span>Solo milestones</span>
         </label>
         <button class="filter-reset" onclick="resetFilters()">
@@ -498,7 +511,7 @@
       <!-- LEYENDA -->
       <div class="gantt-legend">
         <div class="gantt-legend-item">
-          <div class="legend-bar" style="background:#14b8a6;"></div>
+          <div class="legend-bar legend-bar-teal"></div>
           <span>Tarea normal</span>
         </div>
         <div class="gantt-legend-item">
@@ -506,14 +519,14 @@
           <span>Bloqueada</span>
         </div>
         <div class="gantt-legend-item">
-          <div style="display:flex;align-items:center;gap:3px;">
-            <div class="legend-bar" style="background:#fbbf24;color:#1a1a1a;font-size:8px;display:flex;align-items:center;padding:0 4px;">◆</div>
-            <div class="legend-diamond" style="background:#fbbf24;flex-shrink:0;"></div>
+          <div class="legend-item-flex">
+            <div class="legend-bar legend-bar-ms">◆</div>
+            <div class="legend-diamond legend-diamond-ms"></div>
           </div>
           <span>Milestone</span>
         </div>
         <div class="gantt-legend-item">
-          <div class="legend-bar" style="background:repeating-linear-gradient(135deg,#3b82f6,#3b82f6 4px,rgba(0,0,0,.3) 4px,rgba(0,0,0,.3) 8px);"></div>
+          <div class="legend-bar legend-bar-pending"></div>
           <span>Pendiente (rayado)</span>
         </div>
         <div class="gantt-legend-item">
@@ -524,14 +537,14 @@
 
       <!-- Aviso solo mobile -->
       <div class="gantt-desktop-only">
-        <i class="fa-solid fa-desktop" style="font-size:2rem;opacity:.4;"></i>
-        <span style="font-size:14px;">El diagrama de Gantt solo está disponible en escritorio.</span>
+        <i class="fa-solid fa-desktop gantt-mobile-icon"></i>
+        <span class="gantt-mobile-text">El diagrama de Gantt solo está disponible en escritorio.</span>
       </div>
 
       <!-- GANTT -->
       <div id="gantt-container"></div>
-      <p id="gantt-empty" style="display:none;text-align:center;padding:60px;color:var(--muted);">
-        <i class="fa-solid fa-magnifying-glass fa-2x" style="margin-bottom:12px;display:block;"></i>
+      <p id="gantt-empty">
+        <i class="fa-solid fa-magnifying-glass fa-2x"></i>
         Ninguna tarea coincide con los filtros.
       </p>
     </div>
@@ -547,10 +560,10 @@
     const DEPT_COLORS = {
       'Desarrollo': '#14b8a6',
       'Diseño':     '#ff00ff',
-      'Audio':      '#3b82f6',
-      'Narrativa':  '#4ade80',
-      'Marketing':  '#a855f7',
-      'Arte':       '#fb923c',
+      'Audio':      '#4ade80',
+      'Narrativa':  '#a855f7',
+      'Marketing':  '#fb923c',
+      'Arte':       '#3b82f6',
     };
 
     const ROW_H  = 62;

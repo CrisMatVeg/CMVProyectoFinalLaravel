@@ -46,6 +46,7 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+      margin-top: 24px;
       margin-bottom: 24px;
       padding: 14px 20px;
       background: var(--cardgrey);
@@ -245,7 +246,7 @@
       color: var(--muted);
     }
     .cal-legend-item { display: flex; align-items: center; gap: 6px; }
-    .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+    .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; background: var(--tipo-color, #14b8a6); }
 
     /* ── Overlay compartido ───────────────────────────────── */
     .cal-overlay {
@@ -461,10 +462,10 @@
   $colorMap = [
     'Desarrollo' => '#14b8a6',
     'Diseño'     => '#ff00ff',
-    'Audio'      => '#3b82f6',
-    'Narrativa'  => '#4ade80',
-    'Marketing'  => '#a855f7',
-    'Arte'       => '#fb923c',
+    'Audio'      => '#4ade80',
+    'Narrativa'  => '#a855f7',
+    'Marketing'  => '#fb923c',
+    'Arte'       => '#3b82f6',
   ];
   $estadoColors = [
     'Pendiente'  => '#6b7280',
@@ -475,7 +476,7 @@
 
 <body class="teal">
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -537,12 +538,12 @@
   <main>
     <div class="main-content">
       <h1 class="title-gradient">
-        <i class="fa-solid fa-calendar-days" style="margin-right:10px;"></i>Calendario de Tareas
+        <i class="fa-solid fa-calendar-days btn-icon-mr-lg"></i>Calendario de Tareas
       </h1>
       <p class="subtitle">{{ $proyecto->name }} · {{ $proyecto->tareas->count() }} tareas en total</p>
 
       <!-- FILTROS -->
-      <div class="cal-filters" style="margin-top:24px;">
+      <div class="cal-filters">
         <label>Departamento
           <select id="f-tipo">
             <option value="">Todos</option>
@@ -568,7 +569,7 @@
       <div class="cal-legend">
         @foreach($colorMap as $dept => $color)
           <div class="cal-legend-item">
-            <div class="cal-legend-dot" style="background:{{ $color }};"></div>
+            <div class="cal-legend-dot" data-tipo="{{ $dept }}"></div>
             <span>{{ $dept }}</span>
           </div>
         @endforeach
