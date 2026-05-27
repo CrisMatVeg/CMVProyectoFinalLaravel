@@ -131,6 +131,12 @@
         margin-bottom: 16px;
         text-align: center;
     }
+
+    .auth-logo img {
+        height: 60px;
+        width: auto;
+        vertical-align: middle;
+    }
     </style>
 </head>
 
@@ -146,7 +152,7 @@
             <!-- Logo — usa div, no header, para evitar estilos globales de header -->
             <div class="auth-logo-wrap">
                 <div class="auth-logo pixel-logo">
-                    <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL
+                    <img src="{{ asset('isotipo.png') }}" alt="">PIXEL
                 </div>
                 <p class="auth-subtitle">Accede a tu cuenta</p>
             </div>
