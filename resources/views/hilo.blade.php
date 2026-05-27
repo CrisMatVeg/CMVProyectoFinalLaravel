@@ -157,7 +157,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 16px;
     }
     .msg-adjunto {
       display: flex;
@@ -358,18 +358,27 @@
       height: 1px;
       background: var(--border);
     }
-    .count-badge {
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 12px;
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
+    /* Clases locales adicionales */
+    .hilo-breadcrumb { margin-bottom: 18px; }
+    .hilo-back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; padding: 7px 14px; }
+    .msg-avatar[data-avatar-index="0"] { background: #14b8a6; }
+    .msg-avatar[data-avatar-index="1"] { background: #ff00ff; }
+    .msg-avatar[data-avatar-index="2"] { background: #3b82f6; }
+    .msg-avatar[data-avatar-index="3"] { background: #4ade80; }
+    .msg-avatar[data-avatar-index="4"] { background: #a855f7; }
+    .msg-avatar[data-avatar-index="5"] { background: #fb923c; }
+    .msg-avatar[data-avatar-index="6"] { background: #f59e0b; }
+    .msg-avatar[data-avatar-index="7"] { background: #ec4899; }
+    .confirm-cancel-btn { padding: 8px 20px; width: auto; }
+    .preview-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .preview-header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .preview-icon  { font-size: 18px; flex-shrink: 0; }
+    .preview-title { font-family: var(--font-title); font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .preview-header-right { display: flex; gap: 8px; flex-shrink: 0; }
+    .preview-download-btn { width: auto; padding: 0 12px; font-size: 12px; gap: 6px; text-decoration: none; display: flex; align-items: center; }
+    .reply-file-input { display: none; }
+    .mensajes-empty { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+    .mensajes-empty i { font-size: 1.6rem; opacity: .3; display: block; margin-bottom: 10px; }
 
     /* Tarjeta alternativa para imágenes (visible solo en mobile) */
     .img-card-mobile { display: none; }
@@ -495,14 +504,12 @@
     'imagen' => 'fa-file-image',
     'video'  => 'fa-file-video',
   ];
-  $palette = ['#14b8a6','#ff00ff','#3b82f6','#4ade80','#a855f7','#fb923c','#f59e0b','#ec4899'];
-  $autorColor = $palette[$hilo->user_id % count($palette)];
 @endphp
 
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -562,9 +569,8 @@
     <div class="main-content">
 
       <!-- Breadcrumb -->
-      <div style="margin-bottom:18px;">
-        <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="btn-ghost hover-lift"
-           style="display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:7px 14px;">
+      <div class="hilo-breadcrumb">
+        <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="btn-ghost hover-lift hilo-back-btn">
           <i class="fa-solid fa-arrow-left"></i> Volver al foro
         </a>
       </div>
@@ -579,15 +585,15 @@
       <!-- Cabecera del hilo -->
       <div class="hilo-header-card">
         <div class="hilo-header-top">
-          <div class="msg-avatar" style="background:{{ $autorColor }};">
+          <div class="msg-avatar" data-avatar-index="{{ $hilo->user_id % 8 }}">
             {{ strtoupper(substr($hilo->autor->username ?? '?', 0, 1)) }}
           </div>
           <div class="hilo-header-info">
             <h1 class="hilo-header-title title-gradient">{{ $hilo->titulo }}</h1>
             <div class="hilo-header-meta">
-              <span><i class="fa-solid fa-user" style="margin-right:4px;"></i>{{ $hilo->autor->username ?? '—' }}</span>
+              <span><i class="fa-solid fa-user icon-mr-sm"></i>{{ $hilo->autor->username ?? '—' }}</span>
               <span>·</span>
-              <span><i class="fa-solid fa-clock" style="margin-right:4px;"></i>{{ $hilo->created_at->diffForHumans() }}</span>
+              <span><i class="fa-solid fa-clock icon-mr-sm"></i>{{ $hilo->created_at->diffForHumans() }}</span>
             </div>
           </div>
           @if($hilo->user_id === auth()->id() || $proyecto->created_by === auth()->id())
@@ -600,12 +606,12 @@
               @csrf
               @method('DELETE')
             </form>
-            <div x-show="hiloConfirm" class="confirm-modal-overlay" style="display:none;" @click.self="hiloConfirm = false">
+            <div x-show="hiloConfirm" x-cloak class="confirm-modal-overlay" @click.self="hiloConfirm = false">
               <div class="confirm-modal">
                 <p class="confirm-modal-title">Eliminar hilo</p>
                 <p class="confirm-modal-desc">¿Eliminar este hilo y todos sus mensajes? Esta acción no se puede deshacer.</p>
                 <div class="confirm-modal-actions">
-                  <button @click="hiloConfirm = false" class="btn-ghost" style="padding:8px 20px;">Cancelar</button>
+                  <button @click="hiloConfirm = false" class="btn-ghost confirm-cancel-btn">Cancelar</button>
                   <button @click="document.getElementById('delete-hilo-form').submit()" class="btn-danger">Eliminar</button>
                 </div>
               </div>
@@ -617,7 +623,7 @@
         <div class="hilo-body-text">{{ $hilo->contenido }}</div>
 
         @if($hiloAdjuntos->isNotEmpty())
-        <div class="msg-attachments" style="margin-top:16px;">
+        <div class="msg-attachments">
           @foreach($hiloAdjuntos as $adj)
           @php $ico = $catIcono[$adj->categoria] ?? 'fa-file'; @endphp
           @if($adj->categoria === 'imagen')
@@ -696,18 +702,17 @@
   <!-- Modal previsualización -->
   <div class="modal-overlay" id="modal-preview">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-          <span id="preview-icon" style="font-size:18px;flex-shrink:0;"></span>
-          <span id="preview-title" style="font-family:var(--font-title);font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+      <div class="preview-header">
+        <div class="preview-header-left">
+          <span id="preview-icon" class="preview-icon"></span>
+          <span id="preview-title" class="preview-title"></span>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0;">
+        <div class="preview-header-right">
           <a id="preview-download-btn" href="#"
-             class="file-btn hover-lift"
-             style="width:auto;padding:0 12px;font-size:12px;gap:6px;text-decoration:none;display:flex;align-items:center;">
+             class="file-btn hover-lift preview-download-btn">
             <i class="fa-solid fa-download"></i> Descargar
           </a>
-          <button onclick="closePreview()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;">
+          <button onclick="closePreview()" class="modal-close-btn">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
