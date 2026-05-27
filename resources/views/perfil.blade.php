@@ -91,6 +91,25 @@
             font-size: 14px;
             color: var(--teal);
         }
+
+        .auth-logo img {
+            height: 60px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        .field-error {
+            color: var(--magenta);
+            font-size: 13px;
+        }
+
+        .label-optional {
+            font-size: 11px;
+        }
+
+        .back-icon {
+            font-size: 11px;
+        }
     </style>
 </head>
 
@@ -106,7 +125,7 @@
             <!-- HEADER -->
             <div class="auth-logo-wrap">
                 <div class="auth-logo pixel-logo">
-                    <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL
+                    <img src="{{ asset('isotipo.png') }}" alt="">PIXEL
                 </div>
                 <p class="auth-subtitle">Editar perfil</p>
             </div>
@@ -130,7 +149,7 @@
                     <input type="text" id="username" name="username"
                         value="{{ old('username', $usuario->username) }}" required>
                     @error('username')
-                        <span style="color:var(--magenta); font-size:13px;">{{ $message }}</span>
+                        <span class="field-error">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -139,7 +158,7 @@
                     <input type="text" id="description" name="description"
                         value="{{ old('description', $usuario->description) }}" required>
                     @error('description')
-                        <span style="color:var(--magenta); font-size:13px;">{{ $message }}</span>
+                        <span class="field-error">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -148,18 +167,18 @@
                     <input type="email" id="email" name="email"
                         value="{{ old('email', $usuario->email) }}" required>
                     @error('email')
-                        <span style="color:var(--magenta); font-size:13px;">{{ $message }}</span>
+                        <span class="field-error">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <hr class="section-divider">
-                <p class="section-label">Cambiar contraseña <span style="font-size:11px;">(opcional)</span></p>
+                <p class="section-label">Cambiar contraseña <span class="label-optional">(opcional)</span></p>
 
                 <div class="form-group">
                     <label for="password_actual">Contraseña actual</label>
                     <input type="password" id="password_actual" name="password_actual">
                     @error('password_actual')
-                        <span style="color:var(--magenta); font-size:13px;">{{ $message }}</span>
+                        <span class="field-error">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -167,7 +186,7 @@
                     <label for="password_nuevo">Nueva contraseña</label>
                     <input type="password" id="password_nuevo" name="password_nuevo">
                     @error('password_nuevo')
-                        <span style="color:var(--magenta); font-size:13px;">{{ $message }}</span>
+                        <span class="field-error">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -178,7 +197,7 @@
 
                     <p class="auth-link">
                         <a href="{{ route('proyectos') }}">
-                            <i class="fa-solid fa-arrow-left" style="font-size:11px;"></i>
+                            <i class="fa-solid fa-arrow-left back-icon"></i>
                             Volver a mis proyectos
                         </a>
                     </p>

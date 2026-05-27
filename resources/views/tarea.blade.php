@@ -82,7 +82,7 @@
     <aside class="sidebar">
 
         <!-- LOGO -->
-        <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+        <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
 
         <!-- MENU -->
         <nav class="menu">

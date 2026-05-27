@@ -143,6 +143,7 @@
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
@@ -329,19 +330,6 @@
     .empty-state h3   { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
     .empty-state p    { font-size: 13px; color: var(--muted); }
 
-    /* Counter badge */
-    .count-badge {
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 13px;
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     /* No results message */
     #no-results {
       display: none;
@@ -442,6 +430,108 @@
       color: var(--muted);
       font-size: 14px;
     }
+
+    /* ── Elementos de página ───────────────────────────── */
+    .files-page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .filter-group-right { margin-left: auto; }
+
+    #search-input {
+      background: var(--cardgrey);
+      border: 1px solid var(--border);
+      color: var(--white);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      width: 180px;
+    }
+
+    .file-desc-empty {
+      font-style: italic;
+      opacity: .5;
+    }
+
+    .file-tipo-tag {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--tipo-color, #14b8a6);
+      color: var(--tipo-color, #14b8a6);
+      font-weight: 600;
+    }
+
+    .tipo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+      background: var(--tipo-color, #14b8a6);
+    }
+
+    .drop-zone-hint {
+      font-size: 11px;
+      margin-top: 4px;
+      opacity: .6;
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .preview-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .preview-icon { font-size: 18px; flex-shrink: 0; }
+
+    .preview-title-text {
+      font-family: var(--font-title);
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-preview-download {
+      width: auto;
+      padding: 0 12px;
+      font-size: 12px;
+      gap: 6px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .preview-close-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
   </style>
 </head>
 
@@ -449,10 +539,10 @@
   $colorHex = [
     'Desarrollo' => '#14b8a6',
     'Diseño'     => '#ff00ff',
-    'Audio'      => '#3b82f6',
-    'Narrativa'  => '#4ade80',
-    'Marketing'  => '#a855f7',
-    'Arte'       => '#fb923c',
+    'Audio'      => '#4ade80',
+    'Narrativa'  => '#a855f7',
+    'Marketing'  => '#fb923c',
+    'Arte'       => '#3b82f6',
   ];
 
   $catIcono = [
@@ -467,7 +557,7 @@
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -531,17 +621,17 @@
     <div class="main-content">
 
       <!-- Header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="files-page-header">
         <div>
           <h1 class="title-gradient">Archivos</h1>
           <p class="subtitle">{{ $proyecto->name }}</p>
         </div>
-        <button class="btn-primary hover-lift" onclick="openModal()" style="width:auto;padding:10px 20px;font-size:13px;margin-top:4px;">
-          <i class="fa-solid fa-upload" style="margin-right:8px;"></i>Subir archivo
+        <button class="btn-primary hover-lift btn-upload" onclick="openModal()">
+          <i class="fa-solid fa-upload btn-icon-mr"></i>Subir archivo
         </button>
       </div>
 
-      <div style="margin:14px 0 24px;">
+      <div class="counter-row">
         <span class="count-badge" id="counter">
           <i class="fa-solid fa-folder"></i>
           <span id="counter-num">{{ $archivos->count() }}</span>
@@ -563,15 +653,15 @@
           <label>Tipo de archivo</label>
           <div class="chip-group" id="cat-chips">
             <button class="chip active" data-cat="todos">Todos</button>
-            <button class="chip" data-cat="texto"><i class="fa-solid fa-file-lines" style="margin-right:4px;"></i>Texto</button>
-            <button class="chip" data-cat="pdf"><i class="fa-solid fa-file-pdf" style="margin-right:4px;"></i>PDF</button>
-            <button class="chip" data-cat="audio"><i class="fa-solid fa-file-audio" style="margin-right:4px;"></i>Audio</button>
-            <button class="chip" data-cat="imagen"><i class="fa-solid fa-file-image" style="margin-right:4px;"></i>Imagen</button>
-            <button class="chip" data-cat="video"><i class="fa-solid fa-file-video" style="margin-right:4px;"></i>Video</button>
+            <button class="chip" data-cat="texto"><i class="fa-solid fa-file-lines icon-mr-sm"></i>Texto</button>
+            <button class="chip" data-cat="pdf"><i class="fa-solid fa-file-pdf icon-mr-sm"></i>PDF</button>
+            <button class="chip" data-cat="audio"><i class="fa-solid fa-file-audio icon-mr-sm"></i>Audio</button>
+            <button class="chip" data-cat="imagen"><i class="fa-solid fa-file-image icon-mr-sm"></i>Imagen</button>
+            <button class="chip" data-cat="video"><i class="fa-solid fa-file-video icon-mr-sm"></i>Video</button>
           </div>
         </div>
 
-        <div class="filter-group" style="margin-left:auto;">
+        <div class="filter-group filter-group-right">
           <label>Departamento</label>
           <select class="filter-select" id="dep-filter">
             <option value="todos">Todos los departamentos</option>
@@ -583,8 +673,7 @@
 
         <div class="filter-group">
           <label>Buscar</label>
-          <input type="text" id="search-input" placeholder="Nombre del archivo…"
-                 style="background:var(--cardgrey);border:1px solid var(--border);color:var(--white);border-radius:8px;padding:5px 10px;font-size:12px;width:180px;">
+          <input type="text" id="search-input" placeholder="Nombre del archivo…">
         </div>
       </div>
 
@@ -621,7 +710,7 @@
               @if($archivo->description)
                 <div class="file-desc">{{ $archivo->description }}</div>
               @else
-                <div class="file-desc" style="font-style:italic;opacity:.5;">Sin descripción</div>
+                <div class="file-desc file-desc-empty">Sin descripción</div>
               @endif
             </div>
           </div>
@@ -629,17 +718,14 @@
           @if($archivo->tipos->isNotEmpty())
           <div class="file-tags">
             @foreach($archivo->tipos as $tipo)
-            @php $hex = $colorHex[$tipo->name] ?? '#14b8a6'; @endphp
-            <span style="font-size:11px;padding:2px 10px;border-radius:20px;border:1px solid {{ $hex }};color:{{ $hex }};font-weight:600;">
-              {{ $tipo->name }}
-            </span>
+            <span class="file-tipo-tag" data-tipo="{{ $tipo->name }}">{{ $tipo->name }}</span>
             @endforeach
           </div>
           @endif
 
           <div class="file-info-row">
             <span title="{{ $archivo->original_name }}">
-              <i class="fa-solid fa-paperclip" style="margin-right:4px;"></i>
+              <i class="fa-solid fa-paperclip icon-mr-sm"></i>
               {{ $archivo->size_formateado }}
               &nbsp;·&nbsp;
               {{ $archivo->uploader ? $archivo->uploader->username : '—' }}
@@ -676,7 +762,7 @@
         @endforeach
 
         <div id="no-results">
-          <i class="fa-solid fa-magnifying-glass" style="margin-right:6px;"></i>
+          <i class="fa-solid fa-magnifying-glass icon-mr-sm"></i>
           Sin resultados para los filtros aplicados.
         </div>
       </div>
@@ -705,9 +791,9 @@
   <!-- MODAL SUBIDA -->
   <div class="modal-overlay" id="modal-upload">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-        <div class="modal-title"><i class="fa-solid fa-upload" style="margin-right:10px;"></i>Subir archivo</div>
-        <button onclick="closeModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-upload btn-icon-mr"></i>Subir archivo</div>
+        <button onclick="closeModal()" class="modal-close-btn">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -718,13 +804,13 @@
 
         <!-- Drop zone -->
         <div class="form-group">
-          <label>Archivo <span style="color:#ef4444;">*</span></label>
+          <label>Archivo <span class="required-star">*</span></label>
           <div class="drop-zone" id="drop-zone">
             <input type="file" name="archivo" id="file-input" required
                    accept=".txt,.doc,.docx,.csv,.rtf,.odt,.pdf,.mp3,.wav,.ogg,.m4a,.flac,.aac,.jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.mp4,.mov,.avi,.webm,.mkv">
             <div class="drop-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
             <div class="drop-zone-text">Arrastra un archivo aquí o haz clic para seleccionar</div>
-            <div class="drop-zone-text" style="font-size:11px;margin-top:4px;opacity:.6;">
+            <div class="drop-zone-text drop-zone-hint">
               Texto, PDF, Audio, Imagen o Video · Máx. 50 MB
             </div>
             <div class="drop-zone-file" id="drop-zone-filename"></div>
@@ -733,7 +819,7 @@
 
         <!-- Nombre -->
         <div class="form-group">
-          <label>Nombre <span style="font-weight:400;font-size:11px;">(opcional — por defecto se usa el nombre del archivo)</span></label>
+          <label>Nombre <span class="label-hint">(opcional — por defecto se usa el nombre del archivo)</span></label>
           <input type="text" name="nombre" id="nombre-input" placeholder="Ej: Concept Art v2">
         </div>
 
@@ -745,25 +831,22 @@
 
         <!-- Departamentos -->
         <div class="form-group">
-          <label>Departamentos relacionados <span style="font-weight:400;font-size:11px;">(opcional)</span></label>
+          <label>Departamentos relacionados <span class="label-hint">(opcional)</span></label>
           <div class="tipos-grid">
             @foreach($tipos as $tipo)
-            @php $hex = $colorHex[$tipo->name] ?? '#14b8a6'; @endphp
             <label class="tipo-check">
               <input type="checkbox" name="tipo_ids[]" value="{{ $tipo->id }}">
-              <span style="width:8px;height:8px;border-radius:50%;background:{{ $hex }};flex-shrink:0;display:inline-block;"></span>
+              <span class="tipo-dot" data-tipo="{{ $tipo->name }}"></span>
               <span>{{ $tipo->name }}</span>
             </label>
             @endforeach
           </div>
         </div>
 
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
-          <button type="button" onclick="closeModal()" class="btn-secondary hover-lift"
-                  style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift"
-                  style="width:auto;padding:9px 18px;font-size:13px;">
-            <i class="fa-solid fa-upload" style="margin-right:6px;"></i>Subir
+        <div class="modal-form-footer">
+          <button type="button" onclick="closeModal()" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm">
+            <i class="fa-solid fa-upload btn-icon-mr-sm"></i>Subir
           </button>
         </div>
       </form>
@@ -773,18 +856,17 @@
   <!-- MODAL PREVISUALIZACIÓN -->
   <div class="modal-overlay" id="modal-preview">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-          <span id="preview-icon" style="font-size:18px;flex-shrink:0;"></span>
-          <span id="preview-title" style="font-family:var(--font-title);font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+      <div class="preview-header">
+        <div class="preview-title-wrap">
+          <span id="preview-icon" class="preview-icon"></span>
+          <span id="preview-title" class="preview-title-text"></span>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0;">
+        <div class="preview-actions">
           <a id="preview-download-btn" href="#"
-             class="file-btn hover-lift" title="Descargar"
-             style="width:auto;padding:0 12px;font-size:12px;gap:6px;text-decoration:none;display:flex;align-items:center;">
+             class="file-btn hover-lift btn-preview-download" title="Descargar">
             <i class="fa-solid fa-download"></i> Descargar
           </a>
-          <button onclick="closePreview()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;">
+          <button onclick="closePreview()" class="preview-close-btn">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>

@@ -17,12 +17,11 @@
     <div class="mensajes-list" id="mensajes-list">
         @forelse($mensajes as $mensaje)
             @php
-                $msgColor   = $palette[$mensaje->user_id % count($palette)];
                 $msgInicial = strtoupper(substr($mensaje->autor->username ?? '?', 0, 1));
                 $esMio      = $mensaje->user_id === auth()->id();
             @endphp
             <div class="mensaje-bubble{{ $esMio ? ' es-mio' : '' }}" id="msg-{{ $mensaje->id }}">
-                <div class="msg-avatar" style="background:{{ $msgColor }};">{{ $msgInicial }}</div>
+                <div class="msg-avatar" data-avatar-index="{{ $mensaje->user_id % 8 }}">{{ $msgInicial }}</div>
                 <div class="mensaje-content">
                     @if(!$esMio)
                         <span class="mensaje-author">{{ $mensaje->autor->username ?? '—' }}</span>
@@ -111,8 +110,8 @@
                 </div>
             </div>
         @empty
-            <div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">
-                <i class="fa-regular fa-comment" style="font-size:1.6rem;opacity:.3;display:block;margin-bottom:10px;"></i>
+            <div class="mensajes-empty">
+                <i class="fa-regular fa-comment"></i>
                 Aún no hay respuestas. Sé el primero en responder.
             </div>
         @endforelse
@@ -121,7 +120,7 @@
     {{-- Reply box --}}
     <div class="reply-box">
         <div class="reply-compose">
-            <div class="msg-avatar" style="background:{{ $meColor }};">{{ $meInicial }}</div>
+            <div class="msg-avatar" data-avatar-index="{{ auth()->id() % 8 }}">{{ $meInicial }}</div>
             <div class="reply-right">
                 <textarea wire:model="contenido"
                           rows="3"
@@ -136,7 +135,7 @@
                            id="reply-files"
                            multiple
                            accept=".txt,.doc,.docx,.csv,.rtf,.odt,.pdf,.mp3,.wav,.ogg,.m4a,.flac,.aac,.jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.mp4,.mov,.avi,.webm,.mkv"
-                           style="display:none;">
+                           class="reply-file-input">
                     <span class="reply-file-names">
                         @if(!empty($archivos))
                             {{ count($archivos) }} archivo(s) seleccionado(s)
@@ -144,13 +143,12 @@
                     </span>
                     <button wire:click="guardarRespuesta"
                             wire:loading.attr="disabled"
-                            class="btn-primary hover-lift"
-                            style="width:auto;padding:8px 18px;font-size:13px;">
+                            class="btn-primary hover-lift btn-modal-sm">
                         <span wire:loading.remove wire:target="guardarRespuesta">
-                            <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Responder
+                            <i class="fa-solid fa-paper-plane" class="btn-icon-mr-sm"></i>Responder
                         </span>
                         <span wire:loading wire:target="guardarRespuesta">
-                            <i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i>Enviando…
+                            <i class="fa-solid fa-spinner fa-spin" class="btn-icon-mr-sm"></i>Enviando…
                         </span>
                     </button>
                 </div>
@@ -159,12 +157,12 @@
     </div>
 
     {{-- Modal confirmación eliminar respuesta --}}
-    <div x-show="confirmOpen" class="confirm-modal-overlay" style="display:none;" @click.self="confirmOpen = false">
+    <div x-show="confirmOpen" class="confirm-modal-overlay" x-cloak @click.self="confirmOpen = false">
         <div class="confirm-modal">
             <p class="confirm-modal-title">Eliminar respuesta</p>
             <p class="confirm-modal-desc">¿Eliminar esta respuesta? Esta acción no se puede deshacer.</p>
             <div class="confirm-modal-actions">
-                <button @click="confirmOpen = false" class="btn-ghost" style="padding:8px 20px;">Cancelar</button>
+                <button @click="confirmOpen = false" class="btn-ghost confirm-cancel-btn">Cancelar</button>
                 <button @click="$wire.eliminarRespuesta(confirmId); confirmOpen = false" class="btn-danger">Eliminar</button>
             </div>
         </div>

@@ -30,9 +30,6 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 18px rgba(0,0,0,.25);
     }
-    .hilo-card.fijado {
-      border-left: 3px solid var(--accent);
-    }
 
     .hilo-avatar {
       width: 40px;
@@ -68,6 +65,7 @@
       margin-bottom: 6px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       line-height: 1.5;
@@ -251,33 +249,23 @@
     .empty-state h3   { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
     .empty-state p    { font-size: 13px; color: var(--muted); }
 
-    /* Counter badge */
-    .count-badge {
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 13px;
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
+    /* Paleta de avatares de hilo (índice por user_id % 8) */
+    .hilo-avatar[data-avatar-index="0"] { background: #14b8a6; }
+    .hilo-avatar[data-avatar-index="1"] { background: #ff00ff; }
+    .hilo-avatar[data-avatar-index="2"] { background: #3b82f6; }
+    .hilo-avatar[data-avatar-index="3"] { background: #4ade80; }
+    .hilo-avatar[data-avatar-index="4"] { background: #a855f7; }
+    .hilo-avatar[data-avatar-index="5"] { background: #fb923c; }
+    .hilo-avatar[data-avatar-index="6"] { background: #f59e0b; }
+    .hilo-avatar[data-avatar-index="7"] { background: #ec4899; }
   </style>
 </head>
 
-@php
-  $avatarPalette = ['#14b8a6','#ff00ff','#3b82f6','#4ade80','#a855f7','#fb923c','#f59e0b','#ec4899'];
-  function hiloAvatarColor($userId) {
-    $palette = ['#14b8a6','#ff00ff','#3b82f6','#4ade80','#a855f7','#fb923c','#f59e0b','#ec4899'];
-    return $palette[$userId % count($palette)];
-  }
-@endphp
 
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -341,17 +329,17 @@
     <div class="main-content">
 
       <!-- Header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="page-header-bar">
         <div>
           <h1 class="title-gradient">Foro</h1>
           <p class="subtitle">{{ $proyecto->name }}</p>
         </div>
-        <button class="btn-primary hover-lift" onclick="openModal()" style="width:auto;padding:10px 20px;font-size:13px;margin-top:4px;">
-          <i class="fa-solid fa-plus" style="margin-right:8px;"></i>Nuevo hilo
+        <button class="btn-primary hover-lift btn-page-action" onclick="openModal()">
+          <i class="fa-solid fa-plus btn-icon-mr"></i>Nuevo hilo
         </button>
       </div>
 
-      <div style="margin:14px 0 24px;">
+      <div class="counter-row">
         <span class="count-badge">
           <i class="fa-solid fa-comments"></i>
           {{ $hilos->count() }} {{ $hilos->count() === 1 ? 'hilo' : 'hilos' }}
@@ -366,18 +354,11 @@
       @endif
 
       @forelse($hilos as $hilo)
-      @php
-        $avatarColor = hiloAvatarColor($hilo->user_id);
-        $inicial = strtoupper(substr($hilo->autor->username ?? '?', 0, 1));
-      @endphp
+      @php $inicial = strtoupper(substr($hilo->autor->username ?? '?', 0, 1)); @endphp
       <a href="{{ route('proyecto.foro.show', [$proyecto->id, $hilo->id]) }}"
-         class="hilo-card{{ $hilo->fijado ? ' fijado' : '' }}">
+         class="hilo-card">
 
-        @if($hilo->fijado)
-        <span class="pin-badge"><i class="fa-solid fa-thumbtack"></i> Fijado</span>
-        @endif
-
-        <div class="hilo-avatar" style="background: {{ $avatarColor }};">
+        <div class="hilo-avatar" data-avatar-index="{{ $hilo->user_id % 8 }}">
           {{ $inicial }}
         </div>
 
@@ -424,9 +405,9 @@
   <!-- MODAL: Nuevo hilo -->
   <div class="modal-overlay" id="modal-hilo">
     <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-        <div class="modal-title"><i class="fa-solid fa-plus" style="margin-right:10px;"></i>Nuevo hilo</div>
-        <button onclick="closeModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-plus btn-icon-mr"></i>Nuevo hilo</div>
+        <button onclick="closeModal()" class="modal-close-btn">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -436,19 +417,19 @@
         @csrf
 
         <div class="form-group">
-          <label>Título <span style="color:#ef4444;">*</span></label>
+          <label>Título <span class="required-star">*</span></label>
           <input type="text" name="titulo" required maxlength="200"
                  placeholder="Escribe el título del hilo…">
         </div>
 
         <div class="form-group">
-          <label>Contenido <span style="color:#ef4444;">*</span></label>
+          <label>Contenido <span class="required-star">*</span></label>
           <textarea name="contenido" required rows="6"
                     placeholder="Desarrolla el tema del hilo. Puedes explicar avances, escribir lore, describir una mecánica…"></textarea>
         </div>
 
         <div class="form-group">
-          <label>Archivos adjuntos <span style="font-weight:400;font-size:11px;">(opcional)</span></label>
+          <label>Archivos adjuntos <span class="label-hint">(opcional)</span></label>
           <div class="drop-zone">
             <input type="file" name="archivos[]" id="file-input-hilo" multiple
                    accept=".txt,.doc,.docx,.csv,.rtf,.odt,.pdf,.mp3,.wav,.ogg,.m4a,.flac,.aac,.jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.mp4,.mov,.avi,.webm,.mkv">
@@ -458,12 +439,10 @@
           <div class="file-list-preview" id="file-list-hilo"></div>
         </div>
 
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
-          <button type="button" onclick="closeModal()" class="btn-secondary hover-lift"
-                  style="width:auto;padding:9px 18px;font-size:13px;">Cancelar</button>
-          <button type="submit" class="btn-primary hover-lift"
-                  style="width:auto;padding:9px 18px;font-size:13px;">
-            <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Publicar hilo
+        <div class="modal-form-footer">
+          <button type="button" onclick="closeModal()" class="btn-secondary hover-lift btn-modal-sm">Cancelar</button>
+          <button type="submit" class="btn-primary hover-lift btn-modal-sm">
+            <i class="fa-solid fa-paper-plane btn-icon-mr-sm"></i>Publicar hilo
           </button>
         </div>
       </form>

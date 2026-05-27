@@ -7,38 +7,52 @@ use App\Models\ForoArchivo;
 use App\Models\ForoHilo;
 use App\Models\ForoMensaje;
 use App\Models\Proyecto;
+use App\Traits\CategorizaArchivos;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * Componente Livewire que gestiona el chat en tiempo real de un hilo del foro.
+ * Escucha el canal privado de Broadcasting para actualizarse sin recargar la página.
+ */
 class ChatHilo extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, CategorizaArchivos;
 
-    public int    $proyectoId;
-    public int    $hiloId;
-    public int    $proyectoOwnerId;
+    /** @var int ID del proyecto al que pertenece el hilo */
+    public int $proyectoId;
 
+    /** @var int ID del hilo de foro */
+    public int $hiloId;
+
+    /** @var int ID del owner del proyecto (para mostrar controles de moderación) */
+    public int $proyectoOwnerId;
+
+    /** @var string Texto que el usuario está redactando */
     public string $contenido = '';
-    public array  $archivos  = [];
 
-    private const CATEGORIAS = [
-        'texto'  => ['txt', 'doc', 'docx', 'csv', 'rtf', 'odt'],
-        'pdf'    => ['pdf'],
-        'audio'  => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'],
-        'imagen' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'],
-        'video'  => ['mp4', 'mov', 'avi', 'webm', 'mkv'],
-    ];
+    /** @var array Archivos adjuntos pendientes de subida */
+    public array $archivos = [];
 
-    // Livewire 3 interpola {hiloId} con $this->hiloId al suscribirse al canal
+    /**
+     * Escucha eventos de Broadcasting en el canal privado del hilo.
+     * Livewire 3 interpola {hiloId} con $this->hiloId al suscribirse al canal.
+     * El re-render automático actualiza la lista de mensajes desde BD.
+     */
     #[On('echo-private:chat.{hiloId},.MensajeEnviado')]
     public function refrescarMensajes(): void
     {
-        // El re-render automático de Livewire actualiza la lista desde BD
+        // Re-render automático de Livewire recarga los mensajes
     }
 
+    /**
+     * Valida y persiste una nueva respuesta en el hilo.
+     * Verifica que el usuario sea miembro del proyecto antes de guardar.
+     * Despacha el evento MensajeEnviado para notificar a los demás usuarios en tiempo real.
+     */
     public function guardarRespuesta(): void
     {
         $this->validate([
@@ -48,6 +62,7 @@ class ChatHilo extends Component
         ]);
 
         $contenidoTrimmed = trim($this->contenido);
+
         if (empty($contenidoTrimmed) && empty($this->archivos)) {
             $this->addError('contenido', 'La respuesta debe tener texto o al menos un archivo adjunto.');
             return;
@@ -57,8 +72,7 @@ class ChatHilo extends Component
         $proyecto = Proyecto::findOrFail($this->proyectoId);
         $userId   = Auth::id();
 
-        $esMiembro = $proyecto->miembros()->where('id', $userId)->exists();
-        if (!$esMiembro) {
+        if (!$proyecto->miembros()->where('id', $userId)->exists()) {
             abort(403);
         }
 
@@ -92,6 +106,12 @@ class ChatHilo extends Component
         $this->reset('archivos');
     }
 
+    /**
+     * Elimina una respuesta y sus archivos físicos asociados.
+     * Solo puede hacerlo el autor del mensaje o el owner del proyecto.
+     *
+     * @param int $mensajeId
+     */
     public function eliminarRespuesta(int $mensajeId): void
     {
         $mensaje  = ForoMensaje::where('hilo_id', $this->hiloId)->with('archivos')->findOrFail($mensajeId);
@@ -109,6 +129,12 @@ class ChatHilo extends Component
         $mensaje->delete();
     }
 
+    /**
+     * Renderiza el componente con los mensajes del hilo, paleta de colores
+     * y mapa de iconos por categoría de archivo.
+     *
+     * @return \Illuminate\View\View
+     */
     public function render()
     {
         $palette  = ['#14b8a6', '#ff00ff', '#3b82f6', '#4ade80', '#a855f7', '#fb923c', '#f59e0b', '#ec4899'];
@@ -120,7 +146,7 @@ class ChatHilo extends Component
             'video'  => 'fa-file-video',
         ];
 
-        // Replica la lógica de cForo@show: excluir el mensaje raíz del hilo
+        // Replica la lógica de cForo@show: excluir el mensaje raíz (adjuntos del hilo original)
         $mensajeRaizId = ForoMensaje::where('hilo_id', $this->hiloId)
             ->whereNull('contenido')
             ->oldest()
@@ -139,15 +165,5 @@ class ChatHilo extends Component
             'meColor'   => $palette[Auth::id() % count($palette)],
             'meInicial' => strtoupper(substr(Auth::user()->username ?? '?', 0, 1)),
         ]);
-    }
-
-    private function resolverCategoria(string $ext): string
-    {
-        foreach (self::CATEGORIAS as $cat => $exts) {
-            if (in_array($ext, $exts)) {
-                return $cat;
-            }
-        }
-        return 'texto';
     }
 }

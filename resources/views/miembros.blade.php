@@ -9,24 +9,226 @@
   <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
-</head>
+  <style>
+    /* ── Lista de miembros ──────────────────────────── */
+    .member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-@php
-  $colorHex = [
-    'Desarrollo' => '#14b8a6',
-    'Diseño'     => '#ff00ff',
-    'Audio'      => '#3b82f6',
-    'Narrativa'  => '#4ade80',
-    'Marketing'  => '#a855f7',
-    'Arte'       => '#fb923c',
-  ];
-  $avatarPalette = ['#E040FB','#42A5F5','#26C6DA','#66BB6A','#AB47BC','#FFA726','#ef5350','#26a69a'];
-@endphp
+    .member-card {
+      background: var(--cardgrey);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      cursor: pointer;
+    }
+
+    .member-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 17px;
+      flex-shrink: 0;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    /* Paleta de avatares de miembros (user_id % 8) */
+    .member-avatar[data-avatar-index="0"] { background: #E040FB; }
+    .member-avatar[data-avatar-index="1"] { background: #42A5F5; }
+    .member-avatar[data-avatar-index="2"] { background: #26C6DA; }
+    .member-avatar[data-avatar-index="3"] { background: #66BB6A; }
+    .member-avatar[data-avatar-index="4"] { background: #AB47BC; }
+    .member-avatar[data-avatar-index="5"] { background: #FFA726; }
+    .member-avatar[data-avatar-index="6"] { background: #ef5350; }
+    .member-avatar[data-avatar-index="7"] { background: #26a69a; }
+
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-name {
+      font-weight: 600;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-desc {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-depts {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 340px;
+    }
+
+    /* Badge de departamento — color via --tipo-color (definido en estilos.css) */
+    .dept-badge {
+      font-size: 11px;
+      padding: 3px 11px;
+      border-radius: 20px;
+      border: 1px solid var(--tipo-color, #14b8a6);
+      color: var(--tipo-color, #14b8a6);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .no-dept {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .member-task-count {
+      text-align: center;
+      min-width: 54px;
+      flex-shrink: 0;
+    }
+
+    .task-count-num {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .task-count-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .member-chevron {
+      color: var(--muted);
+      font-size: 12px;
+      flex-shrink: 0;
+      transition: transform .2s;
+    }
+
+    /* ── Panel expandible de tareas ─────────────────── */
+    .member-tasks-panel {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 14px 22px;
+    }
+
+    .no-tasks-msg {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .tasks-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .task-row-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 13px;
+    }
+
+    /* Badge de tipo de tarea — color via --tipo-color */
+    .task-tipo-badge {
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--tipo-color, #14b8a6);
+      color: var(--tipo-color, #14b8a6);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .task-row-title {
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .task-status-badge {
+      font-size: 11px;
+      padding: 2px 9px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .milestone-icon {
+      font-size: 11px;
+      color: #a855f7;
+    }
+
+    /* ── Estado vacío ───────────────────────────────── */
+    .member-empty-state {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 52px;
+      text-align: center;
+    }
+
+    .member-empty-icon {
+      font-size: 2.2rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: block;
+      opacity: .4;
+    }
+
+    .member-empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .member-empty-desc {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .btn-empty-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      text-decoration: none;
+      font-size: 13px;
+      padding: 9px 18px;
+      width: auto;
+    }
+  </style>
+</head>
 
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
       <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
@@ -90,92 +292,85 @@
       <h1 class="title-gradient">Miembros</h1>
       <p class="subtitle">{{ $proyecto->name }}</p>
 
-      <div style="margin:20px 0 28px;">
-        <span style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:13px;color:var(--muted);">
-          <i class="fa-solid fa-users" style="margin-right:6px;"></i>
+      <div class="counter-row">
+        <span class="count-badge">
+          <i class="fa-solid fa-users btn-icon-mr-sm"></i>
           {{ $miembros->count() }} {{ $miembros->count() === 1 ? 'miembro' : 'miembros' }}
         </span>
       </div>
 
       @if($miembros->isEmpty())
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-lg);padding:52px;text-align:center;">
-          <i class="fa-solid fa-user-plus" style="font-size:2.2rem;color:var(--muted);margin-bottom:16px;display:block;opacity:.4;"></i>
-          <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Nadie se ha unido todavía</div>
-          <div style="color:var(--muted);font-size:13px;">Genera un enlace de invitación desde la vista del proyecto.</div>
-          <a href="{{ route('proyecto', $proyecto->id) }}" class="btn-primary hover-lift"
-             style="display:inline-flex;align-items:center;gap:8px;margin-top:20px;text-decoration:none;font-size:13px;padding:9px 18px;width:auto;">
+        <div class="member-empty-state">
+          <i class="fa-solid fa-user-plus member-empty-icon"></i>
+          <div class="member-empty-title">Nadie se ha unido todavía</div>
+          <div class="member-empty-desc">Genera un enlace de invitación desde la vista del proyecto.</div>
+          <a href="{{ route('proyecto', $proyecto->id) }}" class="btn-primary hover-lift btn-empty-cta">
             <i class="fa-solid fa-link"></i> Ir al proyecto
           </a>
         </div>
       @else
-        <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="member-list">
           @foreach($miembros as $miembro)
-          @php $avatarColor = $avatarPalette[$miembro->id % count($avatarPalette)]; @endphp
-          <div style="background:var(--cardgrey);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+          <div class="member-card">
 
             <!-- Fila principal del miembro -->
-            <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;cursor:pointer;"
-                 onclick="toggleMiembro({{ $miembro->id }})">
+            <div class="member-row" data-miembro-id="{{ $miembro->id }}" onclick="toggleMiembro(this)">
 
               <!-- Avatar con inicial -->
-              <div style="width:42px;height:42px;border-radius:50%;background:{{ $avatarColor }};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex-shrink:0;color:#fff;text-transform:uppercase;">
+              <div class="member-avatar" data-avatar-index="{{ $miembro->id % 8 }}">
                 {{ mb_substr($miembro->username, 0, 1) }}
               </div>
 
               <!-- Nombre y descripción -->
-              <div style="flex:1;min-width:0;">
-                <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $miembro->username }}</div>
+              <div class="member-info">
+                <div class="member-name">{{ $miembro->username }}</div>
                 @if($miembro->description)
-                <div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $miembro->description }}</div>
+                <div class="member-desc">{{ $miembro->description }}</div>
                 @endif
               </div>
 
               <!-- Badges de departamentos con acceso -->
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:340px;">
+              <div class="member-depts">
                 @forelse($miembro->accesosProyecto as $acceso)
-                @php $hex = $colorHex[$acceso->tipo->name] ?? '#14b8a6'; @endphp
-                <span style="font-size:11px;padding:3px 11px;border-radius:20px;border:1px solid {{ $hex }};color:{{ $hex }};font-weight:600;white-space:nowrap;">
+                <span class="dept-badge" data-tipo="{{ $acceso->tipo->name }}">
                   {{ $acceso->tipo->name }}
                 </span>
                 @empty
-                <span style="font-size:12px;color:var(--muted);">Sin departamentos</span>
+                <span class="no-dept">Sin departamentos</span>
                 @endforelse
               </div>
 
               <!-- Contador de tareas -->
-              <div style="text-align:center;min-width:54px;flex-shrink:0;">
-                <div style="font-size:19px;font-weight:700;">{{ $miembro->tareas->count() }}</div>
-                <div style="font-size:11px;color:var(--muted);">{{ $miembro->tareas->count() === 1 ? 'tarea' : 'tareas' }}</div>
+              <div class="member-task-count">
+                <div class="task-count-num">{{ $miembro->tareas->count() }}</div>
+                <div class="task-count-label">{{ $miembro->tareas->count() === 1 ? 'tarea' : 'tareas' }}</div>
               </div>
 
               <!-- Chevron -->
-              <div id="chevron-{{ $miembro->id }}" style="color:var(--muted);font-size:12px;flex-shrink:0;transition:transform .2s;">
+              <div id="chevron-{{ $miembro->id }}" class="member-chevron">
                 <i class="fa-solid fa-chevron-down"></i>
               </div>
             </div>
 
             <!-- Panel expandible: tareas asignadas -->
-            <div id="tasks-{{ $miembro->id }}" style="display:none;border-top:1px solid var(--border);padding:14px 22px;">
+            <div id="tasks-{{ $miembro->id }}" class="member-tasks-panel">
               @if($miembro->tareas->isEmpty())
-                <div style="font-size:13px;color:var(--muted);text-align:center;padding:12px 0;">
+                <div class="no-tasks-msg">
                   <i class="fa-solid fa-inbox"></i>&nbsp; Sin tareas asignadas todavía
                 </div>
               @else
-                <div style="display:flex;flex-direction:column;gap:7px;">
+                <div class="tasks-inner">
                   @foreach($miembro->tareas as $tarea)
-                  @php $hex = $tarea->tipo ? ($colorHex[$tarea->tipo->name] ?? '#14b8a6') : '#14b8a6'; @endphp
-                  <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:9px 13px;">
-                    <span style="font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid {{ $hex }};color:{{ $hex }};font-weight:600;flex-shrink:0;">
+                  <div class="task-row-item">
+                    <span class="task-tipo-badge" data-tipo="{{ $tarea->tipo ? $tarea->tipo->name : '' }}">
                       {{ $tarea->tipo ? $tarea->tipo->name : '—' }}
                     </span>
-                    <span style="font-size:13px;flex:1;">{{ $tarea->title }}</span>
+                    <span class="task-row-title">{{ $tarea->title }}</span>
                     @if($tarea->status)
-                    <span style="font-size:11px;padding:2px 9px;background:rgba(255,255,255,0.06);border-radius:6px;color:var(--muted);flex-shrink:0;">
-                      {{ $tarea->status->name }}
-                    </span>
+                    <span class="task-status-badge">{{ $tarea->status->name }}</span>
                     @endif
                     @if($tarea->is_milestone)
-                    <i class="fa-solid fa-flag" style="font-size:11px;color:#a855f7;" title="Hito"></i>
+                    <i class="fa-solid fa-flag milestone-icon" title="Hito"></i>
                     @endif
                   </div>
                   @endforeach
@@ -201,7 +396,8 @@
   </main>
 
   <script>
-    function toggleMiembro(id) {
+    function toggleMiembro(el) {
+      const id      = el.dataset.miembroId;
       const panel   = document.getElementById('tasks-'   + id);
       const chevron = document.getElementById('chevron-' + id);
       const open    = panel.style.display !== 'none';

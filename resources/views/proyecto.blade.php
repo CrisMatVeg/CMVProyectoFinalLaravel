@@ -123,7 +123,7 @@
 <body>
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;vertical-align:middle;">PIXEL</div>
+    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
 
     <nav class="menu">
       <span class="menu-section">Proyecto</span>
@@ -259,10 +259,10 @@
               $colorMap = [
                   'Desarrollo' => 'teal',
                   'Diseño'     => 'magenta',
-                  'Audio'      => 'blue',
-                  'Narrativa'  => 'green',
-                  'Marketing'  => 'purple',
-                  'Arte'       => 'orange',
+                  'Audio'      => 'green',
+                  'Narrativa'  => 'purple',
+                  'Marketing'  => 'orange',
+                  'Arte'       => 'blue',
               ];
               $colorClass = $colorMap[$tipo->name] ?? 'teal';
             @endphp

@@ -879,6 +879,13 @@
             .lp-numbers    { grid-template-columns: 1fr; }
             .lp-feat-grid  { grid-template-columns: 1fr; }
         }
+
+        .lp-nav-logo img  { height: 60px; width: auto; }
+        .lp-footer-end    { justify-content: flex-end; }
+        .bar-75 { width: 75%; }
+        .bar-40 { width: 40%; }
+        .bar-90 { width: 90%; }
+        .bar-55 { width: 55%; }
     </style>
 </head>
 
@@ -887,7 +894,7 @@
     <!-- NAV -->
     <nav class="lp-nav">
         <a class="lp-nav-logo pixel-logo" href="{{ route('home') }}">
-            <img src="{{ asset('isotipo.png') }}" alt="" style="height:60px;width:auto;">
+            <img src="{{ asset('isotipo.png') }}" alt="">
             <span>PIXEL</span>
         </a>
 
@@ -973,22 +980,22 @@
                                     <div class="mm-card mm-teal">
                                         <span class="mm-badge">Desarrollo</span>
                                         <div class="mm-card-t">Sistema de combate</div>
-                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:75%"></div></div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill bar-75"></div></div>
                                     </div>
                                     <div class="mm-card mm-mag">
                                         <span class="mm-badge">Diseño</span>
                                         <div class="mm-card-t">UI del menú</div>
-                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:40%"></div></div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill bar-40"></div></div>
                                     </div>
                                     <div class="mm-card mm-blue">
                                         <span class="mm-badge">Audio</span>
                                         <div class="mm-card-t">Soundtrack nivel 1</div>
-                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:90%"></div></div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill bar-90"></div></div>
                                     </div>
                                     <div class="mm-card mm-green">
                                         <span class="mm-badge">Narrativa</span>
                                         <div class="mm-card-t">Diálogos tutorial</div>
-                                        <div class="mm-bar-prog"><div class="mm-bar-fill" style="width:55%"></div></div>
+                                        <div class="mm-bar-prog"><div class="mm-bar-fill bar-55"></div></div>
                                     </div>
                                 </div>
                             </div>
@@ -1130,7 +1137,7 @@
     </div><!-- /.lp-carousel -->
 
     <!-- FOOTER BAR con counter -->
-    <div class="lp-footer-bar" style="justify-content:flex-end;">
+    <div class="lp-footer-bar lp-footer-end">
         <div class="lp-counter">
             <span class="lp-counter-num" id="lp-counter-num">01</span>
             <span class="lp-counter-sep">/</span>

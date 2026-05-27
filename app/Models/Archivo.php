@@ -2,10 +2,27 @@
 
 namespace App\Models;
 
+use App\Traits\TieneArchivoFormateado;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo que representa un archivo adjunto a un proyecto.
+ *
+ * @property int         $id
+ * @property int         $proyecto_id
+ * @property int         $uploaded_by
+ * @property string      $name
+ * @property string|null $description
+ * @property string      $original_name
+ * @property string      $path
+ * @property string      $mime_type
+ * @property int         $size
+ * @property string      $categoria
+ */
 class Archivo extends Model
 {
+    use TieneArchivoFormateado;
+
     protected $table = 'archivos';
 
     protected $fillable = [
@@ -20,26 +37,33 @@ class Archivo extends Model
         'categoria',
     ];
 
+    /**
+     * Proyecto al que pertenece el archivo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function proyecto()
     {
         return $this->belongsTo(Proyecto::class);
     }
 
+    /**
+     * Usuario que subió el archivo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function uploader()
     {
         return $this->belongsTo(Usuario::class, 'uploaded_by');
     }
 
+    /**
+     * Tipos (áreas) a los que está asociado el archivo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function tipos()
     {
         return $this->belongsToMany(Tipo::class, 'archivo_tipo');
-    }
-
-    public function getSizeFormateadoAttribute(): string
-    {
-        $bytes = $this->size;
-        if ($bytes >= 1048576) return round($bytes / 1048576, 1) . ' MB';
-        if ($bytes >= 1024)    return round($bytes / 1024,    1) . ' KB';
-        return $bytes . ' B';
     }
 }

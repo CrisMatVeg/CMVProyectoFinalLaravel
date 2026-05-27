@@ -15,11 +15,11 @@ use App\Http\Controllers\cForo;
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/login', [cUsuario::class, 'showLogin'])->name('login');
 Route::post('/login', [cUsuario::class, 'login'])->name('login.post');
-Route::post('/logout', [cUsuario::class, 'logout'])->name('logout');
 Route::get('/registro', [cUsuario::class, 'showRegistro'])->name('registro');
 Route::post('/registro', [cUsuario::class, 'registro'])->name('registro.post');
 Route::get('/join', [cInvitacion::class, 'join'])->name('invitacion.join');
 Route::middleware('auth')->group(function () {
+    Route::post('/logout', [cUsuario::class, 'logout'])->name('logout');
     Route::get('/proyectos', [PageController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos', [cProyecto::class, 'store'])->name('proyectos.store');
     Route::get('/proyecto/{proyecto}', [PageController::class, 'proyecto'])->name('proyecto');
