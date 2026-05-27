@@ -2,38 +2,46 @@
 
 namespace Database\Seeders;
 
-use App\Models\Usuario;
-use App\Models\Tipo;
-use App\Models\Estado;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Tipos de tareas
-        $tipos = ['Desarrollo', 'Diseño', 'Audio', 'Narrativa', 'Marketing', 'Arte'];
-        foreach ($tipos as $tipo) {
-            Tipo::firstOrCreate(['name' => $tipo]);
-        }
+        // Deshabilitar restricciones de clave foránea para poder truncar en cualquier orden
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        // Estados de tareas
-        $estados = ['Pendiente', 'En Proceso', 'Terminada'];
-        foreach ($estados as $estado) {
-            Estado::firstOrCreate(['name' => $estado]);
-        }
+        // Vaciar tablas dinámicas (datos de prueba/usuario), de hoja a raíz
+        DB::table('foro_archivos')->truncate();
+        DB::table('foro_mensajes')->truncate();
+        DB::table('foro_hilos')->truncate();
+        DB::table('notas_tarea')->truncate();
+        DB::table('tarea_dependencias')->truncate();
+        DB::table('participaciones')->truncate();
+        DB::table('archivo_tipo')->truncate();
+        DB::table('archivos')->truncate();
+        DB::table('tareas')->truncate();
+        DB::table('invitaciones')->truncate();
+        DB::table('proyecto_accesos')->truncate();
+        DB::table('dialogos')->truncate();
+        DB::table('items')->truncate();
+        DB::table('personajes')->truncate();
+        DB::table('proyectos')->truncate();
+        DB::table('usuarios')->truncate();
+        DB::table('users')->truncate();
+        DB::table('sessions')->truncate();
+        DB::table('password_reset_tokens')->truncate();
 
-        // Usuario de prueba (password = username + password concatenados, igual que el registro)
-        $username = 'testuser';
-        $password = 'password';
-        Usuario::create([
-            'username'    => $username,
-            'email'       => 'test@example.com',
-            'password'    => bcrypt($username . $password),
-            'description' => 'Usuario de prueba para el sistema',
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        // Cargar datos fijos del sistema (idempotente: usa firstOrCreate)
+        $this->call(TiposEstadosSeeder::class);
+
+        // Cargar datos de prueba
+        $this->call([
+            UsuariosSeeder::class,
+            ProyectosPruebaSeeder::class,
         ]);
     }
 }
