@@ -721,6 +721,12 @@ input::placeholder {
     font-size: var(--title-size-md);
 }
 
+.logo img {
+    height: 60px;
+    width: auto;
+    vertical-align: middle;
+}
+
 .logo.pixel-logo {
     font-size: 20px;
 }
@@ -1506,3 +1512,104 @@ form {
 @media (max-width: 400px) {
     .stats { grid-template-columns: 1fr; }
 }
+
+/* ======================================================
+   UTILIDADES COMPARTIDAS ENTRE VISTAS
+====================================================== */
+
+/* Barra de cabecera de página (título + botón acción) */
+.page-header-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+/* Botón inline en cabeceras de página */
+.btn-page-action {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Separador de contador debajo del encabezado */
+.counter-row { margin: 14px 0 24px; }
+
+/* Badge contador de elementos */
+.count-badge {
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Márgenes para iconos dentro de botones */
+.btn-icon-mr    { margin-right: 8px; }
+.btn-icon-mr-sm { margin-right: 6px; }
+.icon-mr-sm     { margin-right: 4px; }
+
+/* Cabecera de modal (título + botón cerrar) */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+/* Botón cerrar modal (X) */
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    line-height: 1;
+}
+.modal-close-btn:hover { color: var(--white); }
+
+/* Pie de formulario en modal */
+.modal-form-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+/* Botón pequeño para acciones dentro de modal */
+.btn-modal-sm {
+    width: auto;
+    padding: 9px 18px;
+    font-size: 13px;
+}
+
+/* Asterisco de campo obligatorio */
+.required-star { color: #ef4444; }
+
+/* Texto de ayuda opcional en etiquetas */
+.label-hint {
+    font-weight: 400;
+    font-size: 11px;
+}
+
+/* Icono en título con más separación */
+.btn-icon-mr-lg { margin-right: 10px; }
+
+/* Alpine.js x-cloak: oculta elemento hasta que Alpine inicialice */
+[x-cloak] { display: none !important; }
+
+/* Colores de departamento/tipo mediante atributo data-tipo */
+[data-tipo="Desarrollo"] { --tipo-color: #14b8a6; }
+[data-tipo="Diseño"]     { --tipo-color: #ff00ff; }
+[data-tipo="Audio"]      { --tipo-color: #4ade80; }
+[data-tipo="Narrativa"]  { --tipo-color: #a855f7; }
+[data-tipo="Marketing"]  { --tipo-color: #fb923c; }
+[data-tipo="Arte"]       { --tipo-color: #3b82f6; }
