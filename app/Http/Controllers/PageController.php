@@ -95,28 +95,34 @@ class PageController extends Controller
             'tareas.tipo',
             'tareas.status',
             'tareas.dependencias.status',
+            'tareas.usuarios',
         ])->findOrFail($id);
         $this->verificarMiembro($proyecto);
+
+        /** @var \App\Models\Usuario $usuario */
+        $usuario  = Auth::user();
+        $esOwner  = $proyecto->created_by === $usuario->id;
 
         $tipos   = \App\Models\Tipo::all();
         $estados = \App\Models\Estado::all();
 
-        $tareasJson = $proyecto->tareas->map(function ($t) {
+        $tareasJson = $proyecto->tareas->map(function ($t) use ($usuario) {
             return [
-                'id'           => $t->id,
-                'title'        => $t->title,
-                'tipo'         => $t->tipo   ? $t->tipo->name   : '—',
-                'estado'       => $t->status ? $t->status->name : '—',
-                'start'        => $t->start_date,
-                'end'          => $t->end_date,
-                'hours'        => $t->estimated_hours,
-                'is_milestone' => (bool) $t->is_milestone,
-                'depends_on'   => $t->dependencias->pluck('id')->toArray(),
-                'blocked'      => $t->isBlocked(),
+                'id'             => $t->id,
+                'title'          => $t->title,
+                'tipo'           => $t->tipo   ? $t->tipo->name   : '—',
+                'estado'         => $t->status ? $t->status->name : '—',
+                'start'          => $t->start_date,
+                'end'            => $t->end_date,
+                'hours'          => $t->estimated_hours,
+                'is_milestone'   => (bool) $t->is_milestone,
+                'depends_on'     => $t->dependencias->pluck('id')->toArray(),
+                'blocked'        => $t->isBlocked(),
+                'assigned_to_me' => $t->usuarios->contains('id', $usuario->id),
             ];
         })->values();
 
-        return view('gantt', compact('proyecto', 'tipos', 'estados', 'tareasJson'));
+        return view('gantt', compact('proyecto', 'tipos', 'estados', 'tareasJson', 'esOwner'));
     }
 
     /**
@@ -128,27 +134,32 @@ class PageController extends Controller
      */
     public function calendario($id)
     {
-        $proyecto = Proyecto::with(['tareas.tipo', 'tareas.status'])->findOrFail($id);
+        $proyecto = Proyecto::with(['tareas.tipo', 'tareas.status', 'tareas.usuarios'])->findOrFail($id);
         $this->verificarMiembro($proyecto);
+
+        /** @var \App\Models\Usuario $usuario */
+        $usuario  = Auth::user();
+        $esOwner  = $proyecto->created_by === $usuario->id;
 
         $tipos   = \App\Models\Tipo::all();
         $estados = \App\Models\Estado::all();
 
-        $tareasJson = $proyecto->tareas->map(function ($t) {
+        $tareasJson = $proyecto->tareas->map(function ($t) use ($usuario) {
             return [
-                'id'           => $t->id,
-                'title'        => $t->title,
-                'description'  => $t->description,
-                'tipo'         => $t->tipo   ? $t->tipo->name   : '—',
-                'estado'       => $t->status ? $t->status->name : '—',
-                'start'        => $t->start_date,
-                'end'          => $t->end_date,
-                'hours'        => $t->estimated_hours,
-                'is_milestone' => (bool) $t->is_milestone,
+                'id'             => $t->id,
+                'title'          => $t->title,
+                'description'    => $t->description,
+                'tipo'           => $t->tipo   ? $t->tipo->name   : '—',
+                'estado'         => $t->status ? $t->status->name : '—',
+                'start'          => $t->start_date,
+                'end'            => $t->end_date,
+                'hours'          => $t->estimated_hours,
+                'is_milestone'   => (bool) $t->is_milestone,
+                'assigned_to_me' => $t->usuarios->contains('id', $usuario->id),
             ];
         })->values();
 
-        return view('calendario', compact('proyecto', 'tipos', 'estados', 'tareasJson'));
+        return view('calendario', compact('proyecto', 'tipos', 'estados', 'tareasJson', 'esOwner'));
     }
 
     /**
