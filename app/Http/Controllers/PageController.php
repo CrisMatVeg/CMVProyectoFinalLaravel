@@ -62,12 +62,9 @@ class PageController extends Controller
         /** @var \App\Models\Usuario $usuario */
         $usuario  = Auth::user();
 
-        $numMiembros       = $proyecto->miembros()->count();
-        $totalTareas       = $proyecto->tareas->count();
-        $tareasFinalizadas = $proyecto->tareas
-            ->filter(fn($t) => $t->status && $t->status->name === 'Terminada')
-            ->count();
-        $progreso = $totalTareas ? round(($tareasFinalizadas / $totalTareas) * 100) : 0;
+        $numMiembros = $proyecto->miembros()->count();
+        $totalTareas = $proyecto->tareas->count();
+        $progreso    = $this->calcularProgreso($proyecto->tareas);
 
         // Tipos a los que tiene acceso el usuario; si no hay registros específicos, accede a todos
         $tiposAccesibles = \App\Models\ProyectoAcceso::where('proyecto_id', $id)
@@ -180,17 +177,18 @@ class PageController extends Controller
             return redirect()->route('proyecto', $id);
         }
 
-        // Cargar miembros (excluyendo al owner) con sus tareas y accesos por tipo
+        // Una sola query para todos los accesos del proyecto, luego se agrupan en memoria
+        $accesosPorUsuario = \App\Models\ProyectoAcceso::where('proyecto_id', $id)
+            ->with('tipo')
+            ->get()
+            ->groupBy('user_id');
+
         $miembros = $proyecto->miembros()
             ->where('id', '!=', $proyecto->created_by)
             ->with(['tareas' => fn($q) => $q->where('project_id', $id)->with('tipo', 'status')])
             ->get()
-            ->each(function ($m) use ($id) {
-                // N+1 conocido: se acepta dado el bajo número de miembros típico por proyecto
-                $m->accesosProyecto = \App\Models\ProyectoAcceso::where('proyecto_id', $id)
-                    ->where('user_id', $m->id)
-                    ->with('tipo')
-                    ->get();
+            ->each(function ($m) use ($accesosPorUsuario) {
+                $m->accesosProyecto = $accesosPorUsuario->get($m->id, collect());
             });
 
         return view('miembros', compact('proyecto', 'miembros'));
@@ -225,8 +223,7 @@ class PageController extends Controller
         // Estadísticas siempre sobre el total del área
         $totalTareas = $todasLasTareas->count();
         $totalHoras  = $todasLasTareas->sum('estimated_hours');
-        $finalizadas = $todasLasTareas->filter(fn($t) => $t->status && $t->status->name === 'Terminada')->count();
-        $progreso    = $totalTareas ? round(($finalizadas / $totalTareas) * 100) : 0;
+        $progreso    = $this->calcularProgreso($todasLasTareas);
 
         // Miembros no-owner: solo ven las tareas donde están asignados
         $tareas = $esOwner
@@ -260,5 +257,12 @@ class PageController extends Controller
             'usuarios', 'progreso', 'todasLasTareasJson', 'esOwner',
             'totalTareas', 'totalHoras'
         ));
+    }
+
+    private function calcularProgreso(\Illuminate\Support\Collection $tareas): int
+    {
+        $total = $tareas->count();
+        $finalizadas = $tareas->filter(fn($t) => $t->status && $t->status->name === 'Terminada')->count();
+        return $total ? (int) round(($finalizadas / $total) * 100) : 0;
     }
 }
