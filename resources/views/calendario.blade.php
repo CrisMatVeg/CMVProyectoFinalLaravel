@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PIXEL | Calendario — {{ $proyecto->name }}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>(function(){var t=localStorage.getItem('pixel-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-  @vite('resources/css/app.css')
-  @vite('resources/js/app.js')
+@extends('layouts.proyecto')
+
+@php $activo = 'calendario'; @endphp
+
+@section('titulo', 'Calendario — ' . $proyecto->name)
+@section('body_class', 'teal')
+
+@push('estilos')
   <style>
     /* ── Cabecera del mes ─────────────────────────────────── */
     .cal-header {
@@ -456,7 +453,7 @@
       padding-top: 14px;
     }
   </style>
-</head>
+@endpush
 
 @php
   $colorMap = [
@@ -474,69 +471,7 @@
   ];
 @endphp
 
-<body class="teal">
-  <aside class="sidebar">
-    <div class="logo pixel-logo"><img src="{{ asset('isotipo.png') }}" alt="">PIXEL</div>
-    <nav class="menu">
-      <span class="menu-section">Proyecto</span>
-      <a href="{{ route('proyecto', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
-        <span>Proyecto</span>
-      </a>
-      <a href="{{ route('proyecto.gantt', $proyecto->id) }}" class="menu-item hover-lift" data-mobile-hide="true">
-        <span class="menu-icon"><i class="fa-solid fa-chart-gantt"></i></span>
-        <span>Gantt</span>
-      </a>
-      <div class="menu-item hover-lift active">
-        <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
-        <span>Calendario</span>
-      </div>
-      <a href="{{ route('proyecto.foro', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-comments"></i></span>
-        <span>Foro</span>
-      </a>
-      <a href="{{ route('proyecto.archivos', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>Archivos</span>
-      </a>
-      <a href="{{ route('proyecto.predefinicion', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-        <span>Datos predefinidos</span>
-      </a>
-      @if($proyecto->created_by === auth()->id())
-      <a href="{{ route('proyecto.miembros', $proyecto->id) }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
-        <span>Miembros</span>
-      </a>
-      @endif
-      <span class="menu-section">General</span>
-      <a href="{{ route('proyectos') }}" class="menu-item hover-lift">
-        <span class="menu-icon"><i class="fa-solid fa-layer-group"></i></span>
-        <span>Mis proyectos</span>
-      </a>
-    </nav>
-    <div class="sidebar-user hover-lift">
-      <a href="{{ route('perfil') }}" class="sidebar-user-link">
-        <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
-        <div class="user-info">
-          <strong>{{ auth()->user()->username }}</strong>
-          <span class="title-gradient">{{ $proyecto->created_by === auth()->id() ? 'Owner' : 'Miembro' }}</span>
-        </div>
-      </a>
-      <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Cambiar tema">
-        <i class="fa-solid fa-circle-half-stroke"></i>
-      </button>
-      <form action="{{ route('logout') }}" method="POST" class="sidebar-logout-form">
-        @csrf
-        <button type="submit" class="logout">
-          <i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i>
-        </button>
-      </form>
-    </div>
-  </aside>
-
-  <main>
-    <div class="main-content">
+@section('contenido')
       <h1 class="title-gradient">
         <i class="fa-solid fa-calendar-days btn-icon-mr-lg"></i>Calendario de Tareas
       </h1>
@@ -605,8 +540,9 @@
     <footer class="footer">
       <p>© 2025 PIXEL. Todos los derechos reservados.</p>
     </footer>
-  </main>
+@endsection
 
+@push('scripts')
   <!-- ══ MODAL DE DÍA ══════════════════════════════════════ -->
   <div class="cal-overlay" id="day-overlay">
     <div class="cal-modal-box" id="day-modal">
@@ -943,5 +879,4 @@
       }, { passive: true });
     });
   </script>
-</body>
-</html>
+@endpush
