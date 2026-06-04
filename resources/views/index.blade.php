@@ -907,6 +907,11 @@
         </ul>
 
         <div class="lp-nav-actions">
+            <a href="https://cristianmatveg.ieslossauces.es/documentacion.pdf" target="_blank" rel="noopener noreferrer" aria-label="Ver documentación">
+                <button class="lp-theme-btn">
+                    <i class="fa-solid fa-file-lines"></i>
+                </button>
+            </a>
             <button class="lp-theme-btn" id="lp-theme-btn" aria-label="Cambiar tema">
                 <i class="fa-solid fa-circle-half-stroke"></i>
             </button>
@@ -942,9 +947,9 @@
                                 <i class="fa-solid fa-rocket"></i> Empezar gratis
                             </button>
                         </a>
-                        <a href="{{ route('login') }}">
+                        <a href="https://educajcyl-my.sharepoint.com/:p:/r/personal/cristian_matveg_educa_jcyl_es/Documents/PIXEL%20-%20Gesti%C3%B3n%20de%20Proyectos%20Gamedev.pptx?d=wbb53560eb9e44a7284f41634a2a25ba3&csf=1&web=1&e=pJmCMf" target="_blank" rel="noopener noreferrer">
                             <button class="btn-hero btn-hero-secondary">
-                                Ver demo <i class="fa-solid fa-arrow-right"></i>
+                                Ver Presentación <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </a>
                     </div>
