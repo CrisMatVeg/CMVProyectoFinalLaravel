@@ -56,7 +56,7 @@ class cArchivo extends Controller
         $this->verificarMiembro($proyecto);
 
         $request->validate([
-            'archivo'      => 'required|file|max:51200',
+            'archivo'      => 'required|file|max:51200|mimes:txt,doc,docx,csv,rtf,odt,pdf,mp3,wav,ogg,m4a,flac,aac,jpg,jpeg,png,gif,webp,svg,bmp,mp4,mov,avi,webm,mkv',
             'descripcion'  => 'nullable|string|max:500',
             'tipo_ids'     => 'nullable|array',
             'tipo_ids.*'   => 'exists:tipos,id',

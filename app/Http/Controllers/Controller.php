@@ -21,4 +21,11 @@ abstract class Controller
             abort(403, 'No eres miembro de este proyecto.');
         }
     }
+
+    protected function verificarOwner(Proyecto $proyecto): void
+    {
+        if (Auth::id() !== $proyecto->created_by) {
+            abort(403, 'Solo el propietario puede realizar esta acción.');
+        }
+    }
 }

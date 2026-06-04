@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tarea;
+use App\Models\Proyecto;
 
 /**
  * Gestiona el ciclo de vida de las tareas de un proyecto:
@@ -20,6 +21,9 @@ class cTarea extends Controller
      */
     public function index($projectId)
     {
+        $proyecto = Proyecto::findOrFail($projectId);
+        $this->verificarMiembro($proyecto);
+
         $tareas = Tarea::where('project_id', $projectId)
             ->with(['tipo', 'status', 'usuarios', 'dependencias'])
             ->get();
@@ -36,6 +40,7 @@ class cTarea extends Controller
     public function show($id)
     {
         $tarea = Tarea::with(['tipo', 'status', 'usuarios', 'dependencias'])->findOrFail($id);
+        $this->verificarMiembro(Proyecto::findOrFail($tarea->project_id));
 
         return response()->json($tarea);
     }

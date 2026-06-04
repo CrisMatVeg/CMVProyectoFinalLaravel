@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'area.access' => \App\Http\Middleware\VerificarAccesoTipo::class,
+            'area.access'    => \App\Http\Middleware\VerificarAccesoTipo::class,
+            'project.member' => \App\Http\Middleware\VerificarMiembroProyecto::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

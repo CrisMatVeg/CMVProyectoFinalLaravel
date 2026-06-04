@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Proyecto;
 use App\Models\Personaje;
 use App\Models\Item;
@@ -48,9 +47,7 @@ class cPredefinicion extends Controller
      */
     public function storePersonaje(Request $request, Proyecto $proyecto)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'game_id'   => 'required|string|max:100|unique:personajes,game_id,NULL,id,proyecto_id,' . $proyecto->id,
@@ -76,9 +73,7 @@ class cPredefinicion extends Controller
      */
     public function updatePersonaje(Request $request, Proyecto $proyecto, Personaje $personaje)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'game_id'   => 'required|string|max:100|unique:personajes,game_id,' . $personaje->id . ',id,proyecto_id,' . $proyecto->id,
@@ -103,9 +98,7 @@ class cPredefinicion extends Controller
      */
     public function destroyPersonaje(Proyecto $proyecto, Personaje $personaje)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $personaje->delete();
 
@@ -123,9 +116,7 @@ class cPredefinicion extends Controller
      */
     public function storeItem(Request $request, Proyecto $proyecto)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'game_id'     => 'required|string|max:100|unique:items,game_id,NULL,id,proyecto_id,' . $proyecto->id,
@@ -150,9 +141,7 @@ class cPredefinicion extends Controller
      */
     public function updateItem(Request $request, Proyecto $proyecto, Item $item)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'game_id'     => 'required|string|max:100|unique:items,game_id,' . $item->id . ',id,proyecto_id,' . $proyecto->id,
@@ -176,9 +165,7 @@ class cPredefinicion extends Controller
      */
     public function destroyItem(Proyecto $proyecto, Item $item)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $item->delete();
 
@@ -196,9 +183,7 @@ class cPredefinicion extends Controller
      */
     public function storeDialogo(Request $request, Proyecto $proyecto)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'id_conversacion' => 'required|string|max:100',
@@ -222,9 +207,7 @@ class cPredefinicion extends Controller
      */
     public function updateDialogo(Request $request, Proyecto $proyecto, Dialogo $dialogo)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $data = $request->validate([
             'id_conversacion' => 'required|string|max:100',
@@ -247,9 +230,7 @@ class cPredefinicion extends Controller
      */
     public function destroyDialogo(Proyecto $proyecto, Dialogo $dialogo)
     {
-        if (Auth::id() !== $proyecto->created_by) {
-            abort(403, 'Solo el propietario del proyecto puede gestionar la predefinición.');
-        }
+        $this->verificarOwner($proyecto);
 
         $dialogo->delete();
 

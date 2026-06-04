@@ -354,16 +354,7 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <span>© 2025 PIXEL. Todos los derechos reservados.</span>
-
-    <div class="footer-links">
-      <a href="#">Privacidad</a>
-      <a href="#">Términos</a>
-      <a href="#">Contacto</a>
-    </div>
-  </footer>
+  <x-footer />
 
   <!-- MODAL CREAR PROYECTO -->
   <div class="modal-overlay hidden">

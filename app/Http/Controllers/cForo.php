@@ -92,7 +92,7 @@ class cForo extends Controller
             'titulo'      => 'required|string|max:200',
             'contenido'   => 'required|string|max:10000',
             'archivos'    => 'nullable|array',
-            'archivos.*'  => 'file|max:51200',
+            'archivos.*'  => 'file|max:51200|mimes:txt,doc,docx,csv,rtf,odt,pdf,mp3,wav,ogg,m4a,flac,aac,jpg,jpeg,png,gif,webp,svg,bmp,mp4,mov,avi,webm,mkv',
         ]);
 
         $hilo = DB::transaction(function () use ($proyectoId, $request) {
@@ -138,7 +138,7 @@ class cForo extends Controller
         $request->validate([
             'contenido'   => 'nullable|string|max:10000',
             'archivos'    => 'nullable|array',
-            'archivos.*'  => 'file|max:51200',
+            'archivos.*'  => 'file|max:51200|mimes:txt,doc,docx,csv,rtf,odt,pdf,mp3,wav,ogg,m4a,flac,aac,jpg,jpeg,png,gif,webp,svg,bmp,mp4,mov,avi,webm,mkv',
         ]);
 
         if (empty(trim($request->contenido ?? '')) && !$request->hasFile('archivos')) {
