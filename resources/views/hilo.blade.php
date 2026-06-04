@@ -271,16 +271,35 @@
     }
     .img-thumb-adjunto:hover { opacity: .88; }
 
-    /* ── Reply box ───────────────────────────────────── */
-    .reply-box {
-      position: sticky;
+    /* ── Hilo: footer y reply-box fijos al fondo de la pantalla ── */
+    footer.footer {
+      position: fixed;
       bottom: 0;
-      z-index: 50;
+      left: var(--sidebar-width);
+      right: 0;
+      z-index: 98;
+      margin: 0;
+    }
+    .reply-box {
+      position: fixed;
+      bottom: 49px; /* altura del footer */
+      left: var(--sidebar-width);
+      right: 0;
+      z-index: 99;
       background: var(--cardgrey);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border: none;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
       padding: 12px 14px;
-      margin-top: 16px;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+    }
+    /* Espacio en el contenido para que no quede tapado */
+    .mensajes-list {
+      padding-bottom: 180px;
+    }
+    @media (max-width: 1023px) {
+      footer.footer { left: var(--sidebar-collapsed-width); }
+      .reply-box    { left: var(--sidebar-collapsed-width); }
     }
     .reply-compose {
       display: flex;
@@ -376,8 +395,8 @@
     .preview-header-right { display: flex; gap: 8px; flex-shrink: 0; }
     .preview-download-btn { width: auto; padding: 0 12px; font-size: 12px; gap: 6px; text-decoration: none; display: flex; align-items: center; }
     .reply-file-input { display: none; }
-    .mensajes-empty { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
-    .mensajes-empty i { font-size: 1.6rem; opacity: .3; display: block; margin-bottom: 10px; }
+    .mensajes-empty { text-align: center; padding: 48px 32px; color: var(--muted); font-size: 13px; }
+    .mensajes-empty i { font-size: 1.6rem; opacity: .3; display: block; margin: 0 auto 10px; }
 
     /* Tarjeta alternativa para imágenes (visible solo en mobile) */
     .img-card-mobile { display: none; }
@@ -621,21 +640,16 @@
       </div>
 
       {{-- Chat reactivo: Livewire + Reverb --}}
+      <div class="hilo-page-body">
       <livewire:chat-hilo
           :proyecto-id="$proyecto->id"
           :hilo-id="$hilo->id"
           :proyecto-owner-id="$proyecto->created_by" />
+      </div>
 
     </div>
 
-    <footer class="footer magenta">
-      <p>© 2025 PIXEL. Todos los derechos reservados.</p>
-      <div class="footer-links">
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-        <a href="#">Contacto</a>
-      </div>
-    </footer>
+    <x-footer />
 @endsection
 
 @push('scripts')
