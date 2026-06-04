@@ -319,14 +319,7 @@
 
     </div>
 
-    <footer class="footer magenta">
-      <p>© 2025 PIXEL. Todos los derechos reservados.</p>
-      <div class="footer-links">
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-        <a href="#">Contacto</a>
-      </div>
-    </footer>
+    <x-footer />
 @endsection
 
 @push('scripts')

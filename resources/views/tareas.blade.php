@@ -627,10 +627,7 @@
             </section>
         </div>
 
-        <footer class="footer">
-            <p>© 2025 PIXEL. Todos los derechos reservados.</p>
-            <div class="footer-links"><a href="#">Privacidad</a><a href="#">Términos</a></div>
-        </footer>
+        <x-footer />
 @endsection
 
 @push('scripts')
