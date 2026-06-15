@@ -11,14 +11,13 @@ class VerificarMiembroProyecto
 {
     public function handle(Request $request, Closure $next)
     {
-        $proyectoId = (int) $request->route('proyecto');
+        $proyecto = $request->route('proyecto');
 
-        if (!$proyectoId) {
-            return $next($request);
-        }
+if (!($proyecto instanceof Proyecto)) {
+    return $next($request);
+}
 
-        $proyecto = Proyecto::findOrFail($proyectoId);
-        $esMiembro = $proyecto->miembros()->where('id', Auth::id())->exists();
+$esMiembro = $proyecto->miembros()->where('id', Auth::id())->exists();
 
         if (!$esMiembro) {
             abort(403, 'No eres miembro de este proyecto.');
