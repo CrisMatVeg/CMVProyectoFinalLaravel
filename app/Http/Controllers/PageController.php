@@ -103,7 +103,11 @@ class PageController extends Controller
         $tipos   = \App\Models\Tipo::all();
         $estados = \App\Models\Estado::all();
 
-        $tareasJson = $proyecto->tareas->map(function ($t) use ($usuario) {
+        $tareasFiltradas = $esOwner
+            ? $proyecto->tareas
+            : $proyecto->tareas->filter(fn($t) => $t->usuarios->contains('id', $usuario->id))->values();
+
+        $tareasJson = $tareasFiltradas->map(function ($t) {
             return [
                 'id'             => $t->id,
                 'title'          => $t->title,
@@ -114,8 +118,7 @@ class PageController extends Controller
                 'hours'          => $t->estimated_hours,
                 'is_milestone'   => (bool) $t->is_milestone,
                 'depends_on'     => $t->dependencias->pluck('id')->toArray(),
-                'blocked'        => $t->isBlocked(),
-                'assigned_to_me' => $t->usuarios->contains('id', $usuario->id),
+                'blocked'        => $t->isBlocked()
             ];
         })->values();
 
